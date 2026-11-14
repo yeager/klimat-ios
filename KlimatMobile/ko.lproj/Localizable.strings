@@ -86,3 +86,5 @@
 "Face ID is unavailable on this device." = "이 기기에서는 Face ID를 사용할 수 없습니다.";
 
 "Connect directly to a compatible Gree Wi-Fi adapter over your local network. Internet and a Gree cloud account are not required." = "로컬 네트워크를 통해 호환되는 Gree Wi‑Fi 어댑터에 직접 연결하세요. 인터넷이나 Gree 클라우드 계정은 필요하지 않습니다.";
+
+"Device authentication is unavailable. Check your passcode settings." = "기기 인증을 사용할 수 없습니다. 암호 설정을 확인하세요.";

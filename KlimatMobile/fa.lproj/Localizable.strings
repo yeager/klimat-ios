@@ -86,3 +86,5 @@
 "Face ID is unavailable on this device." = "Face ID در این دستگاه در دسترس نیست.";
 
 "Connect directly to a compatible Gree Wi-Fi adapter over your local network. Internet and a Gree cloud account are not required." = "مستقیماً از طریق شبکهٔ محلی به آداپتور Wi‑Fi سازگار Gree وصل شوید. اینترنت و حساب ابری Gree لازم نیست.";
+
+"Device authentication is unavailable. Check your passcode settings." = "احراز هویت دستگاه در دسترس نیست. تنظیمات رمز عبور را بررسی کنید.";

@@ -91,8 +91,8 @@ struct HomeView: View {
     private func authenticate() {
         let context = LAContext()
         var error: NSError?
-        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error), context.biometryType == .faceID else {
-            faceIDMessage = String(localized: "Face ID is unavailable on this device.")
+        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
+            faceIDMessage = String(localized: "Device authentication is unavailable. Check your passcode settings.")
             return
         }
         context.localizedFallbackTitle = String(localized: "Use Passcode")

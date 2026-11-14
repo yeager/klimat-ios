@@ -86,3 +86,5 @@
 "Face ID is unavailable on this device." = "Face ID không khả dụng trên thiết bị này.";
 
 "Connect directly to a compatible Gree Wi-Fi adapter over your local network. Internet and a Gree cloud account are not required." = "Kết nối trực tiếp với bộ điều hợp Wi‑Fi Gree tương thích qua mạng cục bộ. Không cần Internet hoặc tài khoản đám mây Gree.";
+
+"Device authentication is unavailable. Check your passcode settings." = "Không thể xác thực thiết bị. Hãy kiểm tra cài đặt mật mã.";

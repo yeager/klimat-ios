@@ -86,3 +86,5 @@
 "Face ID is unavailable on this device." = "ميزة Face ID غير متاحة على هذا الجهاز.";
 
 "Connect directly to a compatible Gree Wi-Fi adapter over your local network. Internet and a Gree cloud account are not required." = "اتصل مباشرةً بمحول Wi‑Fi متوافق من Gree عبر شبكتك المحلية. لا يلزم اتصال بالإنترنت أو حساب Gree السحابي.";
+
+"Device authentication is unavailable. Check your passcode settings." = "المصادقة على الجهاز غير متاحة. تحقق من إعداد رمز الدخول.";
