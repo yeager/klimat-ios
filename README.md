@@ -18,7 +18,9 @@ Vilka modeller som fungerar beror på Wi-Fi-adapter, firmware och protokollversi
 
 ## Kvar före försäljning
 
-Nästa lokala adapter kan vara Midea/Comfee eller fler Daikin- och Mitsubishi-protokoll. Därefter behövs verifiering av Gree/Mitsubishi LAN och MELCloud på riktig iPhone och fysisk AC-hårdvara, signering samt App Store Connect-metadata. För priset 39 kr ska kontoinnehavaren godkänna Apples avtal för betalappar och välja pris i App Store Connect.
+Klimat har lokal styrning för kompatibla Daikin-, Mitsubishi- och Gree-adaptrar. Gree och Mitsubishi behöver fortfarande provas mot fysisk AC-hårdvara. Developer Mode måste också aktiveras på den ihopparade iPhonen innan appen kan köras där.
+
+Före publicering återstår därför hårdvaruverifiering, en signerad iOS-version, skärmbilder, support- och integritetssidor samt färdig butikspresentation. App Store Connect visar redan grundpriset 39,00 kr i Sverige. Kontoinnehavaren behöver godkänna Apples avtal för betalappar innan Klimat kan säljas.
 
 ## Fler lokala apparater
 

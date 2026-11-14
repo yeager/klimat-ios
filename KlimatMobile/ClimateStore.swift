@@ -39,7 +39,7 @@ struct CloudProvider: Identifiable {
     @Published var isLoadingAppleHome = false
     @Published var appleHomeStatus = String(localized: "Add climate devices from Apple Home")
     private let storageKey = "klimat.ios.devices"
-    private let appleHome = HomeKitClimateAdapter()
+    private var appleHome: HomeKitClimateAdapter?
 
     let providers: [CloudProvider] = [
         .init(id: "melcloud", title: "MELCloud", detail: "Mitsubishi Electric", symbol: "cloud", color: "#4A8069"),
@@ -52,15 +52,6 @@ struct CloudProvider: Identifiable {
     ]
 
     init() {
-        appleHome.onDevicesChanged = { [weak self] homeDevices in
-            guard let self else { return }
-            let localDevices = self.devices.filter { $0.brand != "Apple Home" }
-            self.devices = localDevices + homeDevices
-            if self.selectedID == nil { self.selectedID = homeDevices.first?.id }
-            self.save()
-            self.isLoadingAppleHome = false
-            self.appleHomeStatus = homeDevices.isEmpty ? String(localized: "No climate controls found in Apple Home.") : String(localized: "Found \(homeDevices.count) climate controls in Apple Home.")
-        }
         if let data = UserDefaults.standard.data(forKey: storageKey), let saved = try? JSONDecoder().decode([ClimateDevice].self, from: data) {
             devices = saved
             selectedID = saved.first?.id
@@ -143,6 +134,10 @@ struct CloudProvider: Identifiable {
             return
         }
         if let device = selected, device.brand == "Apple Home", let serviceID = device.homeServiceID {
+            guard let appleHome else {
+                connectionNotice = String(localized: "Climate control was not found in Apple Home. Scan for devices again.")
+                return
+            }
             do {
                 let state = try await appleHome.command(serviceID: serviceID, action: action, value: value, number: number)
                 guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
@@ -185,7 +180,23 @@ struct CloudProvider: Identifiable {
     func scanAppleHome() {
         isLoadingAppleHome = true
         appleHomeStatus = String(localized: "Searching Apple Home for climate devices…")
-        appleHome.refresh()
+        homeKitAdapter().refresh()
+    }
+
+    private func homeKitAdapter() -> HomeKitClimateAdapter {
+        if let appleHome { return appleHome }
+        let adapter = HomeKitClimateAdapter()
+        adapter.onDevicesChanged = { [weak self] homeDevices in
+            guard let self else { return }
+            let localDevices = self.devices.filter { $0.brand != "Apple Home" }
+            self.devices = localDevices + homeDevices
+            if self.selectedID == nil { self.selectedID = homeDevices.first?.id }
+            self.save()
+            self.isLoadingAppleHome = false
+            self.appleHomeStatus = homeDevices.isEmpty ? String(localized: "No climate controls found in Apple Home.") : String(localized: "Found \(homeDevices.count) climate controls in Apple Home.")
+        }
+        appleHome = adapter
+        return adapter
     }
     func beginScan() {
         guard !isScanning else { return }
