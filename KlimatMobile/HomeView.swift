@@ -40,7 +40,7 @@ struct HomeView: View {
             .sheet(isPresented: $showCloud) { cloudSheet }
             .sheet(isPresented: $showManual) { manualSheet }
             .sheet(isPresented: $showSettings) { settingsSheet }
-            .alert("Anslutning saknas", isPresented: Binding(get: { store.connectionNotice != nil }, set: { if !$0 { store.connectionNotice = nil } })) {
+            .alert("Connection unavailable", isPresented: Binding(get: { store.connectionNotice != nil }, set: { if !$0 { store.connectionNotice = nil } })) {
                 Button("OK", role: .cancel) { store.connectionNotice = nil }
             } message: { Text(store.connectionNotice ?? "") }
             .onChange(of: store.showCloudSetup) { _, newValue in if newValue { showCloud = true; store.showCloudSetup = false } }
@@ -50,7 +50,7 @@ struct HomeView: View {
     private var header: some View {
         HStack(spacing: 11) {
             ZStack { RoundedRectangle(cornerRadius: 12).fill(Palette.green).frame(width: 42, height: 42); Image(systemName: "wind.snow").font(.system(size: 20, weight: .semibold)).foregroundStyle(.white) }
-            VStack(alignment: .leading, spacing: 1) { Text("KLIMATKONTROLL").font(.system(size: 9, weight: .bold, design: .rounded)).tracking(1.5).foregroundStyle(Palette.muted); Text("Klimat").font(.system(size: 20, weight: .bold, design: .rounded)).foregroundStyle(Palette.ink) }
+            VStack(alignment: .leading, spacing: 1) { Text("CLIMATE CONTROL").font(.system(size: 9, weight: .bold, design: .rounded)).tracking(1.5).foregroundStyle(Palette.muted); Text("Klimat").font(.system(size: 20, weight: .bold, design: .rounded)).foregroundStyle(Palette.ink) }
             Spacer()
             Button { showSettings = true } label: { Image(systemName: "slider.horizontal.3").font(.system(size: 17, weight: .medium)).foregroundStyle(Palette.ink).frame(width: 42, height: 42).background(.white, in: RoundedRectangle(cornerRadius: 14)).overlay(RoundedRectangle(cornerRadius: 14).stroke(Palette.line, lineWidth: 1)) }
         }
@@ -59,9 +59,9 @@ struct HomeView: View {
     private var emptyState: some View {
         VStack(spacing: 13) {
             ZStack { Circle().fill(Palette.wash).frame(width: 72, height: 72); Image(systemName: "air.conditioner.horizontal.fill").font(.system(size: 30)).foregroundStyle(Palette.green) }
-            Text("Ditt hem, i perfekt klimat").font(.system(size: 19, weight: .bold, design: .rounded)).foregroundStyle(Palette.ink)
-            Text("Anslut direkt på ditt nätverk eller hämta klimatreglage från Apple Home.").font(.system(size: 13)).foregroundStyle(Palette.muted).multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
-            Button { store.beginScan() } label: { Label(store.isScanning ? "Söker…" : "Sök på nätverket", systemImage: store.isScanning ? "dot.radiowaves.left.and.right" : "wifi") }.buttonStyle(PrimaryButtonStyle())
+            Text("Your home, in perfect comfort").font(.system(size: 19, weight: .bold, design: .rounded)).foregroundStyle(Palette.ink)
+            Text("Connect directly over your local network or add climate controls from Apple Home.").font(.system(size: 13)).foregroundStyle(Palette.muted).multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
+            Button { store.beginScan() } label: { Label(store.isScanning ? "Searching…" : "Search network", systemImage: store.isScanning ? "dot.radiowaves.left.and.right" : "wifi") }.buttonStyle(PrimaryButtonStyle())
             Text(store.scanMessage).font(.system(size: 11)).foregroundStyle(Palette.muted).multilineTextAlignment(.center)
         }
         .padding(22).frame(maxWidth: .infinity).background(.white, in: RoundedRectangle(cornerRadius: 24)).overlay(RoundedRectangle(cornerRadius: 24).stroke(Palette.line, lineWidth: 1))
@@ -72,41 +72,41 @@ struct HomeView: View {
         return VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 5) {
-                    HStack(spacing: 6) { Circle().fill(device.isOn ? Palette.green : Palette.muted.opacity(0.5)).frame(width: 7, height: 7); Text(device.isOn ? "PÅ" : "AV").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted) }
+                    HStack(spacing: 6) { Circle().fill(device.isOn ? Palette.green : Palette.muted.opacity(0.5)).frame(width: 7, height: 7); Text(device.isOn ? "ON" : "OFF").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted) }
                     Text(device.name).font(.system(size: 19, weight: .bold, design: .rounded)).foregroundStyle(Palette.ink)
                     Text(device.connection).font(.system(size: 11)).foregroundStyle(Palette.muted)
                 }
                 Spacer()
                 Button { Task { await store.command(action: "power", value: device.isOn ? "off" : "on") } } label: { Image(systemName: "power").font(.system(size: 16, weight: .semibold)).foregroundStyle(device.isOn ? .white : Palette.green).frame(width: 42, height: 42).background(device.isOn ? Palette.green : Palette.wash, in: Circle()) }.disabled(!canControl)
-                .accessibilityLabel(device.isOn ? "Stäng av" : "Slå på")
+                .accessibilityLabel(device.isOn ? "Turn off" : "Turn on")
             }
             HStack(alignment: .center, spacing: 8) {
                 Text(String(format: "%.0f°", device.current)).font(.system(size: 58, weight: .light, design: .rounded)).tracking(-3).foregroundStyle(Palette.ink)
-                VStack(alignment: .leading, spacing: 3) { Text("INOMHUS").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted); Text(device.mode).font(.system(size: 13, weight: .semibold)).foregroundStyle(Palette.green) }
+                VStack(alignment: .leading, spacing: 3) { Text("INDOORS").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted); Text(device.mode).font(.system(size: 13, weight: .semibold)).foregroundStyle(Palette.green) }
                 Spacer()
                 Image(systemName: "thermometer.medium").font(.system(size: 27, weight: .light)).foregroundStyle(Palette.green.opacity(0.68))
             }.padding(.top, 24).padding(.bottom, 18)
             Rectangle().fill(Palette.line).frame(height: 1)
             HStack {
-                VStack(alignment: .leading, spacing: 3) { Text("BÖRVÄRDE").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted); HStack(alignment: .firstTextBaseline, spacing: 3) { Text(String(format: "%.1f", device.target)).font(.system(size: 30, weight: .semibold, design: .rounded)).foregroundStyle(Palette.ink); Text("°C").font(.system(size: 13, weight: .medium)).foregroundStyle(Palette.muted) } }
+                VStack(alignment: .leading, spacing: 3) { Text("SET POINT").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted); HStack(alignment: .firstTextBaseline, spacing: 3) { Text(String(format: "%.1f", device.target)).font(.system(size: 30, weight: .semibold, design: .rounded)).foregroundStyle(Palette.ink); Text("°C").font(.system(size: 13, weight: .medium)).foregroundStyle(Palette.muted) } }
                 Spacer()
                 HStack(spacing: 10) {
-                    stepButton("minus", label: "Sänk temperatur") { Task { await store.command(action: "temperature", number: max(16, device.target - 0.5)) } }.disabled(!canControl)
-                    stepButton("plus", label: "Höj temperatur") { Task { await store.command(action: "temperature", number: min(30, device.target + 0.5)) } }.disabled(!canControl)
+                    stepButton("minus", label: "Lower temperature") { Task { await store.command(action: "temperature", number: max(16, device.target - 0.5)) } }.disabled(!canControl)
+                    stepButton("plus", label: "Raise temperature") { Task { await store.command(action: "temperature", number: min(30, device.target + 0.5)) } }.disabled(!canControl)
                 }
             }.padding(.vertical, 17)
             LazyVGrid(columns: columns, spacing: 8) {
-                modeButton("Kyler", icon: "snowflake", selected: device.mode == "Kyler") { Task { await store.command(action: "mode", value: "Kyler") } }.disabled(!canControl)
-                modeButton("Värme", icon: "sun.max", selected: device.mode == "Värme") { Task { await store.command(action: "mode", value: "Värme") } }.disabled(!canControl)
+                modeButton("Cool", icon: "snowflake", selected: device.mode == "Cool") { Task { await store.command(action: "mode", value: "Cool") } }.disabled(!canControl)
+                modeButton("Heat", icon: "sun.max", selected: device.mode == "Heat") { Task { await store.command(action: "mode", value: "Heat") } }.disabled(!canControl)
                 modeButton("Auto", icon: "arrow.trianglehead.2.clockwise", selected: device.mode == "Auto") { Task { await store.command(action: "mode", value: "Auto") } }.disabled(!canControl)
-                modeButton("Avfuktning", icon: "drop", selected: device.mode == "Avfuktning") { Task { await store.command(action: "mode", value: "Avfuktning") } }.disabled(!canControl)
+                modeButton("Dry", icon: "drop", selected: device.mode == "Dry") { Task { await store.command(action: "mode", value: "Dry") } }.disabled(!canControl)
             }
             HStack {
-                Label("Fläkthastighet", systemImage: "wind").font(.system(size: 12, weight: .medium)).foregroundStyle(Palette.ink)
+                Label("Fan speed", systemImage: "wind").font(.system(size: 12, weight: .medium)).foregroundStyle(Palette.ink)
                 Spacer()
-                if device.brand == "Daikin" { Menu { ForEach(["Auto", "Låg", "Medel", "Hög"], id: \.self) { fan in Button(fan) { Task { await store.command(action: "fan", value: fan) } } } } label: { HStack(spacing: 5) { Text(device.fan).font(.system(size: 12, weight: .semibold)); Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold)) }.foregroundStyle(Palette.green).padding(.vertical, 9).padding(.horizontal, 11).background(Palette.wash, in: Capsule()) }.disabled(!canControl) }
+                if device.brand == "Daikin" { Menu { ForEach(["Auto", "Low", "Medium", "High"], id: \.self) { fan in Button(fan) { Task { await store.command(action: "fan", value: fan) } } } } label: { HStack(spacing: 5) { Text(device.fan).font(.system(size: 12, weight: .semibold)); Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold)) }.foregroundStyle(Palette.green).padding(.vertical, 9).padding(.horizontal, 11).background(Palette.wash, in: Capsule()) }.disabled(!canControl) }
             }.padding(.top, 15)
-            if !canControl { Text("Enheten saknar ännu en verifierad lokal adapter.").font(.system(size: 10)).foregroundStyle(Palette.muted).padding(.top, 8) }
+            if !canControl { Text("No verified local adapter is available for this device yet.").font(.system(size: 10)).foregroundStyle(Palette.muted).padding(.top, 8) }
         }
         .padding(18).background(.white, in: RoundedRectangle(cornerRadius: 24)).overlay(RoundedRectangle(cornerRadius: 24).stroke(Palette.line, lineWidth: 1))
     }
@@ -120,7 +120,7 @@ struct HomeView: View {
 
     private var deviceList: some View {
         VStack(alignment: .leading, spacing: 10) {
-            sectionTitle("DINA ENHETER", trailing: "\(store.devices.count) anslutna")
+            sectionTitle("YOUR DEVICES", trailing: "\(store.devices.count) connected")
             ForEach(store.devices) { d in
                 Button { store.selectedID = d.id } label: {
                     HStack(spacing: 11) {
@@ -135,14 +135,14 @@ struct HomeView: View {
 
     private var quickConnect: some View {
         VStack(alignment: .leading, spacing: 10) {
-            sectionTitle("ANSLUT ENHET")
-            Button { showAdd = true } label: { HStack(spacing: 12) { Image(systemName: "dot.radiowaves.left.and.right").font(.system(size: 16)).foregroundStyle(Palette.green).frame(width: 39, height: 39).background(Palette.wash, in: RoundedRectangle(cornerRadius: 12)); VStack(alignment: .leading, spacing: 3) { Text("Sök i det lokala nätverket").font(.system(size: 13, weight: .semibold)).foregroundStyle(Palette.ink); Text("Hitta kompatibla Wi-Fi-adaptrar").font(.system(size: 10)).foregroundStyle(Palette.muted) }; Spacer(); Image(systemName: "chevron.right").font(.system(size: 11, weight: .bold)).foregroundStyle(Palette.muted) }.padding(12).background(.white, in: RoundedRectangle(cornerRadius: 16)).overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.line, lineWidth: 1)) }.buttonStyle(.plain)
+            sectionTitle("CONNECT A DEVICE")
+            Button { showAdd = true } label: { HStack(spacing: 12) { Image(systemName: "dot.radiowaves.left.and.right").font(.system(size: 16)).foregroundStyle(Palette.green).frame(width: 39, height: 39).background(Palette.wash, in: RoundedRectangle(cornerRadius: 12)); VStack(alignment: .leading, spacing: 3) { Text("Search your local network").font(.system(size: 13, weight: .semibold)).foregroundStyle(Palette.ink); Text("Find compatible Wi-Fi adapters").font(.system(size: 10)).foregroundStyle(Palette.muted) }; Spacer(); Image(systemName: "chevron.right").font(.system(size: 11, weight: .bold)).foregroundStyle(Palette.muted) }.padding(12).background(.white, in: RoundedRectangle(cornerRadius: 16)).overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.line, lineWidth: 1)) }.buttonStyle(.plain)
         }
     }
 
     private var cloudSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            sectionTitle("VIA MOLNTJÄNST", trailing: "Fler tillverkare")
+            sectionTitle("VIA CLOUD SERVICE", trailing: "More brands")
             LazyVGrid(columns: columns, spacing: 9) {
                 ForEach(store.providers.prefix(4)) { provider in
                     Button { store.selectedProvider = provider; showCloud = true } label: {
@@ -151,27 +151,27 @@ struct HomeView: View {
                     }.buttonStyle(.plain)
                 }
             }
-            Button { showCloud = true } label: { HStack(spacing: 6) { Image(systemName: "plus.circle.fill"); Text("Visa alla molntjänster") }.font(.system(size: 11, weight: .semibold)).foregroundStyle(Palette.green).padding(.vertical, 4) }
+            Button { showCloud = true } label: { HStack(spacing: 6) { Image(systemName: "plus.circle.fill"); Text("See all cloud services") }.font(.system(size: 11, weight: .semibold)).foregroundStyle(Palette.green).padding(.vertical, 4) }
         }
     }
 
-    private var footer: some View { HStack(spacing: 6) { Image(systemName: "lock.shield"); Text("Anslutningsuppgifter skyddas på din enhet") }.font(.system(size: 10)).foregroundStyle(Palette.muted).frame(maxWidth: .infinity).padding(.top, 3) }
+    private var footer: some View { HStack(spacing: 6) { Image(systemName: "lock.shield"); Text("Connection details stay on your device") }.font(.system(size: 10)).foregroundStyle(Palette.muted).frame(maxWidth: .infinity).padding(.top, 3) }
     private func sectionTitle(_ title: String, trailing: String? = nil) -> some View { HStack { Text(title).font(.system(size: 9, weight: .bold)).tracking(1.25).foregroundStyle(Palette.muted); Spacer(); if let trailing { Text(trailing).font(.system(size: 10, weight: .medium)).foregroundStyle(Palette.muted) } } }
 
     private var addSheet: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Anslut till ditt hem").font(.system(size: 24, weight: .bold, design: .rounded)).foregroundStyle(Palette.ink)
-                Text("Sök efter luftkonditionering på samma Wi-Fi-nätverk som din iPhone.").font(.system(size: 13)).foregroundStyle(Palette.muted)
-                Button { store.beginScan() } label: { Label(store.isScanning ? "Söker efter enheter…" : "Starta nätverkssökning", systemImage: "wifi") }.buttonStyle(PrimaryButtonStyle())
+                Text("Connect to your home").font(.system(size: 24, weight: .bold, design: .rounded)).foregroundStyle(Palette.ink)
+                Text("Find air conditioners on the same Wi-Fi network as your iPhone.").font(.system(size: 13)).foregroundStyle(Palette.muted)
+                Button { store.beginScan() } label: { Label(store.isScanning ? "Searching for devices…" : "Start network search", systemImage: "wifi") }.buttonStyle(PrimaryButtonStyle())
                 Text(store.scanMessage).font(.system(size: 12)).foregroundStyle(Palette.muted)
                 if store.isScanning { ProgressView().tint(Palette.green).frame(maxWidth: .infinity).padding() }
-                Button { store.scanAppleHome() } label: { Label(store.isLoadingAppleHome ? "Söker i Apple Home…" : "Hämta AC från Apple Home", systemImage: "house") }.buttonStyle(SecondaryButtonStyle())
+                Button { store.scanAppleHome() } label: { Label(store.isLoadingAppleHome ? "Searching Apple Home…" : "Add climate controls from Apple Home", systemImage: "house") }.buttonStyle(SecondaryButtonStyle())
                 Text(store.appleHomeStatus).font(.system(size: 11)).foregroundStyle(Palette.muted)
-                Button { showAdd = false; showManual = true } label: { Label("Ange enhetens IP-adress", systemImage: "number") }.buttonStyle(SecondaryButtonStyle())
-                VStack(alignment: .leading, spacing: 8) { Text("DIREKTANSLUTNING").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted); Text("Daikin med äldre lokal HTTP-adapter. Ingen molntjänst behövs.").font(.system(size: 12)).foregroundStyle(Palette.ink) }.padding(14).frame(maxWidth: .infinity, alignment: .leading).background(Palette.wash, in: RoundedRectangle(cornerRadius: 15))
+                Button { showAdd = false; showManual = true } label: { Label("Enter device IP address", systemImage: "number") }.buttonStyle(SecondaryButtonStyle())
+                VStack(alignment: .leading, spacing: 8) { Text("DIRECT CONNECTION").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted); Text("Daikin with the legacy local HTTP adapter. No cloud service required.").font(.system(size: 12)).foregroundStyle(Palette.ink) }.padding(14).frame(maxWidth: .infinity, alignment: .leading).background(Palette.wash, in: RoundedRectangle(cornerRadius: 15))
                 Spacer()
-            }.padding(20).background(Color(red: 0.955, green: 0.967, blue: 0.946).ignoresSafeArea()).toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Klar") { showAdd = false }.foregroundStyle(Palette.green) } }
+            }.padding(20).background(Color(red: 0.955, green: 0.967, blue: 0.946).ignoresSafeArea()).toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Done") { showAdd = false }.foregroundStyle(Palette.green) } }
         }.presentationDetents([.medium, .large])
     }
 
@@ -181,24 +181,24 @@ struct HomeView: View {
                 if let provider = store.selectedProvider {
                     Section { CloudConnectNotice(provider: provider) { store.connectCloud(provider: provider) } }
                 }
-                Section("Välj tillverkare") {
+                Section("Choose a manufacturer") {
                     ForEach(store.providers) { provider in
                         Button { store.selectedProvider = provider } label: { HStack(spacing: 12) { Image(systemName: "cloud").foregroundStyle(Palette.green).frame(width: 28); VStack(alignment: .leading, spacing: 3) { Text(provider.title).foregroundStyle(Palette.ink); Text(provider.detail).font(.caption).foregroundStyle(Palette.muted) }; Spacer(); if store.selectedProvider?.id == provider.id { Image(systemName: "checkmark.circle.fill").foregroundStyle(Palette.green) } } }
                     }
                 }
-                Section { Text("Tillverkaranslutningarna visas här som förberedelse. Inloggning och styrning via molnet är inte aktiverade i den här versionen.").font(.caption).foregroundStyle(Palette.muted) }
-            }.scrollContentBackground(.hidden).background(Color(red: 0.955, green: 0.967, blue: 0.946)).navigationTitle("Molntjänst").navigationBarTitleDisplayMode(.inline).toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Klar") { showCloud = false }.foregroundStyle(Palette.green) } }
+                Section { Text("Manufacturer connections are listed here as a preview. Cloud sign-in and control are not enabled in this version.").font(.caption).foregroundStyle(Palette.muted) }
+            }.scrollContentBackground(.hidden).background(Color(red: 0.955, green: 0.967, blue: 0.946)).navigationTitle("Cloud service").navigationBarTitleDisplayMode(.inline).toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Done") { showCloud = false }.foregroundStyle(Palette.green) } }
         }.presentationDetents([.medium, .large])
     }
 
     private var manualSheet: some View {
         NavigationStack {
-            Form { Section("Daikin med lokal adapter") { TextField("Namn", text: $roomName); TextField("IP-adress, t.ex. 192.168.1.42", text: $ipAddress).keyboardType(.numbersAndPunctuation).textInputAutocapitalization(.never).autocorrectionDisabled() }; Section { Text("Anslut direkt till en Daikin Wi-Fi-adapter som stöder det äldre lokala HTTP-API:t. AC:n och iPhone måste vara på samma nätverk.").font(.caption).foregroundStyle(Palette.muted) }; Section { Button("Anslut till Daikin") { Task { let oldID = store.selectedID; await store.connectDaikin(host: ipAddress, name: roomName); if store.selectedID != oldID { showManual = false } } }.foregroundStyle(Palette.green).disabled(ipAddress.isEmpty) } }.scrollContentBackground(.hidden).background(Color(red: 0.955, green: 0.967, blue: 0.946)).navigationTitle("Lägg till lokalt").navigationBarTitleDisplayMode(.inline).toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Avbryt") { showManual = false }.foregroundStyle(Palette.green) } }
+            Form { Section("Daikin local adapter") { TextField("Name", text: $roomName); TextField("IP address, e.g. 192.168.1.42", text: $ipAddress).keyboardType(.numbersAndPunctuation).textInputAutocapitalization(.never).autocorrectionDisabled() }; Section { Text("Connect directly to a Daikin Wi-Fi adapter that supports the legacy local HTTP API. The AC and iPhone must be on the same network.").font(.caption).foregroundStyle(Palette.muted) }; Section { Button("Connect to Daikin") { Task { let oldID = store.selectedID; await store.connectDaikin(host: ipAddress, name: roomName); if store.selectedID != oldID { showManual = false } } }.foregroundStyle(Palette.green).disabled(ipAddress.isEmpty) } }.scrollContentBackground(.hidden).background(Color(red: 0.955, green: 0.967, blue: 0.946)).navigationTitle("Add locally").navigationBarTitleDisplayMode(.inline).toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Cancel") { showManual = false }.foregroundStyle(Palette.green) } }
         }.presentationDetents([.medium, .large])
     }
 
     private var settingsSheet: some View {
-        NavigationStack { List { Section("Om Klimat") { LabeledContent("App", value: "Klimat"); LabeledContent("Version", value: "0.1.0"); Link(destination: URL(string: "https://github.com/yeager/klimat")!) { Label("Öppen källkod på GitHub", systemImage: "arrow.up.right.square") }.foregroundStyle(Palette.green) }; Section { Button(role: .destructive) { store.devices.removeAll(); store.selectedID = nil; store.save(); showSettings = false } label: { Label("Ta bort alla enheter", systemImage: "trash") } } }.navigationTitle("Inställningar").navigationBarTitleDisplayMode(.inline).toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Klar") { showSettings = false }.foregroundStyle(Palette.green) } } }.presentationDetents([.medium, .large])
+        NavigationStack { List { Section("About Klimat") { LabeledContent("App", value: "Klimat"); LabeledContent("Version", value: "0.1.0"); Link(destination: URL(string: "https://github.com/yeager/klimat")!) { Label("Open source on GitHub", systemImage: "arrow.up.right.square") }.foregroundStyle(Palette.green) }; Section { Button(role: .destructive) { store.devices.removeAll(); store.selectedID = nil; store.save(); showSettings = false } label: { Label("Remove all devices", systemImage: "trash") } } }.navigationTitle("Settings").navigationBarTitleDisplayMode(.inline).toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Done") { showSettings = false }.foregroundStyle(Palette.green) } } }.presentationDetents([.medium, .large])
     }
 }
 
@@ -208,8 +208,8 @@ private struct CloudConnectNotice: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(provider.title).font(.system(size: 18, weight: .bold, design: .rounded)).foregroundStyle(Palette.ink)
-            Text("Molnanslutning kräver att Klimat kopplas till tillverkarens API. Funktionen är inte aktiverad i den här versionen.").font(.system(size: 12)).foregroundStyle(Palette.muted)
-            Button(action: onConnect) { Text("Kontrollera anslutning") }.buttonStyle(PrimaryButtonStyle())
+            Text("Cloud control requires connecting Klimat to the manufacturer’s API. This feature is not enabled in this version.").font(.system(size: 12)).foregroundStyle(Palette.muted)
+            Button(action: onConnect) { Text("Check connection") }.buttonStyle(PrimaryButtonStyle())
         }.padding(.vertical, 8)
     }
 }

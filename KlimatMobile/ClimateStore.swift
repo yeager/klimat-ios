@@ -28,13 +28,13 @@ struct CloudProvider: Identifiable {
     @Published var devices: [ClimateDevice] = []
     @Published var selectedID: String?
     @Published var isScanning = false
-    @Published var scanMessage = "Hitta enheter på ditt Wi-Fi"
+    @Published var scanMessage = "Find devices on your Wi-Fi"
     @Published var discoveredServices: [String] = []
     @Published var showCloudSetup = false
     @Published var selectedProvider: CloudProvider?
     @Published var connectionNotice: String?
     @Published var isLoadingAppleHome = false
-    @Published var appleHomeStatus = "Hämta AC-enheter från Apple Home"
+    @Published var appleHomeStatus = "Add climate devices from Apple Home"
     private var browser: NWBrowser?
     private let storageKey = "klimat.ios.devices"
     private let appleHome = HomeKitClimateAdapter()
@@ -57,7 +57,7 @@ struct CloudProvider: Identifiable {
             if self.selectedID == nil { self.selectedID = homeDevices.first?.id }
             self.save()
             self.isLoadingAppleHome = false
-            self.appleHomeStatus = homeDevices.isEmpty ? "Inga klimatreglage hittades i Apple Home." : "Hittade \(homeDevices.count) klimatreglage i Apple Home."
+            self.appleHomeStatus = homeDevices.isEmpty ? "No climate controls found in Apple Home." : "Found \(homeDevices.count) climate controls in Apple Home."
         }
         if let data = UserDefaults.standard.data(forKey: storageKey), let saved = try? JSONDecoder().decode([ClimateDevice].self, from: data) {
             devices = saved
@@ -69,7 +69,7 @@ struct CloudProvider: Identifiable {
     func connectDaikin(host: String, name: String) async {
         do {
             let state = try await DaikinLocalAdapter.read(host: host)
-            let device = ClimateDevice(id: state.id, name: name.isEmpty ? state.name : name, brand: "Daikin", connection: "Lokalt nätverk · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: state.host)
+            let device = ClimateDevice(id: state.id, name: name.isEmpty ? state.name : name, brand: "Daikin", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: state.host)
             if let index = devices.firstIndex(where: { $0.id == device.id }) { devices[index] = device } else { devices.append(device) }
             selectedID = device.id; save()
         } catch { connectionNotice = error.localizedDescription }
@@ -85,7 +85,7 @@ struct CloudProvider: Identifiable {
             return
         }
         guard let device = selected, device.brand == "Daikin", let host = device.host else {
-            connectionNotice = "Den här enheten saknar en lokal styradapter."; return
+            connectionNotice = "This device does not have a local control adapter."; return
         }
         do {
             let state = try await DaikinLocalAdapter.command(host: host, action: action, value: value, number: number)
@@ -95,13 +95,13 @@ struct CloudProvider: Identifiable {
     }
     func scanAppleHome() {
         isLoadingAppleHome = true
-        appleHomeStatus = "Söker efter klimatutrustning i Apple Home…"
+        appleHomeStatus = "Searching Apple Home for climate devices…"
         appleHome.refresh()
     }
     func beginScan() {
         guard !isScanning else { return }
         discoveredServices = []
-        isScanning = true; scanMessage = "Söker efter kompatibla enheter…"
+        isScanning = true; scanMessage = "Searching for compatible devices…"
         let params = NWParameters.tcp
         params.includePeerToPeer = true
         let b = NWBrowser(for: .bonjour(type: "_http._tcp", domain: nil), using: params)
@@ -109,7 +109,7 @@ struct CloudProvider: Identifiable {
         b.stateUpdateHandler = { [weak self] state in
             Task { @MainActor in
                 guard let self else { return }
-                if case .failed(let error) = state { self.scanMessage = "Sökningen misslyckades: \(error.localizedDescription)"; self.isScanning = false; b.cancel() }
+                if case .failed(let error) = state { self.scanMessage = "Search failed: \(error.localizedDescription)"; self.isScanning = false; b.cancel() }
             }
         }
         b.browseResultsChangedHandler = { [weak self] results, _ in
@@ -128,15 +128,15 @@ struct CloudProvider: Identifiable {
             guard let self, self.isScanning else { return }
             self.isScanning = false
             if self.discoveredServices.isEmpty {
-                self.scanMessage = "Inga Bonjour-tjänster hittades. Många AC-adaptrar annonserar inte Bonjour; anslut med IP-adress."
+                self.scanMessage = "No Bonjour services found. Many AC adapters do not advertise Bonjour; connect using an IP address."
             } else {
-                self.scanMessage = "Hittade \(self.discoveredServices.count) nätverkstjänst(er). AC-enheter behöver identifieras med sitt lokala adapterprotokoll."
+                self.scanMessage = "Found \(self.discoveredServices.count) network service(s). AC devices need to be identified using their local adapter protocol."
             }
             self.browser?.cancel(); self.browser = nil
         }
     }
     func connectCloud(provider: CloudProvider) {
-        connectionNotice = "\(provider.title) kräver en tillverkaradapter. Ingen inloggning har gjorts."
+        connectionNotice = "\(provider.title) requires a manufacturer adapter. No sign-in was performed."
     }
 }
 
@@ -186,10 +186,10 @@ struct CloudProvider: Identifiable {
         case "mode":
             let raw: Int
             switch value {
-            case "Värme": raw = 1
-            case "Kyler": raw = 2
+            case "Heat": raw = 1
+            case "Cool": raw = 2
             case "Auto": raw = service.serviceType == HMServiceTypeThermostat ? 3 : 0
-            case "Avfuktning": throw HomeKitControlError.unsupportedMode
+            case "Dry": throw HomeKitControlError.unsupportedMode
             default: throw HomeKitControlError.unsupportedMode
             }
             let type = service.serviceType == HMServiceTypeThermostat ? HMCharacteristicTypeTargetHeatingCooling : HMCharacteristicTypeTargetHeaterCoolerState
@@ -231,7 +231,7 @@ struct CloudProvider: Identifiable {
             isOn = ((values[HMCharacteristicTypeCurrentHeaterCoolerState] as? NSNumber)?.intValue ?? 0) != 0
         }
         let mode: String
-        switch targetMode { case 1: mode = "Värme"; case 2: mode = "Kyler"; default: mode = "Auto" }
+        switch targetMode { case 1: mode = "Heat"; case 2: mode = "Cool"; default: mode = "Auto" }
         let id = service.uniqueIdentifier.uuidString
         return ClimateDevice(id: id, name: service.name.isEmpty ? accessory.name : service.name, brand: "Apple Home", connection: "Apple Home · \(home.name)", isOn: isOn, current: (values[HMCharacteristicTypeCurrentTemperature] as? NSNumber)?.doubleValue ?? 0, target: (values[HMCharacteristicTypeTargetTemperature] as? NSNumber)?.doubleValue ?? 22, mode: mode, fan: "Auto", host: nil, homeServiceID: id)
     }
@@ -257,11 +257,11 @@ private enum HomeKitControlError: LocalizedError {
     case serviceUnavailable, characteristicUnavailable, unsupportedMode, unsupportedPowerControl, unsupportedFanControl
     var errorDescription: String? {
         switch self {
-        case .serviceUnavailable: return "Klimatreglaget hittades inte i Apple Home. Sök efter enheter igen."
-        case .characteristicUnavailable: return "Den här enheten stöder inte reglaget."
-        case .unsupportedMode: return "Det här driftläget stöds inte av Apple Home-enheten."
-        case .unsupportedPowerControl: return "Strömreglaget stöds inte av Apple Home-enheten."
-        case .unsupportedFanControl: return "Fläkthastigheten styrs inte via Apple Home för den här enheten."
+        case .serviceUnavailable: return "Climate control was not found in Apple Home. Scan for devices again."
+        case .characteristicUnavailable: return "This device does not support this control."
+        case .unsupportedMode: return "This operating mode is not supported by the Apple Home device."
+        case .unsupportedPowerControl: return "Power control is not supported by the Apple Home device."
+        case .unsupportedFanControl: return "Fan speed cannot be controlled through Apple Home for this device."
         }
     }
 }
@@ -285,8 +285,8 @@ private enum DaikinLocalAdapter {
         let sensor = try await request(base, "aircon/get_sensor_info")
         let info = (try? await request(base, "common/basic_info")) ?? [:]
         let mode: String
-        switch control["mode"] ?? "0" { case "2": mode = "Avfuktning"; case "3": mode = "Kyler"; case "4": mode = "Värme"; case "6": mode = "Fläkt"; default: mode = "Auto" }
-        let fanMap = ["A": "Auto", "3": "Låg", "5": "Medel", "7": "Hög"]
+        switch control["mode"] ?? "0" { case "2": mode = "Dry"; case "3": mode = "Cool"; case "4": mode = "Heat"; case "6": mode = "Fan"; default: mode = "Auto" }
+        let fanMap = ["A": "Auto", "3": "Low", "5": "Medium", "7": "High"]
         return DaikinState(id: info["mac"] ?? host, name: info["name"].map { $0.removingPercentEncoding ?? $0 } ?? "Daikin AC", isOn: control["pow"] == "1", current: Double(sensor["htemp"] ?? "23") ?? 23, target: Double(control["stemp"] ?? "22") ?? 22, mode: mode, fan: fanMap[control["f_rate"] ?? "A"] ?? "Auto", host: host)
     }
     static func command(host: String, action: String, value: String?, number: Double?) async throws -> DaikinState {
@@ -295,8 +295,8 @@ private enum DaikinLocalAdapter {
         switch action {
         case "power": params["pow"] = value == "on" ? "1" : "0"
         case "temperature": params["stemp"] = String(format: "%g", number ?? 22)
-        case "mode": params["mode"] = ["Auto":"0", "Avfuktning":"2", "Kyler":"3", "Värme":"4", "Fläkt":"6"][value ?? ""] ?? "0"
-        case "fan": params["f_rate"] = ["Auto":"A", "Låg":"3", "Medel":"5", "Hög":"7"][value ?? ""] ?? "A"
+        case "mode": params["mode"] = ["Auto":"0", "Dry":"2", "Cool":"3", "Heat":"4", "Fan":"6"][value ?? ""] ?? "0"
+        case "fan": params["f_rate"] = ["Auto":"A", "Low":"3", "Medium":"5", "High":"7"][value ?? ""] ?? "A"
         default: throw URLError(.unsupportedURL)
         }
         _ = try await request(base, "aircon/set_control_info", body: params)
