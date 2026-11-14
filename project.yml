@@ -24,4 +24,5 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         PRODUCT_BUNDLE_IDENTIFIER: se.yeager.klimat.ios
         INFOPLIST_FILE: KlimatMobile/Info.plist
+        CODE_SIGN_ENTITLEMENTS: KlimatMobile/KlimatMobile.entitlements
         CODE_SIGNING_ALLOWED: NO

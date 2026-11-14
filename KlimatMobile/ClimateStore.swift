@@ -1,5 +1,6 @@
 import Foundation
 import Network
+import HomeKit
 
 struct ClimateDevice: Identifiable, Codable, Equatable {
     var id: String
@@ -12,6 +13,7 @@ struct ClimateDevice: Identifiable, Codable, Equatable {
     var mode: String
     var fan: String
     var host: String?
+    var homeServiceID: String? = nil
 }
 
 struct CloudProvider: Identifiable {
@@ -31,8 +33,11 @@ struct CloudProvider: Identifiable {
     @Published var showCloudSetup = false
     @Published var selectedProvider: CloudProvider?
     @Published var connectionNotice: String?
+    @Published var isLoadingAppleHome = false
+    @Published var appleHomeStatus = "Hämta AC-enheter från Apple Home"
     private var browser: NWBrowser?
     private let storageKey = "klimat.ios.devices"
+    private let appleHome = HomeKitClimateAdapter()
 
     let providers: [CloudProvider] = [
         .init(id: "melcloud", title: "MELCloud", detail: "Mitsubishi Electric", symbol: "cloud", color: "#4A8069"),
@@ -45,6 +50,15 @@ struct CloudProvider: Identifiable {
     ]
 
     init() {
+        appleHome.onDevicesChanged = { [weak self] homeDevices in
+            guard let self else { return }
+            let localDevices = self.devices.filter { $0.brand != "Apple Home" }
+            self.devices = localDevices + homeDevices
+            if self.selectedID == nil { self.selectedID = homeDevices.first?.id }
+            self.save()
+            self.isLoadingAppleHome = false
+            self.appleHomeStatus = homeDevices.isEmpty ? "Inga klimatreglage hittades i Apple Home." : "Hittade \(homeDevices.count) klimatreglage i Apple Home."
+        }
         if let data = UserDefaults.standard.data(forKey: storageKey), let saved = try? JSONDecoder().decode([ClimateDevice].self, from: data) {
             devices = saved
             selectedID = saved.first?.id
@@ -61,6 +75,15 @@ struct CloudProvider: Identifiable {
         } catch { connectionNotice = error.localizedDescription }
     }
     func command(action: String, value: String? = nil, number: Double? = nil) async {
+        if let device = selected, device.brand == "Apple Home", let serviceID = device.homeServiceID {
+            do {
+                let state = try await appleHome.command(serviceID: serviceID, action: action, value: value, number: number)
+                guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
+                devices[index] = state
+                save()
+            } catch { connectionNotice = error.localizedDescription }
+            return
+        }
         guard let device = selected, device.brand == "Daikin", let host = device.host else {
             connectionNotice = "Den här enheten saknar en lokal styradapter."; return
         }
@@ -69,6 +92,11 @@ struct CloudProvider: Identifiable {
             guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
             devices[index].isOn = state.isOn; devices[index].current = state.current; devices[index].target = state.target; devices[index].mode = state.mode; devices[index].fan = state.fan; save()
         } catch { connectionNotice = error.localizedDescription }
+    }
+    func scanAppleHome() {
+        isLoadingAppleHome = true
+        appleHomeStatus = "Söker efter klimatutrustning i Apple Home…"
+        appleHome.refresh()
     }
     func beginScan() {
         guard !isScanning else { return }
@@ -109,6 +137,140 @@ struct CloudProvider: Identifiable {
     }
     func connectCloud(provider: CloudProvider) {
         connectionNotice = "\(provider.title) kräver en tillverkaradapter. Ingen inloggning har gjorts."
+    }
+}
+
+@MainActor private final class HomeKitClimateAdapter: NSObject, HMHomeManagerDelegate {
+    var onDevicesChanged: (([ClimateDevice]) -> Void)?
+    private let manager: HMHomeManager
+    private var refreshTask: Task<Void, Never>?
+
+    override init() {
+        manager = HMHomeManager()
+        super.init()
+        manager.delegate = self
+    }
+
+    nonisolated func homeManagerDidUpdateHomes(_ manager: HMHomeManager) {
+        Task { @MainActor [weak self] in self?.refresh() }
+    }
+
+    func refresh() {
+        refreshTask?.cancel()
+        refreshTask = Task { [weak self] in
+            guard let self else { return }
+            var results: [ClimateDevice] = []
+            for home in manager.homes {
+                for accessory in home.accessories {
+                    for service in accessory.services where service.serviceType == HMServiceTypeThermostat || service.serviceType == HMServiceTypeHeaterCooler {
+                        let values = Dictionary(uniqueKeysWithValues: await service.characteristics.asyncCompactMap { characteristic -> (String, Any)? in
+                            guard Self.readableTypes.contains(characteristic.characteristicType), let value = await Self.read(characteristic) else { return nil }
+                            return (characteristic.characteristicType, value)
+                        })
+                        results.append(Self.device(home: home, accessory: accessory, service: service, values: values))
+                    }
+                }
+            }
+            onDevicesChanged?(results)
+        }
+    }
+
+    func command(serviceID: String, action: String, value: String?, number: Double?) async throws -> ClimateDevice {
+        guard let service = manager.homes.lazy.flatMap(\.accessories).flatMap(\.services).first(where: { $0.uniqueIdentifier.uuidString == serviceID }) else {
+            throw HomeKitControlError.serviceUnavailable
+        }
+        let byType = Dictionary(uniqueKeysWithValues: service.characteristics.map { ($0.characteristicType, $0) })
+        switch action {
+        case "temperature":
+            try await Self.write(number ?? 22, to: byType[HMCharacteristicTypeTargetTemperature])
+        case "mode":
+            let raw: Int
+            switch value {
+            case "Värme": raw = 1
+            case "Kyler": raw = 2
+            case "Auto": raw = service.serviceType == HMServiceTypeThermostat ? 3 : 0
+            case "Avfuktning": throw HomeKitControlError.unsupportedMode
+            default: throw HomeKitControlError.unsupportedMode
+            }
+            let type = service.serviceType == HMServiceTypeThermostat ? HMCharacteristicTypeTargetHeatingCooling : HMCharacteristicTypeTargetHeaterCoolerState
+            try await Self.write(raw, to: byType[type])
+        case "power":
+            if let active = byType[HMCharacteristicTypeActive] {
+                try await Self.write((value == "on" ? 1 : 0) as Int, to: active)
+            } else if service.serviceType == HMServiceTypeThermostat, let mode = byType[HMCharacteristicTypeTargetHeatingCooling] {
+                let current = (mode.value as? NSNumber)?.intValue ?? 3
+                try await Self.write(value == "on" ? (current == 0 ? 3 : current) : 0, to: mode)
+            } else {
+                throw HomeKitControlError.unsupportedPowerControl
+            }
+        case "fan": throw HomeKitControlError.unsupportedFanControl
+        default: throw HomeKitControlError.unsupportedMode
+        }
+        refresh()
+        guard let home = manager.homes.first(where: { $0.accessories.contains(where: { $0.services.contains(where: { $0.uniqueIdentifier.uuidString == serviceID }) }) }),
+              let accessory = home.accessories.first(where: { $0.services.contains(where: { $0.uniqueIdentifier.uuidString == serviceID }) }) else { throw HomeKitControlError.serviceUnavailable }
+        let values = Dictionary(uniqueKeysWithValues: await service.characteristics.asyncCompactMap { characteristic -> (String, Any)? in
+            guard Self.readableTypes.contains(characteristic.characteristicType), let value = await Self.read(characteristic) else { return nil }
+            return (characteristic.characteristicType, value)
+        })
+        return Self.device(home: home, accessory: accessory, service: service, values: values)
+    }
+
+    private static let readableTypes: Set<String> = [HMCharacteristicTypeCurrentTemperature, HMCharacteristicTypeTargetTemperature, HMCharacteristicTypeCurrentHeatingCooling, HMCharacteristicTypeTargetHeatingCooling, HMCharacteristicTypeCurrentHeaterCoolerState, HMCharacteristicTypeTargetHeaterCoolerState, HMCharacteristicTypeActive]
+
+    private static func device(home: HMHome, accessory: HMAccessory, service: HMService, values: [String: Any]) -> ClimateDevice {
+        let isThermostat = service.serviceType == HMServiceTypeThermostat
+        let targetModeType = isThermostat ? HMCharacteristicTypeTargetHeatingCooling : HMCharacteristicTypeTargetHeaterCoolerState
+        let targetMode = (values[targetModeType] as? NSNumber)?.intValue ?? 0
+        let isOn: Bool
+        if isThermostat {
+            isOn = targetMode != 0
+        } else if let active = values[HMCharacteristicTypeActive] as? NSNumber {
+            isOn = active.intValue != 0
+        } else {
+            isOn = ((values[HMCharacteristicTypeCurrentHeaterCoolerState] as? NSNumber)?.intValue ?? 0) != 0
+        }
+        let mode: String
+        switch targetMode { case 1: mode = "Värme"; case 2: mode = "Kyler"; default: mode = "Auto" }
+        let id = service.uniqueIdentifier.uuidString
+        return ClimateDevice(id: id, name: service.name.isEmpty ? accessory.name : service.name, brand: "Apple Home", connection: "Apple Home · \(home.name)", isOn: isOn, current: (values[HMCharacteristicTypeCurrentTemperature] as? NSNumber)?.doubleValue ?? 0, target: (values[HMCharacteristicTypeTargetTemperature] as? NSNumber)?.doubleValue ?? 22, mode: mode, fan: "Auto", host: nil, homeServiceID: id)
+    }
+
+    private static func read(_ characteristic: HMCharacteristic) async -> Any? {
+        await withCheckedContinuation { continuation in
+            characteristic.readValue { error in continuation.resume(returning: error == nil ? characteristic.value : nil) }
+        }
+    }
+
+    private static func write(_ value: Any, to characteristic: HMCharacteristic?) async throws {
+        guard let characteristic, characteristic.properties.contains(HMCharacteristicPropertyWritable) else { throw HomeKitControlError.characteristicUnavailable }
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            characteristic.writeValue(value) { error in
+                if let error { continuation.resume(throwing: error) }
+                else { continuation.resume(returning: ()) }
+            }
+        }
+    }
+}
+
+private enum HomeKitControlError: LocalizedError {
+    case serviceUnavailable, characteristicUnavailable, unsupportedMode, unsupportedPowerControl, unsupportedFanControl
+    var errorDescription: String? {
+        switch self {
+        case .serviceUnavailable: return "Klimatreglaget hittades inte i Apple Home. Sök efter enheter igen."
+        case .characteristicUnavailable: return "Den här enheten stöder inte reglaget."
+        case .unsupportedMode: return "Det här driftläget stöds inte av Apple Home-enheten."
+        case .unsupportedPowerControl: return "Strömreglaget stöds inte av Apple Home-enheten."
+        case .unsupportedFanControl: return "Fläkthastigheten styrs inte via Apple Home för den här enheten."
+        }
+    }
+}
+
+private extension Array {
+    func asyncCompactMap<T>(_ transform: (Element) async -> T?) async -> [T] {
+        var result: [T] = []
+        for element in self { if let value = await transform(element) { result.append(value) } }
+        return result
     }
 }
 

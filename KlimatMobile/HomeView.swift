@@ -60,7 +60,7 @@ struct HomeView: View {
         VStack(spacing: 13) {
             ZStack { Circle().fill(Palette.wash).frame(width: 72, height: 72); Image(systemName: "air.conditioner.horizontal.fill").font(.system(size: 30)).foregroundStyle(Palette.green) }
             Text("Ditt hem, i perfekt klimat").font(.system(size: 19, weight: .bold, design: .rounded)).foregroundStyle(Palette.ink)
-            Text("Hitta luftkonditionering på Wi-Fi eller anslut ett tillverkarkonto.").font(.system(size: 13)).foregroundStyle(Palette.muted).multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
+            Text("Anslut direkt på ditt nätverk eller hämta klimatreglage från Apple Home.").font(.system(size: 13)).foregroundStyle(Palette.muted).multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
             Button { store.beginScan() } label: { Label(store.isScanning ? "Söker…" : "Sök på nätverket", systemImage: store.isScanning ? "dot.radiowaves.left.and.right" : "wifi") }.buttonStyle(PrimaryButtonStyle())
             Text(store.scanMessage).font(.system(size: 11)).foregroundStyle(Palette.muted).multilineTextAlignment(.center)
         }
@@ -68,7 +68,7 @@ struct HomeView: View {
     }
 
     private func deviceCard(_ device: ClimateDevice) -> some View {
-        let canControl = device.brand == "Daikin" && device.host != nil
+        let canControl = (device.brand == "Daikin" && device.host != nil) || (device.brand == "Apple Home" && device.homeServiceID != nil)
         return VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 5) {
@@ -104,7 +104,7 @@ struct HomeView: View {
             HStack {
                 Label("Fläkthastighet", systemImage: "wind").font(.system(size: 12, weight: .medium)).foregroundStyle(Palette.ink)
                 Spacer()
-                Menu { ForEach(["Auto", "Låg", "Medel", "Hög"], id: \.self) { fan in Button(fan) { Task { await store.command(action: "fan", value: fan) } } } } label: { HStack(spacing: 5) { Text(device.fan).font(.system(size: 12, weight: .semibold)); Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold)) }.foregroundStyle(Palette.green).padding(.vertical, 9).padding(.horizontal, 11).background(Palette.wash, in: Capsule()) }.disabled(!canControl)
+                if device.brand == "Daikin" { Menu { ForEach(["Auto", "Låg", "Medel", "Hög"], id: \.self) { fan in Button(fan) { Task { await store.command(action: "fan", value: fan) } } } } label: { HStack(spacing: 5) { Text(device.fan).font(.system(size: 12, weight: .semibold)); Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold)) }.foregroundStyle(Palette.green).padding(.vertical, 9).padding(.horizontal, 11).background(Palette.wash, in: Capsule()) }.disabled(!canControl) }
             }.padding(.top, 15)
             if !canControl { Text("Enheten saknar ännu en verifierad lokal adapter.").font(.system(size: 10)).foregroundStyle(Palette.muted).padding(.top, 8) }
         }
@@ -166,6 +166,8 @@ struct HomeView: View {
                 Button { store.beginScan() } label: { Label(store.isScanning ? "Söker efter enheter…" : "Starta nätverkssökning", systemImage: "wifi") }.buttonStyle(PrimaryButtonStyle())
                 Text(store.scanMessage).font(.system(size: 12)).foregroundStyle(Palette.muted)
                 if store.isScanning { ProgressView().tint(Palette.green).frame(maxWidth: .infinity).padding() }
+                Button { store.scanAppleHome() } label: { Label(store.isLoadingAppleHome ? "Söker i Apple Home…" : "Hämta AC från Apple Home", systemImage: "house") }.buttonStyle(SecondaryButtonStyle())
+                Text(store.appleHomeStatus).font(.system(size: 11)).foregroundStyle(Palette.muted)
                 Button { showAdd = false; showManual = true } label: { Label("Ange enhetens IP-adress", systemImage: "number") }.buttonStyle(SecondaryButtonStyle())
                 VStack(alignment: .leading, spacing: 8) { Text("DIREKTANSLUTNING").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted); Text("Daikin med äldre lokal HTTP-adapter. Ingen molntjänst behövs.").font(.system(size: 12)).foregroundStyle(Palette.ink) }.padding(14).frame(maxWidth: .infinity, alignment: .leading).background(Palette.wash, in: RoundedRectangle(cornerRadius: 15))
                 Spacer()
