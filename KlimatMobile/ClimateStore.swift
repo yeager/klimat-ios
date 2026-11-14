@@ -72,6 +72,15 @@ struct CloudProvider: Identifiable {
             selectedID = device.id; save()
         } catch { connectionNotice = error.localizedDescription }
     }
+    func connectMitsubishi(host: String, name: String) async {
+        do {
+            let state = try await MitsubishiLocalAdapter.read(host: host)
+            let identifier = state.mac.isEmpty ? host : state.mac
+            let device = ClimateDevice(id: identifier, name: name.isEmpty ? "Mitsubishi Electric AC" : name, brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host)
+            if let index = devices.firstIndex(where: { $0.id == device.id || $0.host == host }) { devices[index] = device } else { devices.append(device) }
+            selectedID = device.id; save()
+        } catch { connectionNotice = error.localizedDescription }
+    }
     func command(action: String, value: String? = nil, number: Double? = nil) async {
         if let device = selected, device.brand == "Apple Home", let serviceID = device.homeServiceID {
             do {
@@ -82,13 +91,20 @@ struct CloudProvider: Identifiable {
             } catch { connectionNotice = error.localizedDescription }
             return
         }
-        guard let device = selected, device.brand == "Daikin", let host = device.host else {
+        guard let device = selected, let host = device.host else {
             connectionNotice = String(localized: "This device does not have a local control adapter."); return
         }
         do {
-            let state = try await DaikinLocalAdapter.command(host: host, action: action, value: value, number: number)
+            let isMitsubishi = device.brand == "Mitsubishi Electric"
+            let daikinState = isMitsubishi ? nil : try await DaikinLocalAdapter.command(host: host, action: action, value: value, number: number)
+            let mitsubishiState = isMitsubishi ? try await MitsubishiLocalAdapter.command(host: host, action: action, value: value, number: number) : nil
             guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
-            devices[index].isOn = state.isOn; devices[index].current = state.current; devices[index].target = state.target; devices[index].mode = state.mode; devices[index].fan = state.fan; save()
+            let isOn = daikinState?.isOn ?? mitsubishiState?.isOn
+            let current = daikinState?.current ?? mitsubishiState?.current
+            let target = daikinState?.target ?? mitsubishiState?.target
+            let mode = daikinState?.mode ?? mitsubishiState?.mode
+            let fan = daikinState?.fan ?? mitsubishiState?.fan
+            if let isOn { devices[index].isOn = isOn }; if let current { devices[index].current = current }; if let target { devices[index].target = target }; if let mode { devices[index].mode = mode }; if let fan { devices[index].fan = fan }; save()
         } catch { connectionNotice = error.localizedDescription }
     }
     func scanAppleHome() {
@@ -107,19 +123,27 @@ struct CloudProvider: Identifiable {
                 self.isScanning = false
                 return
             }
-            var found: [DaikinState] = []
+            var found: [ClimateDevice] = []
             for start in stride(from: 0, to: hosts.count, by: 24) {
                 let batch = Array(hosts[start..<min(start + 24, hosts.count)])
-                await withTaskGroup(of: DaikinState?.self) { group in
+                await withTaskGroup(of: ClimateDevice?.self) { group in
                     for host in batch {
-                        group.addTask { try? await DaikinLocalAdapter.discover(host: host) }
+                        group.addTask {
+                            if let state = try? await DaikinLocalAdapter.discover(host: host) {
+                                return ClimateDevice(id: state.id, name: state.name, brand: "Daikin", connection: "Local network · \(state.host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: state.host)
+                            }
+                            if let state = try? await MitsubishiLocalAdapter.discover(host: host) {
+                                let identifier = state.mac.isEmpty ? host : state.mac
+                                return ClimateDevice(id: identifier, name: "Mitsubishi Electric AC", brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host)
+                            }
+                            return nil
+                        }
                     }
-                    for await state in group { if let state { found.append(state) } }
+                    for await device in group { if let device { found.append(device) } }
                 }
             }
             guard self.isScanning else { return }
-            for state in found {
-                let device = ClimateDevice(id: state.id, name: state.name, brand: "Daikin", connection: "Local network · \(state.host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: state.host)
+            for device in found {
                 if let index = self.devices.firstIndex(where: { $0.id == device.id || $0.host == device.host }) { self.devices[index] = device }
                 else { self.devices.append(device) }
                 if self.selectedID == nil { self.selectedID = device.id }
@@ -127,8 +151,8 @@ struct CloudProvider: Identifiable {
             self.save()
             self.isScanning = false
             self.scanMessage = found.isEmpty
-                ? String(localized: "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually.")
-                : String(localized: "Found \(found.count) compatible Daikin adapter(s) on this Wi-Fi network.")
+                ? String(localized: "No compatible direct AC adapters found on this Wi-Fi network. You can enter an adapter IP address manually.")
+                : String(localized: "Found \(found.count) compatible AC adapter(s) on this Wi-Fi network.")
         }
     }
     func connectCloud(provider: CloudProvider) {

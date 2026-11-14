@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D47C910C8EC697A9BE6CA4E /* MitsubishiLocalAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408D2FB78DC1B9CB8E8D7C8C /* MitsubishiLocalAdapter.swift */; };
 		0DFC8E060EF5C525DE187424 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C34D732D0484F658C366BDC0 /* InfoPlist.strings */; };
 		12E146F4B4DC0F9E04BA664A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D70D7BCBE207747C1163F814 /* Localizable.strings */; };
 		1BE33B4E69A3B6C94C48A7B1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E04459B793FE7BC27D50A3B /* InfoPlist.strings */; };
@@ -68,6 +69,7 @@
 		3BC13866FA5BDBFC56CB863A /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = fa.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3DB7ED30992E5CB3E142F53B /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = te.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3F4F5EF5828A3F0ED250554C /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		408D2FB78DC1B9CB8E8D7C8C /* MitsubishiLocalAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MitsubishiLocalAdapter.swift; sourceTree = "<group>"; };
 		4235184141FC53092758CA94 /* KlimatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KlimatApp.swift; sourceTree = "<group>"; };
 		51AA3D61CF05C00BAC9E373C /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = id.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5515A81536DD1723F2C3363A /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -167,6 +169,7 @@
 				D70D7BCBE207747C1163F814 /* Localizable.strings */,
 				7023635AE9FEF93D620324B0 /* Localizable.strings */,
 				014A5A1037126ECFF46A16B2 /* Localizable.strings */,
+				408D2FB78DC1B9CB8E8D7C8C /* MitsubishiLocalAdapter.swift */,
 			);
 			path = KlimatMobile;
 			sourceTree = "<group>";
@@ -312,6 +315,7 @@
 				38844AD6F18277AC55B3F54D /* ClimateStore.swift in Sources */,
 				D5D7ADA3E36D933EF35A0905 /* HomeView.swift in Sources */,
 				B7A5B9AE67A9B2E9A4DF1AE0 /* KlimatApp.swift in Sources */,
+				0D47C910C8EC697A9BE6CA4E /* MitsubishiLocalAdapter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
