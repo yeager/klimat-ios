@@ -8,6 +8,8 @@ Klimat has no analytics, advertising, tracking, developer-operated backend, or a
 
 Cloud services are optional. If you choose MELCloud Classic, your sign-in details are sent directly to Mitsubishi Electric's MELCloud service over HTTPS; Klimat does not save your password. Apple Home access is requested only when you choose that feature, and is handled through Apple's HomeKit framework. See [PRIVACY.md](PRIVACY.md) for details.
 
+Gitleaks scans the complete Git history on pushes, pull requests, and a daily schedule. The workflow is in [`.github/workflows/gitleaks.yml`](.github/workflows/gitleaks.yml).
+
 ## Local device control
 
 Klimat searches the private IPv4 subnet used by the iPhone on Wi-Fi for compatible Daikin, Mitsubishi, and Gree adapters. Devices can also be added by IP address. Daikin support covers adapters with the older local HTTP API. Mitsubishi support covers MAC-577 adapters with the local `/smart` interface and encrypted traffic. Gree support covers compatible Smart Wi-Fi modules using the Gree protocol on UDP port 7000; pairing happens locally and the device key is stored in the iOS Keychain. Power, temperature, mode, fan, and status are controlled over Wi-Fi without internet or cloud access. Mitsubishi and Gree protocol implementations are based on the references [pymitsubishi](https://github.com/pymitsubishi/pymitsubishi) and [gree-climate](https://github.com/thesmokinator/gree-climate); see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
