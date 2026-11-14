@@ -28,20 +28,20 @@ struct CloudProvider: Identifiable {
     @Published var devices: [ClimateDevice] = []
     @Published var selectedID: String?
     @Published var isScanning = false
-    @Published var scanMessage = "Find devices on your Wi-Fi"
+    @Published var scanMessage = String(localized: "Find devices on your Wi-Fi")
     @Published var discoveredServices: [String] = []
     @Published var showCloudSetup = false
     @Published var selectedProvider: CloudProvider?
     @Published var connectionNotice: String?
     @Published var isLoadingAppleHome = false
-    @Published var appleHomeStatus = "Add climate devices from Apple Home"
+    @Published var appleHomeStatus = String(localized: "Add climate devices from Apple Home")
     private var browser: NWBrowser?
     private let storageKey = "klimat.ios.devices"
     private let appleHome = HomeKitClimateAdapter()
 
     let providers: [CloudProvider] = [
         .init(id: "melcloud", title: "MELCloud", detail: "Mitsubishi Electric", symbol: "cloud", color: "#4A8069"),
-        .init(id: "lg", title: "LG ThinQ", detail: "LG luftkonditionering", symbol: "cloud", color: "#B44B68"),
+        .init(id: "lg", title: "LG ThinQ", detail: "LG air conditioning", symbol: "cloud", color: "#B44B68"),
         .init(id: "panasonic", title: "Panasonic Comfort Cloud", detail: "Panasonic", symbol: "cloud", color: "#4269A2"),
         .init(id: "smartthings", title: "SmartThings", detail: "Samsung", symbol: "cloud", color: "#3972C6"),
         .init(id: "toshiba", title: "Toshiba Lifestyle", detail: "Toshiba", symbol: "cloud", color: "#B04D4D"),
@@ -57,7 +57,7 @@ struct CloudProvider: Identifiable {
             if self.selectedID == nil { self.selectedID = homeDevices.first?.id }
             self.save()
             self.isLoadingAppleHome = false
-            self.appleHomeStatus = homeDevices.isEmpty ? "No climate controls found in Apple Home." : "Found \(homeDevices.count) climate controls in Apple Home."
+            self.appleHomeStatus = homeDevices.isEmpty ? String(localized: "No climate controls found in Apple Home.") : String(localized: "Found \(homeDevices.count) climate controls in Apple Home.")
         }
         if let data = UserDefaults.standard.data(forKey: storageKey), let saved = try? JSONDecoder().decode([ClimateDevice].self, from: data) {
             devices = saved
@@ -85,7 +85,7 @@ struct CloudProvider: Identifiable {
             return
         }
         guard let device = selected, device.brand == "Daikin", let host = device.host else {
-            connectionNotice = "This device does not have a local control adapter."; return
+            connectionNotice = String(localized: "This device does not have a local control adapter."); return
         }
         do {
             let state = try await DaikinLocalAdapter.command(host: host, action: action, value: value, number: number)
@@ -95,13 +95,13 @@ struct CloudProvider: Identifiable {
     }
     func scanAppleHome() {
         isLoadingAppleHome = true
-        appleHomeStatus = "Searching Apple Home for climate devices…"
+        appleHomeStatus = String(localized: "Searching Apple Home for climate devices…")
         appleHome.refresh()
     }
     func beginScan() {
         guard !isScanning else { return }
         discoveredServices = []
-        isScanning = true; scanMessage = "Searching for compatible devices…"
+        isScanning = true; scanMessage = String(localized: "Searching for compatible devices…")
         let params = NWParameters.tcp
         params.includePeerToPeer = true
         let b = NWBrowser(for: .bonjour(type: "_http._tcp", domain: nil), using: params)
@@ -109,7 +109,7 @@ struct CloudProvider: Identifiable {
         b.stateUpdateHandler = { [weak self] state in
             Task { @MainActor in
                 guard let self else { return }
-                if case .failed(let error) = state { self.scanMessage = "Search failed: \(error.localizedDescription)"; self.isScanning = false; b.cancel() }
+                if case .failed(let error) = state { self.scanMessage = String(localized: "Search failed: \(error.localizedDescription)"); self.isScanning = false; b.cancel() }
             }
         }
         b.browseResultsChangedHandler = { [weak self] results, _ in
@@ -128,15 +128,15 @@ struct CloudProvider: Identifiable {
             guard let self, self.isScanning else { return }
             self.isScanning = false
             if self.discoveredServices.isEmpty {
-                self.scanMessage = "No Bonjour services found. Many AC adapters do not advertise Bonjour; connect using an IP address."
+                self.scanMessage = String(localized: "No Bonjour services found. Many AC adapters do not advertise Bonjour; connect using an IP address.")
             } else {
-                self.scanMessage = "Found \(self.discoveredServices.count) network service(s). AC devices need to be identified using their local adapter protocol."
+                self.scanMessage = String(localized: "Found \(self.discoveredServices.count) network service(s). AC devices need to be identified using their local adapter protocol.")
             }
             self.browser?.cancel(); self.browser = nil
         }
     }
     func connectCloud(provider: CloudProvider) {
-        connectionNotice = "\(provider.title) requires a manufacturer adapter. No sign-in was performed."
+        connectionNotice = String(localized: "\(provider.title) requires a manufacturer adapter. No sign-in was performed.")
     }
 }
 
@@ -257,11 +257,11 @@ private enum HomeKitControlError: LocalizedError {
     case serviceUnavailable, characteristicUnavailable, unsupportedMode, unsupportedPowerControl, unsupportedFanControl
     var errorDescription: String? {
         switch self {
-        case .serviceUnavailable: return "Climate control was not found in Apple Home. Scan for devices again."
-        case .characteristicUnavailable: return "This device does not support this control."
-        case .unsupportedMode: return "This operating mode is not supported by the Apple Home device."
-        case .unsupportedPowerControl: return "Power control is not supported by the Apple Home device."
-        case .unsupportedFanControl: return "Fan speed cannot be controlled through Apple Home for this device."
+        case .serviceUnavailable: return String(localized: "Climate control was not found in Apple Home. Scan for devices again.")
+        case .characteristicUnavailable: return String(localized: "This device does not support this control.")
+        case .unsupportedMode: return String(localized: "This operating mode is not supported by the Apple Home device.")
+        case .unsupportedPowerControl: return String(localized: "Power control is not supported by the Apple Home device.")
+        case .unsupportedFanControl: return String(localized: "Fan speed cannot be controlled through Apple Home for this device.")
         }
     }
 }
