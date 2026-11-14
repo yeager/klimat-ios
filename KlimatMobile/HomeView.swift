@@ -305,20 +305,28 @@ struct HomeView: View {
         NavigationStack {
             List {
                 Section("Appearance") {
-                    Picker("Theme", selection: $appearance) {
+                    Picker(selection: $appearance) {
                         Text("System").tag("system"); Text("Light").tag("light"); Text("Dark").tag("dark")
+                    } label: {
+                        Label("Theme", systemImage: appearance == "dark" ? "moon.fill" : appearance == "light" ? "sun.max.fill" : "circle.lefthalf.filled")
                     }
+                    Text("Choose light or dark mode, or follow your iPhone setting.").font(.caption).foregroundStyle(Palette.muted)
                 }
                 Section("Temperature") {
-                    Picker("Temperature unit", selection: $temperatureUnit) {
+                    Picker(selection: $temperatureUnit) {
                         Text("Celsius").tag("celsius"); Text("Fahrenheit").tag("fahrenheit")
+                    } label: {
+                        Label("Temperature unit", systemImage: "thermometer.medium")
                     }
+                    Text("Choose how temperatures are shown throughout Klimat.").font(.caption).foregroundStyle(Palette.muted)
                 }
                 Section("Privacy") {
-                    Toggle("Require Face ID", isOn: $requireFaceID).disabled(!faceIDAvailable)
+                    Toggle(isOn: $requireFaceID) {
+                        Label("Require Face ID", systemImage: "faceid")
+                    }.disabled(!faceIDAvailable)
                     Text(faceIDAvailable ? "Use Face ID to unlock Klimat when you reopen the app." : "Face ID is unavailable on this device.").font(.caption).foregroundStyle(Palette.muted)
                 }
-                Section("About Klimat") { LabeledContent("App", value: "Klimat"); LabeledContent("Version", value: "0.1.0"); Link(destination: URL(string: "https://github.com/yeager/klimat")!) { Label("Open source on GitHub", systemImage: "arrow.up.right.square") }.foregroundStyle(Palette.green) }
+                Section("About Klimat") { LabeledContent("App", value: "Klimat"); LabeledContent("Version", value: "0.1.0"); Link(destination: URL(string: "https://github.com/yeager/klimat-ios")!) { Label("Open source on GitHub", systemImage: "arrow.up.right.square") }.foregroundStyle(Palette.green) }
                 Section { Button(role: .destructive) { store.disconnectMELCloud(); store.devices.removeAll(); store.selectedID = nil; store.save(); showSettings = false } label: { Label("Remove all devices", systemImage: "trash") } }
             }
             .scrollContentBackground(.hidden).background(Palette.background)
