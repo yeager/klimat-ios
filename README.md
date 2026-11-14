@@ -1,29 +1,27 @@
-# Klimat för iPhone
+# Klimat for iPhone
 
-Klimat är en SwiftUI-app för iOS 17 och senare. Den har engelskt gränssnitt samt svenska, spanska, franska, tyska, förenklad kinesiska, hindi, arabiska, brasiliansk portugisiska, japanska, bengali, ryska, indonesiska, turkiska, urdu, marathi, telugu, tamil, vietnamesiska, koreanska, italienska och persiska, egen appikon, sökning efter lokala Daikin-, Mitsubishi- och Gree-adaptrar, Apple Home-integration och styrning via det lokala nätverket. Appen heter Klimat på hemskärmen.
+Klimat is an open-source SwiftUI app for iOS 17 and later. Its English interface is localized into Swedish, Spanish, French, German, Simplified Chinese, Hindi, Arabic, Brazilian Portuguese, Japanese, Bengali, Russian, Indonesian, Turkish, Urdu, Marathi, Telugu, Tamil, Vietnamese, Korean, Italian, and Persian.
 
-## Bygg
+## Privacy first
 
-Öppna `KlimatMobile.xcodeproj` i Xcode och bygg schemat `KlimatMobile`. Projektet kan också genereras från `project.yml` med XcodeGen.
+Klimat has no analytics, advertising, tracking, developer-operated backend, or account. The app does not send usage or device data to the Klimat developer. Compatible local adapters can be discovered and controlled over the same Wi-Fi network without internet access or a cloud account. Device entries are stored in the app's local preferences; protocol keys and optional MELCloud session tokens are stored in the iOS Keychain.
 
-## Direktanslutning
+Cloud services are optional. If you choose MELCloud Classic, your sign-in details are sent directly to Mitsubishi Electric's MELCloud service over HTTPS; Klimat does not save your password. Apple Home access is requested only when you choose that feature, and is handled through Apple's HomeKit framework. See [PRIVACY.md](PRIVACY.md) for details.
 
-Klimat söker efter kompatibla Daikin-, Mitsubishi- och Gree-adaptrar på samma privata Wi-Fi-nät som iPhone använder. De kan också läggas till med IP-adress. Daikin-stödet gäller adaptrar med det äldre lokala HTTP-API:t. Mitsubishi-stödet gäller MAC-577-adaptrar med det lokala `/smart`-gränssnittet och använder AES-krypterad trafik. Gree-stödet gäller kompatibla Smart WiFi-moduler som använder Gree-protokollet på UDP-port 7000; appen parar lokalt och sparar enhetsnyckeln i iOS-nyckelringen. Status, ström, temperatur, läge och fläkt styrs direkt över Wi-Fi utan internet eller moln. Mitsubishi-protokollet bygger på referensen [pymitsubishi](https://github.com/pymitsubishi/pymitsubishi); Gree-protokollet bygger på [gree-climate](https://github.com/thesmokinator/gree-climate). Licenser anges i `THIRD_PARTY_NOTICES.md`.
+## Local device control
 
-Klimat kan också läsa och styra HomeKit-termostater och värme-/kylreglage som användaren redan har lagt till i Apple Home. Åtkomst begärs först när användaren väljer Apple Home. Enheten måste exponera HomeKits klimatreglage; stöd för alla funktioner varierar mellan tillverkare.
+Klimat searches the private IPv4 subnet used by the iPhone on Wi-Fi for compatible Daikin, Mitsubishi, and Gree adapters. Devices can also be added by IP address. Daikin support covers adapters with the older local HTTP API. Mitsubishi support covers MAC-577 adapters with the local `/smart` interface and encrypted traffic. Gree support covers compatible Smart Wi-Fi modules using the Gree protocol on UDP port 7000; pairing happens locally and the device key is stored in the iOS Keychain. Power, temperature, mode, fan, and status are controlled over Wi-Fi without internet or cloud access. Mitsubishi and Gree protocol implementations are based on the references [pymitsubishi](https://github.com/pymitsubishi/pymitsubishi) and [gree-climate](https://github.com/thesmokinator/gree-climate); see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-MELCloud Classic finns som valfri molnanslutning för Mitsubishi-konton. Den kräver internet. Lösenordet skickas direkt till MELCloud för inloggning och sparas inte av appen. Sessionsnyckeln sparas i iOS-nyckelringen. API:t är inofficiellt och integrationen behöver verifieras med ett aktivt konto och fysisk enhet; andra tillverkares molntjänster är inte anslutna.
+Klimat can also read and control compatible climate services that you have already added to Apple Home. Access is requested only when you select Apple Home. Available controls depend on the accessory.
 
-Vilka modeller som fungerar beror på Wi-Fi-adapter, firmware och protokollversion. Stödet för Mitsubishi och Gree är ännu inte verifierat mot fysisk AC-hårdvara. Appen söker i det privata IPv4-subnät som iPhone använder via Wi-Fi och hämtar enhetsstatus endast från svar som matchar respektive protokoll. Subnät större än 512 adresser avböjs. Det här är inte en generell sökning efter alla AC-märken. Apple Home stöder redan parade HomeKit-enheter. MELCloud Classic kan ansluta via internet; andra molntjänster är inte anslutna. Klimat sparar inte MELCloud-lösenordet och lagrar sessionsnyckeln i iOS-nyckelringen.
+MELCloud Classic is an optional cloud connection for Mitsubishi accounts and requires internet access. Its API is unofficial and has not been verified against physical AC hardware. Other manufacturers' cloud services are not connected.
 
-## Kvar före försäljning
+Compatibility depends on the adapter, firmware, and protocol version. Mitsubishi and Gree support still needs testing with physical AC hardware. Network discovery checks only the iPhone's private IPv4 Wi-Fi subnet, rejects subnets larger than 512 addresses, and is not a general scan for all AC brands.
 
-Klimat har lokal styrning för kompatibla Daikin-, Mitsubishi- och Gree-adaptrar. Gree och Mitsubishi behöver fortfarande provas mot fysisk AC-hårdvara. Developer Mode måste också aktiveras på den ihopparade iPhonen innan appen kan köras där.
+## Build
 
-Före publicering återstår därför hårdvaruverifiering, en signerad iOS-version, skärmbilder, support- och integritetssidor samt färdig butikspresentation. App Store Connect visar redan grundpriset 39,00 kr i Sverige. Kontoinnehavaren behöver godkänna Apples avtal för betalappar innan Klimat kan säljas.
+Open `KlimatMobile.xcodeproj` in Xcode and build the `KlimatMobile` scheme. The project can also be generated from `project.yml` using XcodeGen.
 
-## Fler lokala apparater
+## License
 
-Gree-protokollet är nu implementerat för kompatibla Wi-Fi-moduler. Det använder lokal UDP-trafik på port 7000 med AES-baserad bindning och status-/kommandotrafik. Enhetsstöd behöver verifieras mot fysiska modeller innan bredare kompatibilitetslöften. [Gree-protokollbibliotek](https://github.com/thesmokinator/gree-climate) · [Gree-enhetsmanual](https://www.greecomfort.com/assets/our-products/vireo-r32/documents/vireo-r32-service-manual-a.pdf).
-
-Midea/Comfee och flera ommärkta märken har också LAN-styrning, men dokumenterade Midea-flöden hämtar normalt en enhetsspecifik token/nyckel från Mideas moln vid första parkopplingen. Därför prioriteras det efter ett helt lokalt Gree-flöde, om inte enheten kan provisioneras utan moln. [Midea LAN-projektets parkopplings- och nyckeldokumentation](https://github.com/midea-lan/midea-local#finding-your-device).
+Klimat is licensed under the MIT License. Third-party protocol reference notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
