@@ -23,9 +23,9 @@ Target coverage is English plus these 20 widely used App Store languages, and Sw
 - Vietnamese (`vi`)
 - Korean (`ko`)
 - Italian (`it`)
-- Persian (`fa`)
+- Polish (`pl-PL`)
 - Swedish (`sv-SE`)
 
-The app UI covers English, Swedish, Spanish, French, German, Simplified Chinese, Hindi, Arabic, Brazilian Portuguese, Japanese, Bengali, Russian, Indonesian, Turkish, Urdu, Marathi, Telugu, Tamil, Vietnamese, Korean, Italian, and Persian (22 locales total). App Store copy covers English plus the 20 listed languages other than Swedish and Persian, with a separate Swedish listing: English plus 21 storefront localizations. Persian remains available in the app UI; App Store Connect does not offer it as a storefront localization for this app. The listings lead with direct control of compatible legacy Daikin local HTTP adapters and Apple Home climate services. They do not yet advertise MELCloud or Mitsubishi local control, pending verification on physical equipment.
+The app UI also supports Persian, for 23 locales total including English; App Store Connect does not offer Persian for this app. Store copy covers English, 20 common languages, and Swedish. Polish is included as a storefront locale supported by App Store Connect. The listings lead with direct control of compatible legacy Daikin local HTTP adapters and Apple Home climate services. They do not advertise optional MELCloud or Mitsubishi local control, which has not been verified on physical equipment.
 
 App Store header artwork is available in English (`assets/app-store-header-5244x2950.png`) and Swedish (`assets/app-store-header-sv-5244x2950.png`). Upload state is managed in App Store Connect and should be verified there before release.
