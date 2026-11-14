@@ -12,6 +12,7 @@
 	<key>UILaunchScreen</key><dict/>
 	<key>UIUserInterfaceStyle</key><string>Automatic</string>
 	<key>NSLocalNetworkUsageDescription</key><string>Klimat searches your local Wi-Fi network for compatible air conditioners.</string>
+	<key>NSFaceIDUsageDescription</key><string>Use Face ID to protect access to your Klimat controls.</string>
 	<key>NSHomeKitUsageDescription</key><string>Klimat visar och styr luftkonditionering som du har lagt till i Apple Home.</string>
 	<key>NSAppTransportSecurity</key><dict><key>NSAllowsLocalNetworking</key><true/></dict>
 </dict>
