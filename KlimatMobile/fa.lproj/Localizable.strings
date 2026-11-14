@@ -80,3 +80,7 @@
 "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually." = "آداپتور Daikin سازگاری در این شبکهٔ Wi-Fi پیدا نشد. می‌توانید نشانی IP را دستی وارد کنید.";
 "Found %lld compatible Daikin adapter(s) on this Wi-Fi network." = "%lld آداپتور Daikin سازگار در این شبکهٔ Wi-Fi پیدا شد.";
 "Compatible Daikin adapters work locally, without internet or a cloud account." = "آداپتورهای Daikin سازگار به‌صورت محلی، بدون اینترنت یا حساب ابری کار می‌کنند.";
+"Choose light or dark mode, or follow your iPhone setting." = "حالت روشن یا تاریک را انتخاب کنید یا از تنظیمات iPhone پیروی کنید.";
+"Choose how temperatures are shown throughout Klimat." = "نحوه نمایش دما در Klimat را انتخاب کنید.";
+"Use Face ID to unlock Klimat when you reopen the app." = "برای بازکردن قفل Klimat هنگام باز کردن دوباره برنامه از Face ID استفاده کنید.";
+"Face ID is unavailable on this device." = "Face ID در این دستگاه در دسترس نیست.";

@@ -80,3 +80,7 @@
 "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually." = "ఈ Wi-Fi నెట్‌వర్క్‌లో అనుకూల Daikin అడాప్టర్‌లు కనుగొనబడలేదు. IP చిరునామాను మాన్యువల్‌గా నమోదు చేయవచ్చు.";
 "Found %lld compatible Daikin adapter(s) on this Wi-Fi network." = "ఈ Wi-Fi నెట్‌వర్క్‌లో %lld అనుకూల Daikin అడాప్టర్‌లు కనుగొనబడ్డాయి.";
 "Compatible Daikin adapters work locally, without internet or a cloud account." = "అనుకూల Daikin అడాప్టర్‌లు ఇంటర్నెట్ లేదా క్లౌడ్ ఖాతా లేకుండానే స్థానికంగా పనిచేస్తాయి.";
+"Choose light or dark mode, or follow your iPhone setting." = "లైట్ లేదా డార్క్ మోడ్‌ను ఎంచుకోండి, లేదా iPhone సెట్టింగ్‌ను అనుసరించండి.";
+"Choose how temperatures are shown throughout Klimat." = "Klimatలో ఉష్ణోగ్రతలు ఎలా చూపాలో ఎంచుకోండి.";
+"Use Face ID to unlock Klimat when you reopen the app." = "యాప్‌ను మళ్లీ తెరిచినప్పుడు Klimatను అన్‌లాక్ చేయడానికి Face IDని ఉపయోగించండి.";
+"Face ID is unavailable on this device." = "ఈ పరికరంలో Face ID అందుబాటులో లేదు.";
