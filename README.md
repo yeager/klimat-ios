@@ -1,6 +1,6 @@
 # Klimat for iPhone
 
-Klimat is an open-source SwiftUI app for iOS 17 and later. Its English interface is localized into Swedish, Spanish, French, German, Simplified Chinese, Hindi, Arabic, Brazilian Portuguese, Japanese, Bengali, Russian, Indonesian, Turkish, Urdu, Marathi, Telugu, Tamil, Vietnamese, Korean, Italian, and Persian.
+Klimat is an open-source SwiftUI app for iOS 17 and later. Its English interface is localized into Swedish, Spanish, French, German, Simplified Chinese, Hindi, Arabic, Brazilian Portuguese, Japanese, Bengali, Russian, Indonesian, Turkish, Urdu, Marathi, Telugu, Tamil, Vietnamese, Korean, Italian, Polish, and Persian. App Store Connect storefront copy is available in English, Swedish, and 20 common languages; Persian storefront localization is not supported by App Store Connect.
 
 ## Privacy first
 
