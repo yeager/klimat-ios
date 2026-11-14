@@ -26,4 +26,4 @@ Target coverage is English plus these 20 widely used App Store languages, and Sw
 - Persian (`fa`)
 - Swedish (`sv-SE`)
 
-The app and store copy currently cover English, Swedish, Spanish, French, German, and Simplified Chinese (6 of the requested 22 locales). Store copy describes current verified app capabilities: direct control of compatible legacy Daikin local HTTP adapters and Apple Home climate services. It does not claim that the listed cloud providers or other local protocols are implemented.
+The app and store copy currently cover English, Swedish, Spanish, French, German, Simplified Chinese, Hindi, Arabic, Brazilian Portuguese, and Japanese (10 of the requested 22 locales). Store copy describes current verified app capabilities: direct control of compatible legacy Daikin local HTTP adapters and Apple Home climate services. It does not claim that the listed cloud providers or other local protocols are implemented.

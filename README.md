@@ -1,6 +1,6 @@
 # Klimat för iPhone
 
-Klimat är en SwiftUI-app för iOS 17 och senare. Den har engelskt gränssnitt samt svenska, spanska, franska, tyska och förenklad kinesiska, egen appikon, sökning efter lokala Daikin-adaptrar, Apple Home-integration och styrning via det lokala nätverket. Appen heter Klimat på hemskärmen.
+Klimat är en SwiftUI-app för iOS 17 och senare. Den har engelskt gränssnitt samt svenska, spanska, franska, tyska, förenklad kinesiska, hindi, arabiska, brasiliansk portugisiska och japanska, egen appikon, sökning efter lokala Daikin-adaptrar, Apple Home-integration och styrning via det lokala nätverket. Appen heter Klimat på hemskärmen.
 
 ## Bygg
 
