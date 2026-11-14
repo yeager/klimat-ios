@@ -4,20 +4,21 @@
 Klimat: AC Control
 
 **Subtitle**  
-Local air conditioner control
+AC control, no cloud needed
 
 **Promotional text**  
-Control compatible Daikin adapters over your home Wi-Fi, with no cloud account required. Add supported climate controls from Apple Home.
+Control compatible Daikin ACs directly over local Wi-Fi, even without internet. No cloud account is needed for direct control.
 
 **Description**  
-Take control of your home climate with Klimat.
+AC control that stays local. Klimat connects directly to compatible Daikin Wi-Fi adapters on your home network. Control your AC even when your internet connection is down. No manufacturer cloud, cloud account, or subscription is needed for this direct connection.
 
-Klimat connects directly to compatible Daikin Wi-Fi adapters on your local network. Enter the adapter’s IP address to read the current status and adjust power, target temperature, operating mode, and fan speed. This direct connection does not require a manufacturer cloud account.
+Enter the adapter’s IP address or let Klimat search your local Wi-Fi network. Read the current status and adjust power, target temperature, operating mode, and fan speed. Your iPhone and AC must be connected to the same local network, and the adapter must expose Daikin’s compatible legacy local HTTP API.
 
 You can also add supported thermostats and heating and cooling services already configured in Apple Home. Available controls depend on the accessories in your home.
 
 **Features**
-- Direct local Wi-Fi control for compatible Daikin adapters using the legacy HTTP API
+- Direct local Wi-Fi control for compatible Daikin adapters, including when internet is unavailable
+- No cloud connection, cloud account, or subscription required for direct Daikin control
 - Read current temperature and operating status
 - Adjust set point, power, mode, and fan speed
 - Import supported climate services from Apple Home

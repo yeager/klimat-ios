@@ -68,7 +68,6 @@
 "Searching Apple Home for climate devices…" = "Söker efter klimatutrustning i Apple Home…";
 "Searching for compatible devices…" = "Söker efter kompatibla enheter…";
 "Search failed: %@" = "Sökningen misslyckades: %@";
-"No Bonjour services found. Many AC adapters do not advertise Bonjour; connect using an IP address." = "Inga Bonjour-tjänster hittades. Många AC-adaptrar annonserar inte Bonjour. Anslut med IP-adress.";
 "Found %lld network service(s). AC devices need to be identified using their local adapter protocol." = "Hittade %lld nätverkstjänst(er). AC-enheter behöver identifieras med sitt lokala adapterprotokoll.";
 "%@ requires a manufacturer adapter. No sign-in was performed." = "%@ kräver en tillverkaradapter. Ingen inloggning gjordes.";
 "Climate control was not found in Apple Home. Scan for devices again." = "Klimatreglaget hittades inte i Apple Home. Sök efter enheter igen.";
@@ -76,3 +75,9 @@
 "This operating mode is not supported by the Apple Home device." = "Apple Home-enheten stöder inte det här driftläget.";
 "Power control is not supported by the Apple Home device." = "Apple Home-enheten stöder inte strömreglaget.";
 "Fan speed cannot be controlled through Apple Home for this device." = "Fläkthastigheten kan inte styras via Apple Home för den här enheten.";
+
+"Scanning this Wi-Fi network for compatible Daikin adapters…" = "Söker på det här Wi-Fi-nätverket efter kompatibla Daikin-adaptrar…";
+"Could not determine the Wi-Fi subnet. Enter the adapter IP address instead." = "Det gick inte att hitta Wi-Fi-nätets adressintervall. Ange adapterns IP-adress i stället.";
+"No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually." = "Inga kompatibla Daikin-adaptrar hittades på det här Wi-Fi-nätverket. Du kan ange adapterns IP-adress manuellt.";
+"Found %lld compatible Daikin adapter(s) on this Wi-Fi network." = "Hittade %lld kompatibla Daikin-adaptrar på det här Wi-Fi-nätverket.";
+"Compatible Daikin adapters work locally, without internet or a cloud account." = "Kompatibla Daikin-adaptrar styrs lokalt utan internet eller molnkonto.";

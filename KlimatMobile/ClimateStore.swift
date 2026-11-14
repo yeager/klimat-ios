@@ -1,5 +1,5 @@
 import Foundation
-import Network
+import Darwin
 import HomeKit
 
 struct ClimateDevice: Identifiable, Codable, Equatable {
@@ -29,13 +29,11 @@ struct CloudProvider: Identifiable {
     @Published var selectedID: String?
     @Published var isScanning = false
     @Published var scanMessage = String(localized: "Find devices on your Wi-Fi")
-    @Published var discoveredServices: [String] = []
     @Published var showCloudSetup = false
     @Published var selectedProvider: CloudProvider?
     @Published var connectionNotice: String?
     @Published var isLoadingAppleHome = false
     @Published var appleHomeStatus = String(localized: "Add climate devices from Apple Home")
-    private var browser: NWBrowser?
     private let storageKey = "klimat.ios.devices"
     private let appleHome = HomeKitClimateAdapter()
 
@@ -100,39 +98,37 @@ struct CloudProvider: Identifiable {
     }
     func beginScan() {
         guard !isScanning else { return }
-        discoveredServices = []
-        isScanning = true; scanMessage = String(localized: "Searching for compatible devices…")
-        let params = NWParameters.tcp
-        params.includePeerToPeer = true
-        let b = NWBrowser(for: .bonjour(type: "_http._tcp", domain: nil), using: params)
-        browser = b
-        b.stateUpdateHandler = { [weak self] state in
-            Task { @MainActor in
-                guard let self else { return }
-                if case .failed(let error) = state { self.scanMessage = String(localized: "Search failed: \(error.localizedDescription)"); self.isScanning = false; b.cancel() }
+        isScanning = true; scanMessage = String(localized: "Scanning this Wi-Fi network for compatible Daikin adapters…")
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            let hosts = LocalSubnetDiscovery.hosts()
+            guard !hosts.isEmpty else {
+                self.scanMessage = String(localized: "Could not determine the Wi-Fi subnet. Enter the adapter IP address instead.")
+                self.isScanning = false
+                return
             }
-        }
-        b.browseResultsChangedHandler = { [weak self] results, _ in
-            Task { @MainActor in
-                guard let self else { return }
-                for result in results {
-                    let name: String
-                    if case let .service(n, _, _, _) = result.endpoint { name = n } else { continue }
-                    if !self.discoveredServices.contains(name) { self.discoveredServices.append(name) }
+            var found: [DaikinState] = []
+            for start in stride(from: 0, to: hosts.count, by: 24) {
+                let batch = Array(hosts[start..<min(start + 24, hosts.count)])
+                await withTaskGroup(of: DaikinState?.self) { group in
+                    for host in batch {
+                        group.addTask { try? await DaikinLocalAdapter.discover(host: host) }
+                    }
+                    for await state in group { if let state { found.append(state) } }
                 }
             }
-        }
-        b.start(queue: .main)
-        Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .seconds(8))
-            guard let self, self.isScanning else { return }
-            self.isScanning = false
-            if self.discoveredServices.isEmpty {
-                self.scanMessage = String(localized: "No Bonjour services found. Many AC adapters do not advertise Bonjour; connect using an IP address.")
-            } else {
-                self.scanMessage = String(localized: "Found \(self.discoveredServices.count) network service(s). AC devices need to be identified using their local adapter protocol.")
+            guard self.isScanning else { return }
+            for state in found {
+                let device = ClimateDevice(id: state.id, name: state.name, brand: "Daikin", connection: "Local network · \(state.host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: state.host)
+                if let index = self.devices.firstIndex(where: { $0.id == device.id || $0.host == device.host }) { self.devices[index] = device }
+                else { self.devices.append(device) }
+                if self.selectedID == nil { self.selectedID = device.id }
             }
-            self.browser?.cancel(); self.browser = nil
+            self.save()
+            self.isScanning = false
+            self.scanMessage = found.isEmpty
+                ? String(localized: "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually.")
+                : String(localized: "Found \(found.count) compatible Daikin adapter(s) on this Wi-Fi network.")
         }
     }
     func connectCloud(provider: CloudProvider) {
@@ -274,11 +270,19 @@ private extension Array {
     }
 }
 
-private struct DaikinState {
+private struct DaikinState: Sendable {
     let id: String; let name: String; let isOn: Bool; let current: Double; let target: Double; let mode: String; let fan: String; let host: String
 }
 
 private enum DaikinLocalAdapter {
+    static func discover(host: String) async throws -> DaikinState {
+        let control = try await request(endpoint(host), "aircon/get_control_info", timeout: 1.2)
+        guard control["ret"] == "OK", ["0", "1"].contains(control["pow"] ?? ""), control["mode"] != nil else {
+            throw URLError(.cannotParseResponse)
+        }
+        return try await read(host: host)
+    }
+
     static func read(host: String) async throws -> DaikinState {
         let base = endpoint(host)
         let control = try await request(base, "aircon/get_control_info")
@@ -299,18 +303,15 @@ private enum DaikinLocalAdapter {
         case "fan": params["f_rate"] = ["Auto":"A", "Low":"3", "Medium":"5", "High":"7"][value ?? ""] ?? "A"
         default: throw URLError(.unsupportedURL)
         }
-        _ = try await request(base, "aircon/set_control_info", body: params)
+        _ = try await request(base, "aircon/set_control_info", parameters: params)
         return try await read(host: host)
     }
     private static func endpoint(_ host: String) -> String { "http://\(host.trimmingCharacters(in: CharacterSet(charactersIn: "/")))" }
-    private static func request(_ base: String, _ path: String, body: [String:String]? = nil) async throws -> [String:String] {
-        guard let url = URL(string: "\(base)/\(path)") else { throw URLError(.badURL) }
-        var request = URLRequest(url: url, timeoutInterval: 5)
-        if let body {
-            request.httpMethod = "POST"
-            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-            request.httpBody = body.map { "\($0.key)=\($0.value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? $0.value)" }.sorted().joined(separator: "&").data(using: .utf8)
-        }
+    private static func request(_ base: String, _ path: String, parameters: [String:String]? = nil, timeout: TimeInterval = 5) async throws -> [String:String] {
+        guard var components = URLComponents(string: "\(base)/\(path)") else { throw URLError(.badURL) }
+        if let parameters { components.queryItems = parameters.map { URLQueryItem(name: $0.key, value: $0.value) } }
+        guard let url = components.url else { throw URLError(.badURL) }
+        let request = URLRequest(url: url, timeoutInterval: timeout)
         let (data, response) = try await URLSession.shared.data(for: request)
         guard (response as? HTTPURLResponse)?.statusCode == 200, let text = String(data: data, encoding: .utf8) else { throw URLError(.badServerResponse) }
         var result: [String:String] = [:]
@@ -320,5 +321,37 @@ private enum DaikinLocalAdapter {
         }
         guard result["ret"].map({ $0 == "OK" }) ?? true else { throw URLError(.cannotWriteToFile) }
         return result
+    }
+}
+
+private enum LocalSubnetDiscovery {
+    static func hosts() -> [String] {
+        var first: UnsafeMutablePointer<ifaddrs>?
+        guard getifaddrs(&first) == 0, let first else { return [] }
+        defer { freeifaddrs(first) }
+
+        var item: UnsafeMutablePointer<ifaddrs>? = first
+        while let current = item {
+            defer { item = current.pointee.ifa_next }
+            let interface = current.pointee
+            guard String(cString: interface.ifa_name) == "en0",
+                  let address = interface.ifa_addr,
+                  let netmask = interface.ifa_netmask,
+                  address.pointee.sa_family == UInt8(AF_INET),
+                  netmask.pointee.sa_family == UInt8(AF_INET) else { continue }
+
+            let ip = UInt32(bigEndian: UnsafePointer<sockaddr_in>(OpaquePointer(address)).pointee.sin_addr.s_addr)
+            let mask = UInt32(bigEndian: UnsafePointer<sockaddr_in>(OpaquePointer(netmask)).pointee.sin_addr.s_addr)
+            let isPrivate = (ip >> 24) == 10 || (ip >> 20) == 0xAC1 || (ip >> 16) == 0xC0A8
+            guard isPrivate else { return [] }
+            let network = ip & mask
+            let broadcast = network | ~mask
+            guard broadcast > network, broadcast - network <= 512 else { return [] }
+
+            return ((network + 1)..<broadcast).filter { $0 != ip }.map { value in
+                "\((value >> 24) & 255).\((value >> 16) & 255).\((value >> 8) & 255).\(value & 255)"
+            }
+        }
+        return []
     }
 }

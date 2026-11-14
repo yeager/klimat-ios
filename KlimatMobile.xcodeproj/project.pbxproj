@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		38844AD6F18277AC55B3F54D /* ClimateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA80FF3C490BB163912044E /* ClimateStore.swift */; };
+		5125C617A829D360EE547576 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E53C4AEE425920852D170E51 /* InfoPlist.strings */; };
 		6C87E010C0582B9A249A1597 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE16B312BC7FDE3906756D02 /* Assets.xcassets */; };
 		B7A5B9AE67A9B2E9A4DF1AE0 /* KlimatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4235184141FC53092758CA94 /* KlimatApp.swift */; };
 		D5D7ADA3E36D933EF35A0905 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794029BAEA1C9C10F431EABC /* HomeView.swift */; };
@@ -22,6 +23,7 @@
 		8AA80FF3C490BB163912044E /* ClimateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClimateStore.swift; sourceTree = "<group>"; };
 		BE16B312BC7FDE3906756D02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CDFA764DF901F14FD3A5867B /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = sv.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E53C4AEE425920852D170E51 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = sv.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E74DBB8103D8F422383F0517 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -41,6 +43,7 @@
 				8AA80FF3C490BB163912044E /* ClimateStore.swift */,
 				794029BAEA1C9C10F431EABC /* HomeView.swift */,
 				E74DBB8103D8F422383F0517 /* Info.plist */,
+				E53C4AEE425920852D170E51 /* InfoPlist.strings */,
 				4235184141FC53092758CA94 /* KlimatApp.swift */,
 				852A82D15447694192311D46 /* KlimatMobile.entitlements */,
 				CDFA764DF901F14FD3A5867B /* Localizable.strings */,
@@ -114,6 +117,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6C87E010C0582B9A249A1597 /* Assets.xcassets in Resources */,
+				5125C617A829D360EE547576 /* InfoPlist.strings in Resources */,
 				F2B98B7A8360AFCAA21F1DFF /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -181,11 +185,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Klimat;
 				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking = YES;
-				INFOPLIST_KEY_NSBonjourServices = (
-					_http._tcp,
-					_https._tcp,
-				);
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Klimat söker efter kompatibla luftkonditioneringsapparater på ditt lokala nätverk.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Klimat searches your local Wi-Fi network for compatible air conditioners.";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -269,11 +269,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Klimat;
 				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking = YES;
-				INFOPLIST_KEY_NSBonjourServices = (
-					_http._tcp,
-					_https._tcp,
-				);
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Klimat söker efter kompatibla luftkonditioneringsapparater på ditt lokala nätverk.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Klimat searches your local Wi-Fi network for compatible air conditioners.";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;

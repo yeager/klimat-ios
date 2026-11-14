@@ -8,11 +8,8 @@ settings:
     SWIFT_VERSION: "5.9"
     TARGETED_DEVICE_FAMILY: "1"
     INFOPLIST_KEY_CFBundleDisplayName: Klimat
-    INFOPLIST_KEY_NSLocalNetworkUsageDescription: Klimat söker efter kompatibla luftkonditioneringsapparater på ditt lokala nätverk.
+    INFOPLIST_KEY_NSLocalNetworkUsageDescription: Klimat searches your local Wi-Fi network for compatible air conditioners.
     INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking: YES
-    INFOPLIST_KEY_NSBonjourServices:
-      - _http._tcp
-      - _https._tcp
 targets:
   KlimatMobile:
     type: application

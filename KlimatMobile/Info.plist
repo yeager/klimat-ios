@@ -11,9 +11,8 @@
 	<key>LSRequiresIPhoneOS</key><true/>
 	<key>UILaunchScreen</key><dict/>
 	<key>UIUserInterfaceStyle</key><string>Automatic</string>
-	<key>NSLocalNetworkUsageDescription</key><string>Klimat söker efter kompatibla luftkonditioneringsapparater på ditt lokala nätverk.</string>
+	<key>NSLocalNetworkUsageDescription</key><string>Klimat searches your local Wi-Fi network for compatible air conditioners.</string>
 	<key>NSHomeKitUsageDescription</key><string>Klimat visar och styr luftkonditionering som du har lagt till i Apple Home.</string>
-	<key>NSBonjourServices</key><array><string>_http._tcp</string><string>_https._tcp</string></array>
 	<key>NSAppTransportSecurity</key><dict><key>NSAllowsLocalNetworking</key><true/></dict>
 </dict>
 </plist>
