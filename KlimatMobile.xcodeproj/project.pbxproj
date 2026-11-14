@@ -19,6 +19,7 @@
 		38844AD6F18277AC55B3F54D /* ClimateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA80FF3C490BB163912044E /* ClimateStore.swift */; };
 		393CC74E5CF35A9D11FAE37D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7023635AE9FEF93D620324B0 /* Localizable.strings */; };
 		39AE9D99DE39544404289D03 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0CEED6BC60316058B39DAD16 /* Localizable.strings */; };
+		3A74B25DECEB974DDC5EBF39 /* GreeLocalAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2790123AE8D9AA15FA901D2 /* GreeLocalAdapter.swift */; };
 		3B00F1D3372ACBD35D3BE88A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3DB7ED30992E5CB3E142F53B /* InfoPlist.strings */; };
 		3D68C1F6AE54E84EB18F961F /* MELCloudClassicAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBDC13EF4B802B14859B85E3 /* MELCloudClassicAdapter.swift */; };
 		42D8C6F2F963373250D92193 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0192E5AE7483089097C2549E /* InfoPlist.strings */; };
@@ -102,6 +103,7 @@
 		C7AB3FD0D1E87F650660DB6F /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = te.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CDFA764DF901F14FD3A5867B /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CE3B22767F19A97DA9726564 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = vi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		D2790123AE8D9AA15FA901D2 /* GreeLocalAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreeLocalAdapter.swift; sourceTree = "<group>"; };
 		D70D7BCBE207747C1163F814 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ur.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E53C4AEE425920852D170E51 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E5528675B26CC2D5138DA4B1 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 			children = (
 				BE16B312BC7FDE3906756D02 /* Assets.xcassets */,
 				8AA80FF3C490BB163912044E /* ClimateStore.swift */,
+				D2790123AE8D9AA15FA901D2 /* GreeLocalAdapter.swift */,
 				794029BAEA1C9C10F431EABC /* HomeView.swift */,
 				E74DBB8103D8F422383F0517 /* Info.plist */,
 				E53C4AEE425920852D170E51 /* InfoPlist.strings */,
@@ -316,6 +319,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				38844AD6F18277AC55B3F54D /* ClimateStore.swift in Sources */,
+				3A74B25DECEB974DDC5EBF39 /* GreeLocalAdapter.swift in Sources */,
 				D5D7ADA3E36D933EF35A0905 /* HomeView.swift in Sources */,
 				B7A5B9AE67A9B2E9A4DF1AE0 /* KlimatApp.swift in Sources */,
 				3D68C1F6AE54E84EB18F961F /* MELCloudClassicAdapter.swift in Sources */,

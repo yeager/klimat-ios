@@ -1,6 +1,7 @@
 import Foundation
 import Darwin
 import HomeKit
+import Security
 
 struct ClimateDevice: Identifiable, Codable, Equatable {
     var id: String
@@ -16,6 +17,7 @@ struct ClimateDevice: Identifiable, Codable, Equatable {
     var homeServiceID: String? = nil
     var remoteID: Int? = nil
     var remoteBuildingID: Int? = nil
+    var localCipher: String? = nil
 }
 
 struct CloudProvider: Identifiable {
@@ -83,6 +85,26 @@ struct CloudProvider: Identifiable {
             selectedID = device.id; save()
         } catch { connectionNotice = error.localizedDescription }
     }
+    func connectGree(host: String, name: String) async {
+        do {
+            let info: GreeLocalAdapter.DeviceInfo
+            if let broadcast = LocalSubnetDiscovery.broadcastAddress(),
+               let matches = try? await GreeLocalAdapter.discoverAll(broadcast: broadcast, timeout: 1.2),
+               let match = matches.first(where: { $0.host == host }) {
+                info = match
+            } else {
+                info = try await GreeLocalAdapter.discover(host: host)
+            }
+            let cached = GreeKeychain.load(mac: info.mac)
+            let savedCipher = GreeLocalAdapter.CipherKind(rawValue: cached?.cipher ?? "v1") ?? .v1
+            let state = try await GreeLocalAdapter.connect(info, savedKey: cached?.key, savedCipher: savedCipher)
+            guard GreeKeychain.save(key: state.key, cipher: state.cipher, mac: info.mac) else { throw GreeControlError.keychainUnavailable }
+            let device = ClimateDevice(id: "gree-\(info.mac)", name: name.isEmpty ? info.name : name, brand: "Gree", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, localCipher: state.cipher.rawValue)
+            if let index = devices.firstIndex(where: { $0.id == device.id || $0.host == host }) { devices[index] = device } else { devices.append(device) }
+            selectedID = device.id
+            save()
+        } catch { connectionNotice = error.localizedDescription }
+    }
     func connectMELCloud(email: String, password: String) async {
         do {
             let (_, records) = try await MELCloudClassicAdapter.signIn(email: email, password: password)
@@ -102,6 +124,15 @@ struct CloudProvider: Identifiable {
         if selectedID?.hasPrefix("melcloud-") == true { selectedID = devices.first?.id }
         save()
     }
+    func removeAllDevices() {
+        for device in devices where device.brand == "Gree" {
+            GreeKeychain.delete(mac: String(device.id.dropFirst("gree-".count)))
+        }
+        disconnectMELCloud()
+        devices.removeAll()
+        selectedID = nil
+        save()
+    }
     func command(action: String, value: String? = nil, number: Double? = nil) async {
         if let device = selected, device.brand == "MELCloud" {
             do {
@@ -116,6 +147,21 @@ struct CloudProvider: Identifiable {
                 let state = try await appleHome.command(serviceID: serviceID, action: action, value: value, number: number)
                 guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
                 devices[index] = state
+                save()
+            } catch { connectionNotice = error.localizedDescription }
+            return
+        }
+        if let device = selected, device.brand == "Gree", let host = device.host {
+            do {
+                let mac = String(device.id.dropFirst("gree-".count))
+                let info = GreeLocalAdapter.DeviceInfo(mac: mac, name: device.name, host: host, brand: "Gree", model: "")
+                guard let credentials = GreeKeychain.load(mac: mac),
+                      let cipher = GreeLocalAdapter.CipherKind(rawValue: credentials.cipher) else { throw GreeControlError.missingPairing }
+                let current = try await GreeLocalAdapter.read(info, key: credentials.key, cipher: cipher)
+                let state = try await GreeLocalAdapter.command(current, action: action, value: value, number: number)
+                guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
+                devices[index].isOn = state.isOn; devices[index].current = state.current; devices[index].target = state.target
+                devices[index].mode = state.mode; devices[index].fan = state.fan; devices[index].localCipher = state.cipher.rawValue
                 save()
             } catch { connectionNotice = error.localizedDescription }
             return
@@ -143,7 +189,7 @@ struct CloudProvider: Identifiable {
     }
     func beginScan() {
         guard !isScanning else { return }
-        isScanning = true; scanMessage = String(localized: "Scanning this Wi-Fi network for compatible Daikin adapters…")
+        isScanning = true; scanMessage = String(localized: "Scanning this Wi-Fi network for compatible Daikin, Mitsubishi and Gree adapters…")
         Task { @MainActor [weak self] in
             guard let self else { return }
             let hosts = LocalSubnetDiscovery.hosts()
@@ -153,6 +199,14 @@ struct CloudProvider: Identifiable {
                 return
             }
             var found: [ClimateDevice] = []
+            if let broadcast = LocalSubnetDiscovery.broadcastAddress(),
+               let greeDevices = try? await GreeLocalAdapter.discoverAll(broadcast: broadcast) {
+                for info in greeDevices {
+                    guard let state = try? await GreeLocalAdapter.connect(info),
+                          GreeKeychain.save(key: state.key, cipher: state.cipher, mac: info.mac) else { continue }
+                    found.append(ClimateDevice(id: "gree-\(info.mac)", name: info.name, brand: "Gree", connection: "Local network · \(info.host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: info.host, localCipher: state.cipher.rawValue))
+                }
+            }
             for start in stride(from: 0, to: hosts.count, by: 24) {
                 let batch = Array(hosts[start..<min(start + 24, hosts.count)])
                 await withTaskGroup(of: ClimateDevice?.self) { group in
@@ -189,6 +243,46 @@ struct CloudProvider: Identifiable {
     }
     private static func modeName(_ mode: Int) -> String { [0: "Auto", 8: "Auto", 1: "Heat", 2: "Dry", 3: "Cool", 7: "Fan"][mode] ?? "Auto" }
     private static func fanName(_ speed: Int) -> String { [0: "Auto", 1: "Low", 2: "Low", 3: "Medium", 4: "High", 5: "High"][speed] ?? "Auto" }
+}
+
+private enum GreeControlError: LocalizedError {
+    case missingPairing, keychainUnavailable
+    var errorDescription: String? {
+        switch self {
+        case .missingPairing: return "Reconnect to this Gree adapter to restore its secure local pairing."
+        case .keychainUnavailable: return "Klimat could not securely save the local Gree pairing on this iPhone."
+        }
+    }
+}
+
+private enum GreeKeychain {
+    private static let service = "se.yeager.klimat.gree-local"
+    private struct Credentials: Codable { let key: String; let cipher: String }
+
+    static func load(mac: String) -> (key: String, cipher: String)? {
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
+                                    kSecAttrAccount as String: mac, kSecReturnData as String: true, kSecMatchLimit as String: kSecMatchLimitOne]
+        var result: CFTypeRef?
+        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
+              let data = result as? Data, let credentials = try? JSONDecoder().decode(Credentials.self, from: data) else { return nil }
+        return (credentials.key, credentials.cipher)
+    }
+
+    @discardableResult static func save(key: String, cipher: GreeLocalAdapter.CipherKind, mac: String) -> Bool {
+        guard let data = try? JSONEncoder().encode(Credentials(key: key, cipher: cipher.rawValue)) else { return false }
+        var query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
+                                    kSecAttrAccount as String: mac]
+        SecItemDelete(query as CFDictionary)
+        query[kSecValueData as String] = data
+        query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        return SecItemAdd(query as CFDictionary, nil) == errSecSuccess
+    }
+
+    static func delete(mac: String) {
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
+                                    kSecAttrAccount as String: mac]
+        SecItemDelete(query as CFDictionary)
+    }
 }
 
 @MainActor private final class HomeKitClimateAdapter: NSObject, HMHomeManagerDelegate {
@@ -381,8 +475,22 @@ private enum DaikinLocalAdapter {
 
 private enum LocalSubnetDiscovery {
     static func hosts() -> [String] {
+        guard let subnet = localSubnet() else { return [] }
+        return ((subnet.network + 1)..<subnet.broadcast).filter { $0 != subnet.ip }.map(addressString)
+    }
+
+    static func broadcastAddress() -> String? {
+        guard let subnet = localSubnet() else { return nil }
+        return addressString(subnet.broadcast)
+    }
+
+    private static func addressString(_ value: UInt32) -> String {
+        "\((value >> 24) & 255).\((value >> 16) & 255).\((value >> 8) & 255).\(value & 255)"
+    }
+
+    private static func localSubnet() -> (ip: UInt32, network: UInt32, broadcast: UInt32)? {
         var first: UnsafeMutablePointer<ifaddrs>?
-        guard getifaddrs(&first) == 0, let first else { return [] }
+        guard getifaddrs(&first) == 0, let first else { return nil }
         defer { freeifaddrs(first) }
 
         var item: UnsafeMutablePointer<ifaddrs>? = first
@@ -398,15 +506,12 @@ private enum LocalSubnetDiscovery {
             let ip = UInt32(bigEndian: UnsafePointer<sockaddr_in>(OpaquePointer(address)).pointee.sin_addr.s_addr)
             let mask = UInt32(bigEndian: UnsafePointer<sockaddr_in>(OpaquePointer(netmask)).pointee.sin_addr.s_addr)
             let isPrivate = (ip >> 24) == 10 || (ip >> 20) == 0xAC1 || (ip >> 16) == 0xC0A8
-            guard isPrivate else { return [] }
+            guard isPrivate else { return nil }
             let network = ip & mask
             let broadcast = network | ~mask
-            guard broadcast > network, broadcast - network <= 512 else { return [] }
-
-            return ((network + 1)..<broadcast).filter { $0 != ip }.map { value in
-                "\((value >> 24) & 255).\((value >> 16) & 255).\((value >> 8) & 255).\(value & 255)"
-            }
+            guard broadcast > network, broadcast - network <= 512 else { return nil }
+            return (ip, network, broadcast)
         }
-        return []
+        return nil
     }
 }

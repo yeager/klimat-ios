@@ -75,7 +75,7 @@
 "This operating mode is not supported by the Apple Home device." = "Apple Home పరికరం ఈ ఆపరేటింగ్ మోడ్‌కు మద్దతు ఇవ్వదు.";
 "Power control is not supported by the Apple Home device." = "Apple Home పరికరం పవర్ నియంత్రణకు మద్దతు ఇవ్వదు.";
 "Fan speed cannot be controlled through Apple Home for this device." = "ఈ పరికరపు ఫ్యాన్ వేగాన్ని Apple Home ద్వారా నియంత్రించలేరు.";
-"Scanning this Wi-Fi network for compatible Daikin adapters…" = "ఈ Wi-Fi నెట్‌వర్క్‌లో అనుకూల Daikin అడాప్టర్‌ల కోసం వెతుకుతోంది…";
+"Scanning this Wi-Fi network for compatible Daikin, Mitsubishi and Gree adapters…" = "ఈ Wi‑Fi నెట్‌వర్క్‌లో అనుకూల Daikin, Mitsubishi, Gree అడాప్టర్‌ల కోసం వెతుకుతోంది…";
 "Could not determine the Wi-Fi subnet. Enter the adapter IP address instead." = "Wi-Fi సబ్‌నెట్‌ను గుర్తించలేకపోయాం. బదులుగా అడాప్టర్ IP చిరునామాను నమోదు చేయండి.";
 "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually." = "ఈ Wi-Fi నెట్‌వర్క్‌లో అనుకూల Daikin అడాప్టర్‌లు కనుగొనబడలేదు. IP చిరునామాను మాన్యువల్‌గా నమోదు చేయవచ్చు.";
 "Found %lld compatible Daikin adapter(s) on this Wi-Fi network." = "ఈ Wi-Fi నెట్‌వర్క్‌లో %lld అనుకూల Daikin అడాప్టర్‌లు కనుగొనబడ్డాయి.";
@@ -84,3 +84,5 @@
 "Choose how temperatures are shown throughout Klimat." = "Klimatలో ఉష్ణోగ్రతలు ఎలా చూపాలో ఎంచుకోండి.";
 "Use Face ID to unlock Klimat when you reopen the app." = "యాప్‌ను మళ్లీ తెరిచినప్పుడు Klimatను అన్‌లాక్ చేయడానికి Face IDని ఉపయోగించండి.";
 "Face ID is unavailable on this device." = "ఈ పరికరంలో Face ID అందుబాటులో లేదు.";
+
+"Connect directly to a compatible Gree Wi-Fi adapter over your local network. Internet and a Gree cloud account are not required." = "మీ స్థానిక నెట్‌వర్క్ ద్వారా అనుకూల Gree Wi‑Fi అడాప్టర్‌కు నేరుగా కనెక్ట్ అవ్వండి. ఇంటర్నెట్ లేదా Gree క్లౌడ్ ఖాతా అవసరం లేదు.";

@@ -75,7 +75,7 @@
 "This operating mode is not supported by the Apple Home device." = "Il dispositivo Apple Home non supporta questa modalità operativa.";
 "Power control is not supported by the Apple Home device." = "Il dispositivo Apple Home non supporta il controllo dell’alimentazione.";
 "Fan speed cannot be controlled through Apple Home for this device." = "La velocità della ventola di questo dispositivo non può essere controllata da Apple Home.";
-"Scanning this Wi-Fi network for compatible Daikin adapters…" = "Ricerca di adattatori Daikin compatibili su questa rete Wi-Fi…";
+"Scanning this Wi-Fi network for compatible Daikin, Mitsubishi and Gree adapters…" = "Ricerca di adattatori Daikin, Mitsubishi e Gree compatibili su questa rete Wi‑Fi…";
 "Could not determine the Wi-Fi subnet. Enter the adapter IP address instead." = "Impossibile determinare la subnet Wi-Fi. Inserisci l’indirizzo IP dell’adattatore.";
 "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually." = "Nessun adattatore Daikin compatibile trovato su questa rete Wi-Fi. Puoi inserire l’indirizzo IP manualmente.";
 "Found %lld compatible Daikin adapter(s) on this Wi-Fi network." = "Trovati %lld adattatori Daikin compatibili su questa rete Wi-Fi.";
@@ -84,3 +84,5 @@
 "Choose how temperatures are shown throughout Klimat." = "Scegli come visualizzare le temperature in Klimat.";
 "Use Face ID to unlock Klimat when you reopen the app." = "Usa Face ID per sbloccare Klimat quando riapri l’app.";
 "Face ID is unavailable on this device." = "Face ID non è disponibile su questo dispositivo.";
+
+"Connect directly to a compatible Gree Wi-Fi adapter over your local network. Internet and a Gree cloud account are not required." = "Connettiti direttamente a un adattatore Wi‑Fi Gree compatibile tramite la rete locale. Non servono Internet né un account cloud Gree.";
