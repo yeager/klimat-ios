@@ -88,3 +88,6 @@
 "Connect directly to a compatible Gree Wi-Fi adapter over your local network. Internet and a Gree cloud account are not required." = "Подключитесь напрямую к совместимому Wi‑Fi-адаптеру Gree в локальной сети. Интернет и облачная учётная запись Gree не нужны.";
 
 "Device authentication is unavailable. Check your passcode settings." = "Аутентификация устройства недоступна. Проверьте настройки код-пароля.";
+"No analytics or tracking. Direct control stays on your local network." = "Нет аналитики и отслеживания. Прямое управление работает в локальной сети.";
+"Privacy policy" = "Политика конфиденциальности";
+"Open-source code" = "Открытый исходный код";

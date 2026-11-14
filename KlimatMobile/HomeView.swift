@@ -326,11 +326,18 @@ struct HomeView: View {
                         Label("Require Face ID", systemImage: "faceid")
                     }.disabled(!faceIDAvailable)
                     Text(faceIDAvailable ? "Use Face ID to unlock Klimat when you reopen the app." : "Face ID is unavailable on this device.").font(.caption).foregroundStyle(Palette.muted)
+                    Text("No analytics or tracking. Direct control stays on your local network.").font(.caption).foregroundStyle(Palette.muted)
+                    Link(destination: URL(string: "https://github.com/yeager/klimat-ios/blob/main/PRIVACY.md")!) {
+                        Label("Privacy policy", systemImage: "hand.raised")
+                    }
                 }
                 Section("About Klimat") {
                     LabeledContent("App", value: "Klimat")
                     LabeledContent("Version", value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—")
                     LabeledContent("Build", value: Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—")
+                    Link(destination: URL(string: "https://github.com/yeager/klimat-ios")!) {
+                        Label("Open-source code", systemImage: "chevron.left.forwardslash.chevron.right")
+                    }
                 }
                 Section { Button(role: .destructive) { store.removeAllDevices(); showSettings = false } label: { Label("Remove all devices", systemImage: "trash") } }
             }
