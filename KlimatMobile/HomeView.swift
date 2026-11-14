@@ -216,16 +216,20 @@ struct HomeView: View {
 
     private var cloudSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            sectionTitle("VIA CLOUD SERVICE", trailing: "More brands")
-            LazyVGrid(columns: columns, spacing: 9) {
-                ForEach(store.providers.prefix(4)) { provider in
-                    Button { store.selectedProvider = provider; showCloud = true } label: {
-                        HStack(spacing: 8) { Image(systemName: provider.symbol).font(.system(size: 13, weight: .medium)).foregroundStyle(Palette.green); VStack(alignment: .leading, spacing: 2) { Text(provider.title).font(.system(size: 10, weight: .semibold)).foregroundStyle(Palette.ink).lineLimit(1); Text(provider.detail).font(.system(size: 9)).foregroundStyle(Palette.muted).lineLimit(1) } }
-                            .frame(maxWidth: .infinity, alignment: .leading).padding(11).background(Palette.card, in: RoundedRectangle(cornerRadius: 14)).overlay(RoundedRectangle(cornerRadius: 14).stroke(Palette.line, lineWidth: 1))
-                    }.buttonStyle(.plain)
-                }
+            sectionTitle("VIA CLOUD SERVICE")
+            if let provider = store.providers.first {
+                Button { store.selectedProvider = provider; showCloud = true } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: provider.symbol).font(.system(size: 16, weight: .medium)).foregroundStyle(Palette.green).frame(width: 39, height: 39).background(Palette.wash, in: RoundedRectangle(cornerRadius: 12))
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(provider.title).font(.system(size: 13, weight: .semibold)).foregroundStyle(Palette.ink)
+                            Text("Mitsubishi Electric").font(.system(size: 10)).foregroundStyle(Palette.muted)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right").font(.system(size: 11, weight: .bold)).foregroundStyle(Palette.muted)
+                    }.padding(12).background(Palette.card, in: RoundedRectangle(cornerRadius: 16)).overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.line, lineWidth: 1))
+                }.buttonStyle(.plain)
             }
-            Button { showCloud = true } label: { HStack(spacing: 6) { Image(systemName: "plus.circle.fill"); Text("See all cloud services") }.font(.system(size: 11, weight: .semibold)).foregroundStyle(Palette.green).padding(.vertical, 4) }
         }
     }
 
@@ -252,28 +256,16 @@ struct HomeView: View {
     private var cloudSheet: some View {
         NavigationStack {
             List {
-                if let provider = store.selectedProvider {
-                    if provider.id == "melcloud" {
-                        Section("Connect MELCloud") {
-                            TextField("Email", text: $melCloudEmail).textInputAutocapitalization(.never).keyboardType(.emailAddress).autocorrectionDisabled()
-                            SecureField("Password", text: $melCloudPassword)
-                            Button {
-                                isConnectingMELCloud = true
-                                Task { await store.connectMELCloud(email: melCloudEmail, password: melCloudPassword); melCloudPassword = ""; isConnectingMELCloud = false }
-                            } label: { if isConnectingMELCloud { ProgressView() } else { Text("Connect account") } }.disabled(isConnectingMELCloud || melCloudEmail.isEmpty || melCloudPassword.isEmpty)
-                            if MELCloudClassicAdapter.storedSession() != nil || store.devices.contains(where: { $0.brand == "MELCloud" }) { Button("Disconnect MELCloud", role: .destructive) { store.disconnectMELCloud() } }
-                            Text("Your password is sent directly to Mitsubishi Electric's MELCloud service and is not saved by Klimat. The session key is stored in the iOS Keychain. Cloud control requires internet.").font(.caption).foregroundStyle(Palette.muted)
-                        }
-                    } else {
-                        Section { CloudConnectNotice(provider: provider) { store.connectCloud(provider: provider) } }
-                    }
+                Section("Connect MELCloud") {
+                    TextField("Email", text: $melCloudEmail).textInputAutocapitalization(.never).keyboardType(.emailAddress).autocorrectionDisabled()
+                    SecureField("Password", text: $melCloudPassword)
+                    Button {
+                        isConnectingMELCloud = true
+                        Task { await store.connectMELCloud(email: melCloudEmail, password: melCloudPassword); melCloudPassword = ""; isConnectingMELCloud = false }
+                    } label: { if isConnectingMELCloud { ProgressView() } else { Text("Connect account") } }.disabled(isConnectingMELCloud || melCloudEmail.isEmpty || melCloudPassword.isEmpty)
+                    if MELCloudClassicAdapter.storedSession() != nil || store.devices.contains(where: { $0.brand == "MELCloud" }) { Button("Disconnect MELCloud", role: .destructive) { store.disconnectMELCloud() } }
+                    Text("Your MELCloud password is sent directly to Mitsubishi Electric and is not stored by Klimat. Its session token stays in the iOS Keychain. Cloud control needs internet; direct local control does not use MELCloud.").font(.caption).foregroundStyle(Palette.muted)
                 }
-                Section("Choose a manufacturer") {
-                    ForEach(store.providers) { provider in
-                        Button { store.selectedProvider = provider } label: { HStack(spacing: 12) { Image(systemName: "cloud").foregroundStyle(Palette.green).frame(width: 28); VStack(alignment: .leading, spacing: 3) { Text(provider.title).foregroundStyle(Palette.ink); Text(provider.detail).font(.caption).foregroundStyle(Palette.muted) }; Spacer(); if store.selectedProvider?.id == provider.id { Image(systemName: "checkmark.circle.fill").foregroundStyle(Palette.green) } } }
-                    }
-                }
-                Section { Text("MELCloud Classic sign-in is available above. Other manufacturer cloud services are previews and cannot connect yet.").font(.caption).foregroundStyle(Palette.muted) }
             }.scrollContentBackground(.hidden).background(Palette.background).navigationTitle("Cloud service").navigationBarTitleDisplayMode(.inline).toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Done") { showCloud = false }.foregroundStyle(Palette.green) } }
         }.presentationDetents([.medium, .large]).onDisappear { melCloudPassword = "" }
     }
@@ -345,18 +337,6 @@ struct HomeView: View {
             .navigationTitle("Settings").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Done") { showSettings = false }.foregroundStyle(Palette.green) } }
         }.presentationDetents([.large])
-    }
-}
-
-private struct CloudConnectNotice: View {
-    let provider: CloudProvider
-    let onConnect: () -> Void
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(provider.title).font(.system(size: 18, weight: .bold, design: .rounded)).foregroundStyle(Palette.ink)
-            Text("Cloud control requires connecting Klimat to the manufacturer’s API. This feature is not enabled in this version.").font(.system(size: 12)).foregroundStyle(Palette.muted)
-            Button(action: onConnect) { Text("Check connection") }.buttonStyle(PrimaryButtonStyle())
-        }.padding(.vertical, 8)
     }
 }
 

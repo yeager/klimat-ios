@@ -25,7 +25,6 @@ struct CloudProvider: Identifiable {
     let title: String
     let detail: String
     let symbol: String
-    let color: String
 }
 
 @MainActor final class ClimateStore: ObservableObject {
@@ -42,13 +41,7 @@ struct CloudProvider: Identifiable {
     private var appleHome: HomeKitClimateAdapter?
 
     let providers: [CloudProvider] = [
-        .init(id: "melcloud", title: "MELCloud", detail: "Mitsubishi Electric", symbol: "cloud", color: "#4A8069"),
-        .init(id: "lg", title: "LG ThinQ", detail: "LG air conditioning", symbol: "cloud", color: "#B44B68"),
-        .init(id: "panasonic", title: "Panasonic Comfort Cloud", detail: "Panasonic", symbol: "cloud", color: "#4269A2"),
-        .init(id: "smartthings", title: "SmartThings", detail: "Samsung", symbol: "cloud", color: "#3972C6"),
-        .init(id: "toshiba", title: "Toshiba Lifestyle", detail: "Toshiba", symbol: "cloud", color: "#B04D4D"),
-        .init(id: "gree", title: "Gree", detail: "Gree Cloud", symbol: "cloud", color: "#458A6A"),
-        .init(id: "midea", title: "Midea", detail: "Midea Air", symbol: "cloud", color: "#D27A42")
+        .init(id: "melcloud", title: "MELCloud", detail: "Mitsubishi Electric", symbol: "cloud")
     ]
 
     init() {
@@ -248,9 +241,6 @@ struct CloudProvider: Identifiable {
                 ? String(localized: "No compatible direct AC adapters found on this Wi-Fi network. You can enter an adapter IP address manually.")
                 : String(localized: "Found \(found.count) compatible AC adapter(s) on this Wi-Fi network.")
         }
-    }
-    func connectCloud(provider: CloudProvider) {
-        connectionNotice = String(localized: "\(provider.title) requires a manufacturer adapter. No sign-in was performed.")
     }
     private static func modeName(_ mode: Int) -> String { [0: "Auto", 8: "Auto", 1: "Heat", 2: "Dry", 3: "Cool", 7: "Fan"][mode] ?? "Auto" }
     private static func fanName(_ speed: Int) -> String { [0: "Auto", 1: "Low", 2: "Low", 3: "Medium", 4: "High", 5: "High"][speed] ?? "Auto" }

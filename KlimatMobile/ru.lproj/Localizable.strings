@@ -91,3 +91,11 @@
 "No analytics or tracking. Direct control stays on your local network." = "Нет аналитики и отслеживания. Прямое управление работает в локальной сети.";
 "Privacy policy" = "Политика конфиденциальности";
 "Open-source code" = "Открытый исходный код";
+
+/* Optional MELCloud connection and privacy disclosure. */
+"Connect MELCloud" = "Подключить MELCloud";
+"Email" = "Электронная почта";
+"Password" = "Пароль";
+"Connect account" = "Подключить аккаунт";
+"Disconnect MELCloud" = "Отключить MELCloud";
+"Your MELCloud password is sent directly to Mitsubishi Electric and is not stored by Klimat. Its session token stays in the iOS Keychain. Cloud control needs internet; direct local control does not use MELCloud." = "Пароль MELCloud отправляется напрямую в Mitsubishi Electric и не сохраняется в Klimat. Токен сеанса хранится в Связке ключей iOS. Для управления через облако нужен интернет; прямое локальное управление не использует MELCloud.";
