@@ -10,6 +10,7 @@
 		0D47C910C8EC697A9BE6CA4E /* MitsubishiLocalAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408D2FB78DC1B9CB8E8D7C8C /* MitsubishiLocalAdapter.swift */; };
 		0DFC8E060EF5C525DE187424 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C34D732D0484F658C366BDC0 /* InfoPlist.strings */; };
 		12E146F4B4DC0F9E04BA664A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D70D7BCBE207747C1163F814 /* Localizable.strings */; };
+		13EE85422576727701EB0F70 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A9FDE5D400610B571A5272C7 /* PrivacyInfo.xcprivacy */; };
 		1BE33B4E69A3B6C94C48A7B1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E04459B793FE7BC27D50A3B /* InfoPlist.strings */; };
 		21A73FE08B1DCF091D33D9D2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3BC13866FA5BDBFC56CB863A /* InfoPlist.strings */; };
 		253E319E4735BC923AC0D466 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C0464FA4C219A7CBF35B0AD8 /* Localizable.strings */; };
@@ -93,6 +94,7 @@
 		9B0BB0CF76862E6AB745CC21 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9D16E72BD73C970A26093310 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A89E4CDBDE1AE02444F69394 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A9FDE5D400610B571A5272C7 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AB15F1B3E7622E02C0A37BC7 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ta.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B5A15104394405A319833A5D /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BBDC13EF4B802B14859B85E3 /* MELCloudClassicAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MELCloudClassicAdapter.swift; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 				014A5A1037126ECFF46A16B2 /* Localizable.strings */,
 				BBDC13EF4B802B14859B85E3 /* MELCloudClassicAdapter.swift */,
 				408D2FB78DC1B9CB8E8D7C8C /* MitsubishiLocalAdapter.swift */,
+				A9FDE5D400610B571A5272C7 /* PrivacyInfo.xcprivacy */,
 			);
 			path = KlimatMobile;
 			sourceTree = "<group>";
@@ -308,6 +311,7 @@
 				D4FCB52612CC7BFB352E25C9 /* Localizable.strings in Resources */,
 				39AE9D99DE39544404289D03 /* Localizable.strings in Resources */,
 				82F00BC4DE2007BED585BE7A /* Localizable.strings in Resources */,
+				13EE85422576727701EB0F70 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,7 +368,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -405,7 +409,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = se.yeager.klimat.ios;
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -443,7 +447,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -491,7 +495,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = se.yeager.klimat.ios;
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
