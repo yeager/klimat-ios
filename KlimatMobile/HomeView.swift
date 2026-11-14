@@ -26,6 +26,9 @@ struct HomeView: View {
     @State private var showManual = false
     @State private var ipAddress = ""
     @State private var manualBrand = "Daikin"
+    @State private var melCloudEmail = ""
+    @State private var melCloudPassword = ""
+    @State private var isConnectingMELCloud = false
     @State private var roomName = "Luftkonditionering"
     @State private var showSettings = false
     @State private var isUnlocked = false
@@ -139,7 +142,7 @@ struct HomeView: View {
     }
 
     private func deviceCard(_ device: ClimateDevice) -> some View {
-        let canControl = (["Daikin", "Mitsubishi Electric"].contains(device.brand) && device.host != nil) || (device.brand == "Apple Home" && device.homeServiceID != nil)
+        let canControl = (["Daikin", "Mitsubishi Electric"].contains(device.brand) && device.host != nil) || (device.brand == "Apple Home" && device.homeServiceID != nil) || (device.brand == "MELCloud" && device.remoteID != nil)
         return VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 5) {
@@ -175,7 +178,7 @@ struct HomeView: View {
             HStack {
                 Label("Fan speed", systemImage: "wind").font(.system(size: 12, weight: .medium)).foregroundStyle(Palette.ink)
                 Spacer()
-                if ["Daikin", "Mitsubishi Electric"].contains(device.brand) { Menu { ForEach(["Auto", "Low", "Medium", "High"], id: \.self) { fan in Button(LocalizedStringKey(fan)) { Task { await store.command(action: "fan", value: fan) } } } } label: { HStack(spacing: 5) { Text(LocalizedStringKey(device.fan)).font(.system(size: 12, weight: .semibold)); Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold)) }.foregroundStyle(Palette.green).padding(.vertical, 9).padding(.horizontal, 11).background(Palette.wash, in: Capsule()) }.disabled(!canControl) }
+                if ["Daikin", "Mitsubishi Electric", "MELCloud"].contains(device.brand) { Menu { ForEach(["Auto", "Low", "Medium", "High"], id: \.self) { fan in Button(LocalizedStringKey(fan)) { Task { await store.command(action: "fan", value: fan) } } } } label: { HStack(spacing: 5) { Text(LocalizedStringKey(device.fan)).font(.system(size: 12, weight: .semibold)); Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold)) }.foregroundStyle(Palette.green).padding(.vertical, 9).padding(.horizontal, 11).background(Palette.wash, in: Capsule()) }.disabled(!canControl) }
             }.padding(.top, 15)
             if !canControl { Text("No verified local adapter is available for this device yet.").font(.system(size: 10)).foregroundStyle(Palette.muted).padding(.top, 8) }
         }
@@ -250,16 +253,29 @@ struct HomeView: View {
         NavigationStack {
             List {
                 if let provider = store.selectedProvider {
-                    Section { CloudConnectNotice(provider: provider) { store.connectCloud(provider: provider) } }
+                    if provider.id == "melcloud" {
+                        Section("Connect MELCloud") {
+                            TextField("Email", text: $melCloudEmail).textInputAutocapitalization(.never).keyboardType(.emailAddress).autocorrectionDisabled()
+                            SecureField("Password", text: $melCloudPassword)
+                            Button {
+                                isConnectingMELCloud = true
+                                Task { await store.connectMELCloud(email: melCloudEmail, password: melCloudPassword); melCloudPassword = ""; isConnectingMELCloud = false }
+                            } label: { if isConnectingMELCloud { ProgressView() } else { Text("Connect account") } }.disabled(isConnectingMELCloud || melCloudEmail.isEmpty || melCloudPassword.isEmpty)
+                            if MELCloudClassicAdapter.storedSession() != nil || store.devices.contains(where: { $0.brand == "MELCloud" }) { Button("Disconnect MELCloud", role: .destructive) { store.disconnectMELCloud() } }
+                            Text("Your password is sent directly to Mitsubishi Electric's MELCloud service and is not saved by Klimat. The session key is stored in the iOS Keychain. Cloud control requires internet.").font(.caption).foregroundStyle(Palette.muted)
+                        }
+                    } else {
+                        Section { CloudConnectNotice(provider: provider) { store.connectCloud(provider: provider) } }
+                    }
                 }
                 Section("Choose a manufacturer") {
                     ForEach(store.providers) { provider in
                         Button { store.selectedProvider = provider } label: { HStack(spacing: 12) { Image(systemName: "cloud").foregroundStyle(Palette.green).frame(width: 28); VStack(alignment: .leading, spacing: 3) { Text(provider.title).foregroundStyle(Palette.ink); Text(provider.detail).font(.caption).foregroundStyle(Palette.muted) }; Spacer(); if store.selectedProvider?.id == provider.id { Image(systemName: "checkmark.circle.fill").foregroundStyle(Palette.green) } } }
                     }
                 }
-                Section { Text("Manufacturer connections are listed here as a preview. Cloud sign-in and control are not enabled in this version.").font(.caption).foregroundStyle(Palette.muted) }
+                Section { Text("MELCloud Classic sign-in is available above. Other manufacturer cloud services are previews and cannot connect yet.").font(.caption).foregroundStyle(Palette.muted) }
             }.scrollContentBackground(.hidden).background(Palette.background).navigationTitle("Cloud service").navigationBarTitleDisplayMode(.inline).toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Done") { showCloud = false }.foregroundStyle(Palette.green) } }
-        }.presentationDetents([.medium, .large])
+        }.presentationDetents([.medium, .large]).onDisappear { melCloudPassword = "" }
     }
 
     private var manualSheet: some View {
@@ -303,7 +319,7 @@ struct HomeView: View {
                     Text(faceIDAvailable ? "Use Face ID to unlock Klimat when you reopen the app." : "Face ID is unavailable on this device.").font(.caption).foregroundStyle(Palette.muted)
                 }
                 Section("About Klimat") { LabeledContent("App", value: "Klimat"); LabeledContent("Version", value: "0.1.0"); Link(destination: URL(string: "https://github.com/yeager/klimat")!) { Label("Open source on GitHub", systemImage: "arrow.up.right.square") }.foregroundStyle(Palette.green) }
-                Section { Button(role: .destructive) { store.devices.removeAll(); store.selectedID = nil; store.save(); showSettings = false } label: { Label("Remove all devices", systemImage: "trash") } }
+                Section { Button(role: .destructive) { store.disconnectMELCloud(); store.devices.removeAll(); store.selectedID = nil; store.save(); showSettings = false } label: { Label("Remove all devices", systemImage: "trash") } }
             }
             .scrollContentBackground(.hidden).background(Palette.background)
             .navigationTitle("Settings").navigationBarTitleDisplayMode(.inline)

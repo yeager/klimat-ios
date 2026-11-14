@@ -26,7 +26,7 @@ You can also add supported thermostats and heating and cooling services already 
 
 Compatibility depends on the adapter model, firmware, and the climate controls exposed by Apple Home. Network search checks the local Wi-Fi subnet for supported adapters. You can also enter an adapter’s IP address manually.
 
-Klimat currently supports the compatible local Daikin adapter and Apple Home integrations described above. Other manufacturer cloud services and local protocols are not yet available.
+Klimat supports compatible local Daikin adapters and Apple Home climate integrations. Direct Daikin control continues to work on your local Wi-Fi network without an internet connection.
 
 **Keywords**  
 air conditioner,AC control,Daikin,climate,thermostat,local control,HomeKit,temperature,HVAC

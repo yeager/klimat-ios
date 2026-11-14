@@ -26,4 +26,4 @@ Target coverage is English plus these 20 widely used App Store languages, and Sw
 - Persian (`fa`)
 - Swedish (`sv-SE`)
 
-The app and store copy currently cover English, Swedish, Spanish, French, German, Simplified Chinese, Hindi, Arabic, Brazilian Portuguese, Japanese, Bengali, Russian, Indonesian, Turkish, Urdu, Marathi, Telugu, Tamil, Vietnamese, Korean, Italian, and Persian (22 of the requested 22 locales). Store copy describes current verified app capabilities: direct control of compatible legacy Daikin local HTTP adapters and Apple Home climate services. It does not claim that the listed cloud providers or other local protocols are implemented.
+The app and store copy currently cover English, Swedish, Spanish, French, German, Simplified Chinese, Hindi, Arabic, Brazilian Portuguese, Japanese, Bengali, Russian, Indonesian, Turkish, Urdu, Marathi, Telugu, Tamil, Vietnamese, Korean, Italian, and Persian (22 of the requested 22 locales). The listings lead with direct control of compatible legacy Daikin local HTTP adapters and Apple Home climate services. They do not yet advertise MELCloud or Mitsubishi local control, pending verification on physical equipment.

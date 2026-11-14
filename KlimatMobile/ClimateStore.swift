@@ -14,6 +14,8 @@ struct ClimateDevice: Identifiable, Codable, Equatable {
     var fan: String
     var host: String?
     var homeServiceID: String? = nil
+    var remoteID: Int? = nil
+    var remoteBuildingID: Int? = nil
 }
 
 struct CloudProvider: Identifiable {
@@ -81,7 +83,34 @@ struct CloudProvider: Identifiable {
             selectedID = device.id; save()
         } catch { connectionNotice = error.localizedDescription }
     }
+    func connectMELCloud(email: String, password: String) async {
+        do {
+            let (_, records) = try await MELCloudClassicAdapter.signIn(email: email, password: password)
+            let cloudDevices = records.map { record in
+                ClimateDevice(id: "melcloud-\(record.deviceID)", name: record.name, brand: "MELCloud", connection: "MELCloud · Mitsubishi Electric", isOn: record.power, current: record.roomTemperature, target: record.setTemperature, mode: Self.modeName(record.operationMode), fan: Self.fanName(record.fanSpeed), host: nil, homeServiceID: nil, remoteID: record.deviceID, remoteBuildingID: record.buildingID)
+            }
+            devices.removeAll { $0.brand == "MELCloud" }
+            devices.append(contentsOf: cloudDevices)
+            selectedID = cloudDevices.first?.id ?? selectedID
+            save()
+            if cloudDevices.isEmpty { connectionNotice = String(localized: "No supported air conditioners were found in this MELCloud account.") }
+        } catch { connectionNotice = error.localizedDescription }
+    }
+    func disconnectMELCloud() {
+        MELCloudClassicAdapter.clearSession()
+        devices.removeAll { $0.brand == "MELCloud" }
+        if selectedID?.hasPrefix("melcloud-") == true { selectedID = devices.first?.id }
+        save()
+    }
     func command(action: String, value: String? = nil, number: Double? = nil) async {
+        if let device = selected, device.brand == "MELCloud" {
+            do {
+                let state = try await MELCloudClassicAdapter.command(device: device, action: action, value: value, number: number)
+                guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
+                devices[index].isOn = state.power; devices[index].current = state.roomTemperature; devices[index].target = state.setTemperature; devices[index].mode = Self.modeName(state.operationMode); devices[index].fan = Self.fanName(state.fanSpeed); save()
+            } catch { connectionNotice = error.localizedDescription }
+            return
+        }
         if let device = selected, device.brand == "Apple Home", let serviceID = device.homeServiceID {
             do {
                 let state = try await appleHome.command(serviceID: serviceID, action: action, value: value, number: number)
@@ -158,6 +187,8 @@ struct CloudProvider: Identifiable {
     func connectCloud(provider: CloudProvider) {
         connectionNotice = String(localized: "\(provider.title) requires a manufacturer adapter. No sign-in was performed.")
     }
+    private static func modeName(_ mode: Int) -> String { [0: "Auto", 8: "Auto", 1: "Heat", 2: "Dry", 3: "Cool", 7: "Fan"][mode] ?? "Auto" }
+    private static func fanName(_ speed: Int) -> String { [0: "Auto", 1: "Low", 2: "Low", 3: "Medium", 4: "High", 5: "High"][speed] ?? "Auto" }
 }
 
 @MainActor private final class HomeKitClimateAdapter: NSObject, HMHomeManagerDelegate {

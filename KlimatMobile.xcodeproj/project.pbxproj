@@ -20,6 +20,7 @@
 		393CC74E5CF35A9D11FAE37D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7023635AE9FEF93D620324B0 /* Localizable.strings */; };
 		39AE9D99DE39544404289D03 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0CEED6BC60316058B39DAD16 /* Localizable.strings */; };
 		3B00F1D3372ACBD35D3BE88A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3DB7ED30992E5CB3E142F53B /* InfoPlist.strings */; };
+		3D68C1F6AE54E84EB18F961F /* MELCloudClassicAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBDC13EF4B802B14859B85E3 /* MELCloudClassicAdapter.swift */; };
 		42D8C6F2F963373250D92193 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0192E5AE7483089097C2549E /* InfoPlist.strings */; };
 		438A0F3539F1166D39CC1F11 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 32AB0C76F05A7C200C396B88 /* InfoPlist.strings */; };
 		4C49AFDEB2F71D743F1EBE95 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 014A5A1037126ECFF46A16B2 /* Localizable.strings */; };
@@ -93,6 +94,7 @@
 		A89E4CDBDE1AE02444F69394 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		AB15F1B3E7622E02C0A37BC7 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ta.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B5A15104394405A319833A5D /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		BBDC13EF4B802B14859B85E3 /* MELCloudClassicAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MELCloudClassicAdapter.swift; sourceTree = "<group>"; };
 		BE16B312BC7FDE3906756D02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C0464FA4C219A7CBF35B0AD8 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C178A565B33BE0ADE239A9C7 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = id.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 				D70D7BCBE207747C1163F814 /* Localizable.strings */,
 				7023635AE9FEF93D620324B0 /* Localizable.strings */,
 				014A5A1037126ECFF46A16B2 /* Localizable.strings */,
+				BBDC13EF4B802B14859B85E3 /* MELCloudClassicAdapter.swift */,
 				408D2FB78DC1B9CB8E8D7C8C /* MitsubishiLocalAdapter.swift */,
 			);
 			path = KlimatMobile;
@@ -315,6 +318,7 @@
 				38844AD6F18277AC55B3F54D /* ClimateStore.swift in Sources */,
 				D5D7ADA3E36D933EF35A0905 /* HomeView.swift in Sources */,
 				B7A5B9AE67A9B2E9A4DF1AE0 /* KlimatApp.swift in Sources */,
+				3D68C1F6AE54E84EB18F961F /* MELCloudClassicAdapter.swift in Sources */,
 				0D47C910C8EC697A9BE6CA4E /* MitsubishiLocalAdapter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
