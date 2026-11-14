@@ -6,6 +6,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
     TARGETED_DEVICE_FAMILY: "1"
     INFOPLIST_KEY_CFBundleDisplayName: Klimat
     INFOPLIST_KEY_NSLocalNetworkUsageDescription: Klimat searches your local Wi-Fi network for compatible air conditioners.
@@ -22,4 +24,3 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: se.yeager.klimat.ios
         INFOPLIST_FILE: KlimatMobile/Info.plist
         CODE_SIGN_ENTITLEMENTS: KlimatMobile/KlimatMobile.entitlements
-        CODE_SIGNING_ALLOWED: NO

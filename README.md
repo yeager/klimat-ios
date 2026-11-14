@@ -18,4 +18,10 @@ Vilka Daikin- och Mitsubishi-modeller som fungerar beror på Wi-Fi-adaptern och 
 
 ## Kvar före försäljning
 
-Nästa lokala adaptrar att lägga till är Midea/Comfee och Gree. Därefter behövs bredare protokollspecifik sökning, verifiering av Mitsubishi LAN och MELCloud på riktig iPhone och fysisk AC-hårdvara, signering samt App Store Connect-metadata. För priset 39 kr ska kontoinnehavaren godkänna Apples avtal för betalappar och välja pris i App Store Connect.
+Nästa lokala adapter bör vara Gree eftersom den kan bindas och styras över LAN utan Midea-liknande molnnyckel. Därefter behövs bredare protokollspecifik sökning, verifiering av Mitsubishi LAN och MELCloud på riktig iPhone och fysisk AC-hårdvara, signering samt App Store Connect-metadata. För priset 39 kr ska kontoinnehavaren godkänna Apples avtal för betalappar och välja pris i App Store Connect.
+
+## Fler lokala apparater
+
+Gree och kompatibla ommärkta enheter är en stark kandidat för nästa direktprotokoll. De använder ett lokalt UDP-protokoll på port 7000 med AES-baserad bindning och status-/kommandotrafik. Den MIT-licensierade referensen `gree-climate` beskriver lokal sökning och styrning; dess bindningsflöde behöver verifieras mot verkliga enheter innan stöd annonseras. [Gree-protokollbibliotek](https://github.com/thesmokinator/gree-climate) · [Gree-enhetsmanual](https://www.greecomfort.com/assets/our-products/vireo-r32/documents/vireo-r32-service-manual-a.pdf).
+
+Midea/Comfee och flera ommärkta märken har också LAN-styrning, men dokumenterade Midea-flöden hämtar normalt en enhetsspecifik token/nyckel från Mideas moln vid första parkopplingen. Därför prioriteras det efter ett helt lokalt Gree-flöde, om inte enheten kan provisioneras utan moln. [Midea LAN-projektets parkopplings- och nyckeldokumentation](https://github.com/midea-lan/midea-local#finding-your-device).

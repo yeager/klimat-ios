@@ -326,7 +326,11 @@ struct HomeView: View {
                     }.disabled(!faceIDAvailable)
                     Text(faceIDAvailable ? "Use Face ID to unlock Klimat when you reopen the app." : "Face ID is unavailable on this device.").font(.caption).foregroundStyle(Palette.muted)
                 }
-                Section("About Klimat") { LabeledContent("App", value: "Klimat"); LabeledContent("Version", value: "0.1.0"); Link(destination: URL(string: "https://github.com/yeager/klimat-ios")!) { Label("Open source on GitHub", systemImage: "arrow.up.right.square") }.foregroundStyle(Palette.green) }
+                Section("About Klimat") {
+                    LabeledContent("App", value: "Klimat")
+                    LabeledContent("Version", value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—")
+                    LabeledContent("Build", value: Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—")
+                }
                 Section { Button(role: .destructive) { store.disconnectMELCloud(); store.devices.removeAll(); store.selectedID = nil; store.save(); showSettings = false } label: { Label("Remove all devices", systemImage: "trash") } }
             }
             .scrollContentBackground(.hidden).background(Palette.background)
