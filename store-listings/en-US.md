@@ -24,7 +24,7 @@ You can also add supported thermostats and heating and cooling services already 
 - Import supported climate services from Apple Home
 - Keep device connection details on your iPhone
 
-Compatibility depends on the adapter model, firmware, and the climate controls exposed by Apple Home. Network discovery can find devices that advertise Bonjour; many air conditioner adapters do not, so manual IP entry may be needed.
+Compatibility depends on the adapter model, firmware, and the climate controls exposed by Apple Home. Network search checks the local Wi-Fi subnet for supported adapters. You can also enter an adapter’s IP address manually.
 
 Klimat currently supports the compatible local Daikin adapter and Apple Home integrations described above. Other manufacturer cloud services and local protocols are not yet available.
 

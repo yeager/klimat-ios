@@ -24,7 +24,7 @@ Du kan också lägga till termostater och värme-/kylreglage som redan har konfi
 - Hämta klimatreglage som stöds från Apple Home
 - Spara anslutningsuppgifter på din iPhone
 
-Kompatibiliteten beror på adaptermodell, firmware och vilka klimatreglage Apple Home-tillbehören erbjuder. Nätverkssökningen hittar enheter som annonserar via Bonjour. Många AC-adaptrar gör inte det, så du kan behöva ange IP-adressen manuellt.
+Kompatibiliteten beror på adaptermodell, firmware och vilka klimatreglage Apple Home-tillbehören erbjuder. Nätverkssökningen söker igenom det lokala Wi-Fi-nätet efter adaptrar med protokoll som stöds. Du kan också ange adapterns IP-adress manuellt.
 
 Klimat stöder för närvarande den kompatibla lokala Daikin-adaptern och Apple Home enligt beskrivningen ovan. Molntjänster från andra tillverkare och fler lokala protokoll är ännu inte tillgängliga.
 
