@@ -75,7 +75,7 @@
 "This operating mode is not supported by the Apple Home device." = "Apple Home ডিভাইস এই পরিচালন পদ্ধতি সমর্থন করে না।";
 "Power control is not supported by the Apple Home device." = "Apple Home ডিভাইস পাওয়ার নিয়ন্ত্রণ সমর্থন করে না।";
 "Fan speed cannot be controlled through Apple Home for this device." = "এই ডিভাইসের ফ্যানের গতি Apple Home দিয়ে নিয়ন্ত্রণ করা যায় না।";
-"Scanning this Wi-Fi network for compatible Daikin, Mitsubishi and Gree adapters…" = "এই Wi‑Fi নেটওয়ার্কে সামঞ্জস্যপূর্ণ Daikin, Mitsubishi ও Gree অ্যাডাপ্টার খোঁজা হচ্ছে…";
+"Scanning this Wi-Fi network for compatible Daikin, Mitsubishi, Gree and Midea adapters…" = "এই Wi‑Fi নেটওয়ার্কে সামঞ্জস্যপূর্ণ Daikin, Mitsubishi, Gree ও Midea অ্যাডাপ্টার খোঁজা হচ্ছে…";
 "Could not determine the Wi-Fi subnet. Enter the adapter IP address instead." = "Wi-Fi সাবনেট নির্ধারণ করা যায়নি। পরিবর্তে অ্যাডাপ্টারের IP ঠিকানা লিখুন।";
 "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually." = "এই Wi-Fi নেটওয়ার্কে সামঞ্জস্যপূর্ণ Daikin অ্যাডাপ্টার পাওয়া যায়নি। IP ঠিকানা নিজে লিখতে পারেন।";
 "Found %lld compatible Daikin adapter(s) on this Wi-Fi network." = "এই Wi-Fi নেটওয়ার্কে %lldটি সামঞ্জস্যপূর্ণ Daikin অ্যাডাপ্টার পাওয়া গেছে।";

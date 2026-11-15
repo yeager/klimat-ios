@@ -76,7 +76,7 @@
 "Power control is not supported by the Apple Home device." = "Apple Home-enheten stöder inte strömreglaget.";
 "Fan speed cannot be controlled through Apple Home for this device." = "Fläkthastigheten kan inte styras via Apple Home för den här enheten.";
 
-"Scanning this Wi-Fi network for compatible Daikin, Mitsubishi and Gree adapters…" = "Söker på det här Wi‑Fi-nätverket efter kompatibla Daikin-, Mitsubishi- och Gree-adaptrar…";
+"Scanning this Wi-Fi network for compatible Daikin, Mitsubishi, Gree and Midea adapters…" = "Söker på det här Wi‑Fi-nätverket efter kompatibla Daikin-, Mitsubishi-, Gree- och Midea-adaptrar…";
 "Could not determine the Wi-Fi subnet. Enter the adapter IP address instead." = "Det gick inte att hitta Wi-Fi-nätets adressintervall. Ange adapterns IP-adress i stället.";
 "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually." = "Inga kompatibla Daikin-adaptrar hittades på det här Wi-Fi-nätverket. Du kan ange adapterns IP-adress manuellt.";
 "Found %lld compatible Daikin adapter(s) on this Wi-Fi network." = "Hittade %lld kompatibla Daikin-adaptrar på det här Wi-Fi-nätverket.";

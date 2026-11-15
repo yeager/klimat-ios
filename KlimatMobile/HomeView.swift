@@ -148,7 +148,7 @@ struct HomeView: View {
     }
 
     private func deviceCard(_ device: ClimateDevice) -> some View {
-        let canControl = (["Daikin", "Mitsubishi Electric", "Gree"].contains(device.brand) && device.host != nil) || (device.brand == "Apple Home" && device.homeServiceID != nil) || (device.brand == "MELCloud" && device.remoteID != nil)
+        let canControl = (["Daikin", "Mitsubishi Electric", "Gree", "Midea"].contains(device.brand) && device.host != nil) || (device.brand == "Apple Home" && device.homeServiceID != nil) || (device.brand == "MELCloud" && device.remoteID != nil)
         return VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 5) {
@@ -195,7 +195,7 @@ struct HomeView: View {
             HStack {
                 Label("Fan speed", systemImage: "wind").font(.system(size: 12, weight: .medium)).foregroundStyle(Palette.ink)
                 Spacer()
-                if ["Daikin", "Mitsubishi Electric", "Gree", "MELCloud"].contains(device.brand) { Menu { ForEach(["Auto", "Low", "Medium", "High"], id: \.self) { fan in Button(LocalizedStringKey(fan)) { Task { await store.command(action: "fan", value: fan) } } } } label: { HStack(spacing: 5) { Text(LocalizedStringKey(device.fan)).font(.system(size: 12, weight: .semibold)); Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold)) }.foregroundStyle(Palette.green).padding(.vertical, 9).padding(.horizontal, 11).background(Palette.wash, in: Capsule()) }.disabled(!canControl) }
+                if ["Daikin", "Mitsubishi Electric", "Gree", "Midea", "MELCloud"].contains(device.brand) { Menu { ForEach(["Auto", "Low", "Medium", "High"], id: \.self) { fan in Button(LocalizedStringKey(fan)) { Task { await store.command(action: "fan", value: fan) } } } } label: { HStack(spacing: 5) { Text(LocalizedStringKey(device.fan)).font(.system(size: 12, weight: .semibold)); Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold)) }.foregroundStyle(Palette.green).padding(.vertical, 9).padding(.horizontal, 11).background(Palette.wash, in: Capsule()) }.disabled(!canControl) }
             }.padding(.top, 15)
             if device.brand == "Mitsubishi Electric", let verticalVane = device.verticalVane, let horizontalVane = device.horizontalVane {
                 HStack(spacing: 12) {
@@ -312,18 +312,19 @@ struct HomeView: View {
         NavigationStack {
             Form {
                 Section("Local AC adapter") {
-                    Picker("Manufacturer", selection: $manualBrand) { Text("Daikin").tag("Daikin"); Text("Mitsubishi Electric").tag("Mitsubishi Electric"); Text("Gree").tag("Gree") }
+                    Picker("Manufacturer", selection: $manualBrand) { Text("Daikin").tag("Daikin"); Text("Mitsubishi Electric").tag("Mitsubishi Electric"); Text("Gree").tag("Gree"); Text("Midea (V2)").tag("Midea") }
                     TextField("Name", text: $roomName)
                     TextField("IP address, e.g. 192.168.1.42", text: $ipAddress).keyboardType(.numbersAndPunctuation).textInputAutocapitalization(.never).autocorrectionDisabled()
                 }
-                Section { Text(manualBrand == "Daikin" ? "Connect directly to a Daikin Wi-Fi adapter that supports the legacy local HTTP API. The AC and iPhone must be on the same network." : manualBrand == "Mitsubishi Electric" ? "Connect directly to a Mitsubishi MAC-577 Wi-Fi adapter. Control stays on your local network; the adapter's existing cloud setting is left unchanged." : "Connect directly to a compatible Gree Wi-Fi adapter over your local network. Internet and a Gree cloud account are not required.").font(.caption).foregroundStyle(Palette.muted) }
+                Section { Text(manualBrand == "Daikin" ? "Connect directly to a Daikin Wi-Fi adapter that supports the legacy local HTTP API. The AC and iPhone must be on the same network." : manualBrand == "Mitsubishi Electric" ? "Connect directly to a Mitsubishi MAC-577 Wi-Fi adapter. Control stays on your local network; the adapter's existing cloud setting is left unchanged." : manualBrand == "Gree" ? "Connect directly to a compatible Gree Wi-Fi adapter over your local network. Internet and a Gree cloud account are not required." : "Connect to a Midea device using local protocol V2. V3 devices that require a cloud-provisioned key are not supported.").font(.caption).foregroundStyle(Palette.muted) }
                 Section {
                     Button("Connect locally") {
                         Task {
                             let oldID = store.selectedID
                             if manualBrand == "Daikin" { await store.connectDaikin(host: ipAddress, name: roomName) }
                             else if manualBrand == "Mitsubishi Electric" { await store.connectMitsubishi(host: ipAddress, name: roomName) }
-                            else { await store.connectGree(host: ipAddress, name: roomName) }
+                            else if manualBrand == "Gree" { await store.connectGree(host: ipAddress, name: roomName) }
+                            else { await store.connectMidea(host: ipAddress, name: roomName) }
                             if store.selectedID != oldID { showManual = false }
                         }
                     }.foregroundStyle(Palette.green).disabled(ipAddress.isEmpty)

@@ -1,4 +1,19 @@
-# Klimat for iPhone
+# Klimat
+
+Klimat is an open-source iPhone app and Apple Watch companion for controlling compatible air conditioners. Its main feature is direct control over your local Wi-Fi network, without internet access or a cloud account, for supported adapters.
+
+For the full implementation guide, device compatibility boundaries, privacy/data flows, network restrictions, Watch behavior, build steps and current verification status, see [the technical overview](docs/TECHNICAL_OVERVIEW.md).
+
+## At a glance
+
+- **Direct local adapters:** Daikin legacy local HTTP, Mitsubishi MAC-577, Gree Smart Wi-Fi, and Midea protocol V2.
+- **Optional integrations:** MELCloud Classic cloud service and Apple Home.
+- **Apple Watch:** relays controls through the paired iPhone; the watch does not connect to AC hardware itself.
+- **Privacy:** no analytics, tracking, advertising, developer account, or developer-operated backend.
+- **Settings:** system/light/dark appearance, Celsius/Fahrenheit, and optional Face ID app lock.
+- **Platforms:** iOS 17+ and watchOS 10+.
+
+Compatibility depends on the exact adapter and firmware. The iPhone implementation for Mitsubishi, Gree, and Midea V2 still needs physical-device validation. MELCloud command control is also unverified. Do not treat simulator builds as hardware validation.
 
 Klimat is an open-source SwiftUI app for iOS 17 and later. Its English interface is localized into Swedish, Spanish, French, German, Simplified Chinese, Hindi, Arabic, Brazilian Portuguese, Japanese, Bengali, Russian, Indonesian, Turkish, Urdu, Marathi, Telugu, Tamil, Vietnamese, Korean, Italian, Polish, and Persian. App Store Connect storefront copy is available in English, Swedish, and 20 common languages; Persian storefront localization is not supported by App Store Connect.
 
@@ -12,7 +27,7 @@ Gitleaks scans the complete Git history on pushes, pull requests, and a daily sc
 
 ## Local device control
 
-Klimat searches the private IPv4 subnet used by the iPhone on Wi-Fi for compatible Daikin, Mitsubishi, and Gree adapters. Manually entered addresses must be on that same Wi-Fi subnet; public addresses, hostnames, and other networks are rejected. Daikin support covers adapters with the older local HTTP API. Mitsubishi support covers MAC-577 adapters with the local `/smart` interface and encrypted traffic, including vertical and horizontal vane controls when the adapter reports those positions. Gree support covers compatible Smart Wi-Fi modules using the Gree protocol on UDP port 7000; pairing happens locally and the device key is stored in the iOS Keychain. Power, temperature, mode, fan, and status are controlled over Wi-Fi without internet or cloud access. Mitsubishi and Gree protocol implementations are based on the references [pymitsubishi](https://github.com/pymitsubishi/pymitsubishi) and [gree-climate](https://github.com/thesmokinator/gree-climate); see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Klimat searches the private IPv4 subnet used by the iPhone on Wi-Fi for compatible adapters. See the [technical overview](docs/TECHNICAL_OVERVIEW.md#direct-discovery-and-network-boundary) for scan limits and protocol details.
 
 Klimat can also read and control compatible climate services that you have already added to Apple Home. Access is requested only when you select Apple Home. Available controls depend on the accessory.
 
@@ -22,11 +37,7 @@ MELCloud Classic is an optional cloud connection for Mitsubishi accounts and req
 
 The companion watchOS app shows the selected device's status and lets you switch devices, power, temperature, and mode. Watch Connectivity relays commands to the paired iPhone, which uses the existing device adapter. The watch can request a fresh read through that adapter and shows when its displayed status was last confirmed; while the phone or AC is unreachable it labels the saved reading as cached. For supported local adapters, status reads and AC commands stay on the local Wi-Fi network and do not need a cloud service or internet access. The iPhone must be reachable for live watch updates and commands. Temperature units follow the iPhone setting. The latest device state is shared only with the paired watch; Klimat has no developer backend, analytics, or tracking.
 
-Compatibility depends on the adapter, firmware, and protocol version. The desktop Klimat reference has been physically verified with two Mitsubishi MSZ-LN35VG2W units using MAC-577IF-2E, including status, temperature changes, and vane controls. The iPhone Swift port uses the same MAC-577 local HTTP protocol, but iPhone-specific hardware control still needs testing. The MELCloud iPhone integration has passed account sign-in and device enumeration for one account; no AC command was sent during that test, so command control remains unverified. Gree support still needs physical-device testing. Network discovery checks only the iPhone's private IPv4 Wi-Fi subnet, rejects subnets larger than 512 addresses, and is not a general scan for all AC brands.
-
-## Build
-
-Open `KlimatMobile.xcodeproj` in Xcode and build the `KlimatMobile` scheme. The project can also be generated from `project.yml` using XcodeGen.
+Compatibility depends on the adapter, firmware, and protocol version. The desktop Klimat reference has been physically verified with two Mitsubishi MSZ-LN35VG2W units using MAC-577IF-2E. The iPhone implementations for Mitsubishi, Gree and Midea V2 still need physical-device validation. MELCloud sign-in and device enumeration have passed for one account; no AC command was sent, so command control is unverified. See [verification and build guidance](docs/TECHNICAL_OVERVIEW.md#build-and-verification).
 
 ## License
 

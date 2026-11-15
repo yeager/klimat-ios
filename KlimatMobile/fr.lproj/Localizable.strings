@@ -75,7 +75,7 @@
 "This operating mode is not supported by the Apple Home device." = "Ce mode de fonctionnement n’est pas pris en charge par l’appareil Apple Home.";
 "Power control is not supported by the Apple Home device." = "La commande d’alimentation n’est pas prise en charge par l’appareil Apple Home.";
 "Fan speed cannot be controlled through Apple Home for this device." = "La vitesse du ventilateur ne peut pas être contrôlée via Apple Home pour cet appareil.";
-"Scanning this Wi-Fi network for compatible Daikin, Mitsubishi and Gree adapters…" = "Recherche d’adaptateurs Daikin, Mitsubishi et Gree compatibles sur ce réseau Wi‑Fi…";
+"Scanning this Wi-Fi network for compatible Daikin, Mitsubishi, Gree and Midea adapters…" = "Recherche d’adaptateurs Daikin, Mitsubishi, Gree et Midea compatibles sur ce réseau Wi‑Fi…";
 "Could not determine the Wi-Fi subnet. Enter the adapter IP address instead." = "Impossible de déterminer le sous-réseau Wi-Fi. Saisissez plutôt l’adresse IP de l’adaptateur.";
 "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually." = "Aucun adaptateur Daikin compatible trouvé sur ce réseau Wi-Fi. Vous pouvez saisir l’adresse IP manuellement.";
 "Found %lld compatible Daikin adapter(s) on this Wi-Fi network." = "%lld adaptateurs Daikin compatibles trouvés sur ce réseau Wi-Fi.";

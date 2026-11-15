@@ -18,6 +18,7 @@ struct ClimateDevice: Identifiable, Codable, Equatable {
     var remoteID: Int? = nil
     var remoteBuildingID: Int? = nil
     var localCipher: String? = nil
+    var localPort: UInt16? = nil
     var verticalVane: String? = nil
     var horizontalVane: String? = nil
     var statusUpdatedAt: Date? = nil
@@ -59,6 +60,9 @@ struct CloudProvider: Identifiable {
                 } else if device.brand == "MELCloud" {
                     device.minimumTarget = device.minimumTarget ?? 10
                     device.maximumTarget = device.maximumTarget ?? 31
+                } else if device.brand == "Midea" {
+                    device.minimumTarget = device.minimumTarget ?? 17
+                    device.maximumTarget = device.maximumTarget ?? 30
                 }
                 return device
             }
@@ -109,6 +113,24 @@ struct CloudProvider: Identifiable {
             guard GreeKeychain.save(key: state.key, cipher: state.cipher, mac: info.mac) else { throw GreeControlError.keychainUnavailable }
             let device = ClimateDevice(id: "gree-\(info.mac)", name: name.isEmpty ? info.name : name, brand: "Gree", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, localCipher: state.cipher.rawValue, statusUpdatedAt: Date())
             if let index = devices.firstIndex(where: { $0.id == device.id || $0.host == host }) { devices[index] = device } else { devices.append(device) }
+            selectedID = device.id
+            save()
+        } catch { connectionNotice = error.localizedDescription }
+    }
+    func connectMidea(host: String, name: String) async {
+        guard let host = LocalWiFiIPv4.validatedHost(host) else {
+            connectionNotice = String(localized: "Connection unavailable"); return
+        }
+        do {
+            let info = try await MideaLocalAdapter.discover(host: host)
+            let state = try await MideaLocalAdapter.read(info)
+            let device = ClimateDevice(id: "midea-\(info.id)", name: name.isEmpty ? (info.name.isEmpty ? "Midea AC" : info.name) : name,
+                                        brand: "Midea", connection: "Local network · \(host)",
+                                        isOn: state.isOn, current: state.current, target: state.target,
+                                        mode: state.mode, fan: state.fan, host: host, localPort: info.port,
+                                        statusUpdatedAt: Date(), minimumTarget: 17, maximumTarget: 30)
+            if let index = devices.firstIndex(where: { $0.id == device.id || $0.host == host }) { devices[index] = device }
+            else { devices.append(device) }
             selectedID = device.id
             save()
         } catch { connectionNotice = error.localizedDescription }
@@ -170,6 +192,13 @@ struct CloudProvider: Identifiable {
                 let state = try await GreeLocalAdapter.read(info, key: credentials.key, cipher: cipher)
                 refreshed.isOn = state.isOn; refreshed.current = state.current; refreshed.target = state.target
                 refreshed.mode = state.mode; refreshed.fan = state.fan; refreshed.localCipher = state.cipher.rawValue
+            case "Midea":
+                guard let host = device.host, let id = UInt64(device.id.dropFirst("midea-".count)) else { throw URLError(.badURL) }
+                let info = MideaLocalAdapter.Device(id: id, host: host, port: device.localPort ?? 6444, name: device.name, serialNumber: nil)
+                let state = try await MideaLocalAdapter.read(info)
+                refreshed.isOn = state.isOn; refreshed.current = state.current; refreshed.target = state.target
+                refreshed.mode = state.mode; refreshed.fan = state.fan
+                refreshed.minimumTarget = 17; refreshed.maximumTarget = 30
             case "MELCloud":
                 let state = try await MELCloudClassicAdapter.read(device: device)
                 refreshed.isOn = state.power; refreshed.current = state.roomTemperature; refreshed.target = state.setTemperature
@@ -242,6 +271,21 @@ struct CloudProvider: Identifiable {
             } catch { connectionNotice = error.localizedDescription }
             return
         }
+        if let device = commandDevice, device.brand == "Midea", let host = device.host,
+           let id = UInt64(device.id.dropFirst("midea-".count)) {
+            guard let host = LocalWiFiIPv4.validatedHost(host) else {
+                connectionNotice = String(localized: "Connection unavailable"); return
+            }
+            do {
+                let info = MideaLocalAdapter.Device(id: id, host: host, port: device.localPort ?? 6444, name: device.name, serialNumber: nil)
+                let state = try await MideaLocalAdapter.command(info, action: action, value: value, target: number)
+                guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
+                devices[index].isOn = state.isOn; devices[index].current = state.current; devices[index].target = state.target
+                devices[index].mode = state.mode; devices[index].fan = state.fan
+                devices[index].statusUpdatedAt = Date(); save()
+            } catch { connectionNotice = error.localizedDescription }
+            return
+        }
         guard let device = commandDevice, let host = device.host else {
             connectionNotice = String(localized: "This device does not have a local control adapter."); return
         }
@@ -287,7 +331,7 @@ struct CloudProvider: Identifiable {
     }
     func beginScan() {
         guard !isScanning else { return }
-        isScanning = true; scanMessage = String(localized: "Scanning this Wi-Fi network for compatible Daikin, Mitsubishi and Gree adapters…")
+        isScanning = true; scanMessage = String(localized: "Scanning this Wi-Fi network for compatible Daikin, Mitsubishi, Gree and Midea adapters…")
         Task { @MainActor [weak self] in
             guard let self else { return }
             let hosts = LocalWiFiIPv4.hosts()
@@ -303,6 +347,17 @@ struct CloudProvider: Identifiable {
                     guard let state = try? await GreeLocalAdapter.connect(info),
                           GreeKeychain.save(key: state.key, cipher: state.cipher, mac: info.mac) else { continue }
                     found.append(ClimateDevice(id: "gree-\(info.mac)", name: info.name, brand: "Gree", connection: "Local network · \(info.host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: info.host, localCipher: state.cipher.rawValue, statusUpdatedAt: Date()))
+                }
+            }
+            if let broadcast = LocalWiFiIPv4.broadcastAddress(),
+               let mideaDevices = try? await MideaLocalAdapter.discover(broadcastAddress: broadcast) {
+                for info in mideaDevices {
+                    guard let state = try? await MideaLocalAdapter.read(info) else { continue }
+                    found.append(ClimateDevice(id: "midea-\(info.id)", name: info.name.isEmpty ? "Midea AC" : info.name,
+                                                brand: "Midea", connection: "Local network · \(info.host)",
+                                                isOn: state.isOn, current: state.current, target: state.target,
+                                                mode: state.mode, fan: state.fan, host: info.host, localPort: info.port,
+                                                statusUpdatedAt: Date(), minimumTarget: 17, maximumTarget: 30))
                 }
             }
             for start in stride(from: 0, to: hosts.count, by: 24) {

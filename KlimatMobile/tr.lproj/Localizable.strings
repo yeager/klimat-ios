@@ -75,7 +75,7 @@
 "This operating mode is not supported by the Apple Home device." = "Apple Home aygıtı bu çalışma modunu desteklemiyor.";
 "Power control is not supported by the Apple Home device." = "Apple Home aygıtı güç denetimini desteklemiyor.";
 "Fan speed cannot be controlled through Apple Home for this device." = "Bu aygıtın fan hızı Apple Home üzerinden denetlenemiyor.";
-"Scanning this Wi-Fi network for compatible Daikin, Mitsubishi and Gree adapters…" = "Bu Wi‑Fi ağında uyumlu Daikin, Mitsubishi ve Gree adaptörleri aranıyor…";
+"Scanning this Wi-Fi network for compatible Daikin, Mitsubishi, Gree and Midea adapters…" = "Bu Wi‑Fi ağında uyumlu Daikin, Mitsubishi, Gree ve Midea adaptörleri aranıyor…";
 "Could not determine the Wi-Fi subnet. Enter the adapter IP address instead." = "Wi-Fi alt ağı belirlenemedi. Bunun yerine adaptörün IP adresini girin.";
 "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually." = "Bu Wi-Fi ağında uyumlu Daikin adaptörü bulunamadı. IP adresini elle girebilirsiniz.";
 "Found %lld compatible Daikin adapter(s) on this Wi-Fi network." = "Bu Wi-Fi ağında %lld uyumlu Daikin adaptörü bulundu.";
