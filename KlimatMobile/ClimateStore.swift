@@ -20,6 +20,7 @@ struct ClimateDevice: Identifiable, Codable, Equatable {
     var localCipher: String? = nil
     var verticalVane: String? = nil
     var horizontalVane: String? = nil
+    var statusUpdatedAt: Date? = nil
 }
 
 struct CloudProvider: Identifiable {
@@ -60,7 +61,7 @@ struct CloudProvider: Identifiable {
         }
         do {
             let state = try await DaikinLocalAdapter.read(host: host)
-            let device = ClimateDevice(id: state.id, name: name.isEmpty ? state.name : name, brand: "Daikin", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: state.host)
+            let device = ClimateDevice(id: state.id, name: name.isEmpty ? state.name : name, brand: "Daikin", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: state.host, statusUpdatedAt: Date())
             if let index = devices.firstIndex(where: { $0.id == device.id }) { devices[index] = device } else { devices.append(device) }
             selectedID = device.id; save()
         } catch { connectionNotice = error.localizedDescription }
@@ -72,7 +73,7 @@ struct CloudProvider: Identifiable {
         do {
             let state = try await MitsubishiLocalAdapter.read(host: host)
             let identifier = state.mac.isEmpty ? host : state.mac
-            let device = ClimateDevice(id: identifier, name: name.isEmpty ? "Mitsubishi Electric AC" : name, brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, verticalVane: state.verticalVane, horizontalVane: state.horizontalVane)
+            let device = ClimateDevice(id: identifier, name: name.isEmpty ? "Mitsubishi Electric AC" : name, brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, verticalVane: state.verticalVane, horizontalVane: state.horizontalVane, statusUpdatedAt: Date())
             if let index = devices.firstIndex(where: { $0.id == device.id || $0.host == host }) { devices[index] = device } else { devices.append(device) }
             selectedID = device.id; save()
         } catch { connectionNotice = error.localizedDescription }
@@ -94,7 +95,7 @@ struct CloudProvider: Identifiable {
             let savedCipher = GreeLocalAdapter.CipherKind(rawValue: cached?.cipher ?? "v1") ?? .v1
             let state = try await GreeLocalAdapter.connect(info, savedKey: cached?.key, savedCipher: savedCipher)
             guard GreeKeychain.save(key: state.key, cipher: state.cipher, mac: info.mac) else { throw GreeControlError.keychainUnavailable }
-            let device = ClimateDevice(id: "gree-\(info.mac)", name: name.isEmpty ? info.name : name, brand: "Gree", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, localCipher: state.cipher.rawValue)
+            let device = ClimateDevice(id: "gree-\(info.mac)", name: name.isEmpty ? info.name : name, brand: "Gree", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, localCipher: state.cipher.rawValue, statusUpdatedAt: Date())
             if let index = devices.firstIndex(where: { $0.id == device.id || $0.host == host }) { devices[index] = device } else { devices.append(device) }
             selectedID = device.id
             save()
@@ -104,7 +105,7 @@ struct CloudProvider: Identifiable {
         do {
             let (_, records) = try await MELCloudClassicAdapter.signIn(email: email, password: password)
             let cloudDevices = records.map { record in
-                ClimateDevice(id: "melcloud-\(record.deviceID)", name: record.name, brand: "MELCloud", connection: "MELCloud · Mitsubishi Electric", isOn: record.power, current: record.roomTemperature, target: record.setTemperature, mode: Self.modeName(record.operationMode), fan: Self.fanName(record.fanSpeed), host: nil, homeServiceID: nil, remoteID: record.deviceID, remoteBuildingID: record.buildingID)
+                ClimateDevice(id: "melcloud-\(record.deviceID)", name: record.name, brand: "MELCloud", connection: "MELCloud · Mitsubishi Electric", isOn: record.power, current: record.roomTemperature, target: record.setTemperature, mode: Self.modeName(record.operationMode), fan: Self.fanName(record.fanSpeed), host: nil, homeServiceID: nil, remoteID: record.deviceID, remoteBuildingID: record.buildingID, statusUpdatedAt: Date())
             }
             devices.removeAll { $0.brand == "MELCloud" }
             devices.append(contentsOf: cloudDevices)
@@ -168,6 +169,7 @@ struct CloudProvider: Identifiable {
                 throw URLError(.unsupportedURL)
             }
             guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
+            refreshed.statusUpdatedAt = Date()
             devices[index] = refreshed
             save()
         } catch {
@@ -189,7 +191,8 @@ struct CloudProvider: Identifiable {
             do {
                 let state = try await MELCloudClassicAdapter.command(device: device, action: action, value: value, number: number)
                 guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
-                devices[index].isOn = state.power; devices[index].current = state.roomTemperature; devices[index].target = state.setTemperature; devices[index].mode = Self.modeName(state.operationMode); devices[index].fan = Self.fanName(state.fanSpeed); save()
+                devices[index].isOn = state.power; devices[index].current = state.roomTemperature; devices[index].target = state.setTemperature; devices[index].mode = Self.modeName(state.operationMode); devices[index].fan = Self.fanName(state.fanSpeed)
+                devices[index].statusUpdatedAt = Date(); save()
             } catch { connectionNotice = error.localizedDescription }
             return
         }
@@ -202,6 +205,7 @@ struct CloudProvider: Identifiable {
                 let state = try await appleHome.command(serviceID: serviceID, action: action, value: value, number: number)
                 guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
                 devices[index] = state
+                devices[index].statusUpdatedAt = Date()
                 save()
             } catch { connectionNotice = error.localizedDescription }
             return
@@ -220,6 +224,7 @@ struct CloudProvider: Identifiable {
                 guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
                 devices[index].isOn = state.isOn; devices[index].current = state.current; devices[index].target = state.target
                 devices[index].mode = state.mode; devices[index].fan = state.fan; devices[index].localCipher = state.cipher.rawValue
+                devices[index].statusUpdatedAt = Date()
                 save()
             } catch { connectionNotice = error.localizedDescription }
             return
@@ -242,6 +247,7 @@ struct CloudProvider: Identifiable {
             let fan = daikinState?.fan ?? mitsubishiState?.fan
             if let isOn { devices[index].isOn = isOn }; if let current { devices[index].current = current }; if let target { devices[index].target = target }; if let mode { devices[index].mode = mode }; if let fan { devices[index].fan = fan }
             if let mitsubishiState { devices[index].verticalVane = mitsubishiState.verticalVane; devices[index].horizontalVane = mitsubishiState.horizontalVane }
+            devices[index].statusUpdatedAt = Date()
             save()
         } catch { connectionNotice = error.localizedDescription }
     }
@@ -283,7 +289,7 @@ struct CloudProvider: Identifiable {
                 for info in greeDevices {
                     guard let state = try? await GreeLocalAdapter.connect(info),
                           GreeKeychain.save(key: state.key, cipher: state.cipher, mac: info.mac) else { continue }
-                    found.append(ClimateDevice(id: "gree-\(info.mac)", name: info.name, brand: "Gree", connection: "Local network · \(info.host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: info.host, localCipher: state.cipher.rawValue))
+                    found.append(ClimateDevice(id: "gree-\(info.mac)", name: info.name, brand: "Gree", connection: "Local network · \(info.host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: info.host, localCipher: state.cipher.rawValue, statusUpdatedAt: Date()))
                 }
             }
             for start in stride(from: 0, to: hosts.count, by: 24) {
@@ -292,11 +298,11 @@ struct CloudProvider: Identifiable {
                     for host in batch {
                         group.addTask {
                             if let state = try? await DaikinLocalAdapter.discover(host: host) {
-                                return ClimateDevice(id: state.id, name: state.name, brand: "Daikin", connection: "Local network · \(state.host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: state.host)
+                                return ClimateDevice(id: state.id, name: state.name, brand: "Daikin", connection: "Local network · \(state.host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: state.host, statusUpdatedAt: Date())
                             }
                             if let state = try? await MitsubishiLocalAdapter.discover(host: host) {
                                 let identifier = state.mac.isEmpty ? host : state.mac
-                                return ClimateDevice(id: identifier, name: "Mitsubishi Electric AC", brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, verticalVane: state.verticalVane, horizontalVane: state.horizontalVane)
+                                return ClimateDevice(id: identifier, name: "Mitsubishi Electric AC", brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, verticalVane: state.verticalVane, horizontalVane: state.horizontalVane, statusUpdatedAt: Date())
                             }
                             return nil
                         }
@@ -467,7 +473,7 @@ private enum GreeKeychain {
         let mode: String
         switch targetMode { case 1: mode = "Heat"; case 2: mode = "Cool"; default: mode = "Auto" }
         let id = service.uniqueIdentifier.uuidString
-        return ClimateDevice(id: id, name: service.name.isEmpty ? accessory.name : service.name, brand: "Apple Home", connection: "Apple Home · \(home.name)", isOn: isOn, current: (values[HMCharacteristicTypeCurrentTemperature] as? NSNumber)?.doubleValue ?? 0, target: (values[HMCharacteristicTypeTargetTemperature] as? NSNumber)?.doubleValue ?? 22, mode: mode, fan: "Auto", host: nil, homeServiceID: id)
+        return ClimateDevice(id: id, name: service.name.isEmpty ? accessory.name : service.name, brand: "Apple Home", connection: "Apple Home · \(home.name)", isOn: isOn, current: (values[HMCharacteristicTypeCurrentTemperature] as? NSNumber)?.doubleValue ?? 0, target: (values[HMCharacteristicTypeTargetTemperature] as? NSNumber)?.doubleValue ?? 22, mode: mode, fan: "Auto", host: nil, homeServiceID: id, statusUpdatedAt: Date())
     }
 
     private static func read(_ characteristic: HMCharacteristic) async -> Any? {

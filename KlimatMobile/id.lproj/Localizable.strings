@@ -108,3 +108,8 @@
 "Vertical airflow" = "Arah aliran udara vertikal";
 "Horizontal airflow" = "Arah aliran udara horizontal";
 "Swing" = "Ayun";
+
+/* Watch status freshness */
+"Updated" = "Diperbarui";
+"Cached" = "Status tersimpan";
+"Status not verified" = "Status belum diverifikasi";

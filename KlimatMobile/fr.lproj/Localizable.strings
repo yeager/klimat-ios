@@ -108,3 +108,8 @@
 "Vertical airflow" = "Flux d’air vertical";
 "Horizontal airflow" = "Flux d’air horizontal";
 "Swing" = "Oscillation";
+
+/* Watch status freshness */
+"Updated" = "Mis à jour";
+"Cached" = "État enregistré";
+"Status not verified" = "État non vérifié";

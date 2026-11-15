@@ -108,3 +108,8 @@
 "Vertical airflow" = "上下風向";
 "Horizontal airflow" = "左右風向";
 "Swing" = "スイング";
+
+/* Watch status freshness */
+"Updated" = "更新";
+"Cached" = "保存された状態";
+"Status not verified" = "状態未確認";

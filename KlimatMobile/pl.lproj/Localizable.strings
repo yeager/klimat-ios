@@ -104,3 +104,8 @@
 "Vertical airflow" = "Pionowy kierunek nawiewu";
 "Horizontal airflow" = "Poziomy kierunek nawiewu";
 "Swing" = "Oscylacja";
+
+/* Watch status freshness */
+"Updated" = "Zaktualizowano";
+"Cached" = "Zapisany stan";
+"Status not verified" = "Stan niezweryfikowany";

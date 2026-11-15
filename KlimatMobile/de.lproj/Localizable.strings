@@ -108,3 +108,8 @@
 "Vertical airflow" = "Vertikale Luftführung";
 "Horizontal airflow" = "Horizontale Luftführung";
 "Swing" = "Schwenken";
+
+/* Watch status freshness */
+"Updated" = "Aktualisiert";
+"Cached" = "Gespeicherter Status";
+"Status not verified" = "Status nicht verifiziert";

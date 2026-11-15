@@ -108,3 +108,8 @@
 "Vertical airflow" = "செங்குத்துக் காற்றோட்டம்";
 "Horizontal airflow" = "கிடைமட்டக் காற்றோட்டம்";
 "Swing" = "ஊசலாட்டம்";
+
+/* Watch status freshness */
+"Updated" = "புதுப்பிக்கப்பட்டது";
+"Cached" = "சேமிக்கப்பட்ட நிலை";
+"Status not verified" = "நிலை சரிபார்க்கப்படவில்லை";

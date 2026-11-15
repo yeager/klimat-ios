@@ -108,3 +108,8 @@
 "Vertical airflow" = "垂直送风";
 "Horizontal airflow" = "水平送风";
 "Swing" = "摆风";
+
+/* Watch status freshness */
+"Updated" = "已更新";
+"Cached" = "已保存状态";
+"Status not verified" = "状态未验证";

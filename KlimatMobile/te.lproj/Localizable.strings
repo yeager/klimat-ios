@@ -108,3 +108,8 @@
 "Vertical airflow" = "నిలువు గాలి ప్రవాహం";
 "Horizontal airflow" = "అడ్డ గాలి ప్రవాహం";
 "Swing" = "స్వింగ్";
+
+/* Watch status freshness */
+"Updated" = "నవీకరించబడింది";
+"Cached" = "సేవ్ చేసిన స్థితి";
+"Status not verified" = "స్థితి ధృవీకరించబడలేదు";

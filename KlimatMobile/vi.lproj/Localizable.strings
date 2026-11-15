@@ -108,3 +108,8 @@
 "Vertical airflow" = "Hướng gió dọc";
 "Horizontal airflow" = "Hướng gió ngang";
 "Swing" = "Đảo gió";
+
+/* Watch status freshness */
+"Updated" = "Đã cập nhật";
+"Cached" = "Trạng thái đã lưu";
+"Status not verified" = "Trạng thái chưa xác minh";

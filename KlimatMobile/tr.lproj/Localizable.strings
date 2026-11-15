@@ -108,3 +108,8 @@
 "Vertical airflow" = "Dikey hava akışı";
 "Horizontal airflow" = "Yatay hava akışı";
 "Swing" = "Salınım";
+
+/* Watch status freshness */
+"Updated" = "Güncellendi";
+"Cached" = "Kaydedilen durum";
+"Status not verified" = "Durum doğrulanmadı";

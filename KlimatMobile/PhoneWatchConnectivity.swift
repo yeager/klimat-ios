@@ -54,8 +54,8 @@ final class PhoneWatchConnectivity: NSObject, ObservableObject, WCSessionDelegat
     }
 
     private func snapshot(for store: ClimateStore, error: String? = nil) -> [String: Any] {
-        let devices = store.devices.map { device in
-            [
+        let devices = store.devices.map { device -> [String: Any] in
+            var item: [String: Any] = [
                 "id": device.id,
                 "name": device.name,
                 "brand": device.brand,
@@ -65,7 +65,9 @@ final class PhoneWatchConnectivity: NSObject, ObservableObject, WCSessionDelegat
                 "target": device.target,
                 "mode": device.mode,
                 "fan": device.fan
-            ] as [String: Any]
+            ]
+            if let updatedAt = device.statusUpdatedAt { item["statusUpdatedAt"] = updatedAt.timeIntervalSince1970 }
+            return item
         }
         var result: [String: Any] = [
             "devices": devices,

@@ -108,3 +108,8 @@
 "Vertical airflow" = "উল্লম্ব বায়ুপ্রবাহ";
 "Horizontal airflow" = "অনুভূমিক বায়ুপ্রবাহ";
 "Swing" = "দোলন";
+
+/* Watch status freshness */
+"Updated" = "আপডেট হয়েছে";
+"Cached" = "সংরক্ষিত অবস্থা";
+"Status not verified" = "অবস্থা যাচাই করা হয়নি";

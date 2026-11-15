@@ -23,6 +23,7 @@ private struct WatchClimateDevice: Identifiable, Equatable {
     let target: Double
     let mode: String
     let fan: String
+    let statusUpdatedAt: Date?
 
 #if DEBUG
     static let preview = WatchClimateDevice(
@@ -34,11 +35,12 @@ private struct WatchClimateDevice: Identifiable, Equatable {
         current: 23.5,
         target: 22,
         mode: "Cool",
-        fan: "Auto"
+        fan: "Auto",
+        statusUpdatedAt: Date()
     )
 #endif
 
-    init(id: String, name: String, brand: String, connection: String, isOn: Bool, current: Double, target: Double, mode: String, fan: String) {
+    init(id: String, name: String, brand: String, connection: String, isOn: Bool, current: Double, target: Double, mode: String, fan: String, statusUpdatedAt: Date? = nil) {
         self.id = id
         self.name = name
         self.brand = brand
@@ -48,6 +50,7 @@ private struct WatchClimateDevice: Identifiable, Equatable {
         self.target = target
         self.mode = mode
         self.fan = fan
+        self.statusUpdatedAt = statusUpdatedAt
     }
 
     init?(dictionary: [String: Any]) {
@@ -62,6 +65,11 @@ private struct WatchClimateDevice: Identifiable, Equatable {
         target = (dictionary["target"] as? NSNumber)?.doubleValue ?? 22
         mode = dictionary["mode"] as? String ?? "Auto"
         fan = dictionary["fan"] as? String ?? "Auto"
+        if let seconds = (dictionary["statusUpdatedAt"] as? NSNumber)?.doubleValue {
+            statusUpdatedAt = Date(timeIntervalSince1970: seconds)
+        } else {
+            statusUpdatedAt = nil
+        }
     }
 }
 
@@ -82,10 +90,13 @@ private final class WatchConnectivityModel: NSObject, ObservableObject, WCSessio
     override init() {
         super.init()
 #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--klimat-watch-preview") {
+        let previewArguments = ProcessInfo.processInfo.arguments
+        if previewArguments.contains("--klimat-watch-preview") || previewArguments.contains("--klimat-watch-offline-preview") {
             devices = [.preview]
             selectedID = "preview-daikin"
-            isPhoneReachable = true
+            let offlinePreview = previewArguments.contains("--klimat-watch-offline-preview")
+            isPhoneReachable = !offlinePreview
+            message = offlinePreview ? String(localized: "Connection unavailable") : nil
             isPreview = true
             return
         }
@@ -248,6 +259,18 @@ private struct KlimatWatchHomeView: View {
                         Text("·")
                         Text(LocalizedStringKey(device.mode)).font(.caption2)
                     }
+                    if let statusUpdatedAt = device.statusUpdatedAt {
+                        HStack(spacing: 3) {
+                            Text(connectivity.isPhoneReachable && connectivity.message == nil ? "Updated" : "Cached")
+                            Text(statusUpdatedAt, style: .relative)
+                        }
+                        .font(.system(size: 9))
+                        .foregroundStyle(connectivity.isPhoneReachable && connectivity.message == nil ? Color.secondary : Color.orange)
+                    } else {
+                        Text("Status not verified")
+                            .font(.system(size: 9))
+                            .foregroundStyle(.orange)
+                    }
 
                     HStack(alignment: .center, spacing: 4) {
                         VStack(alignment: .leading, spacing: 0) {
@@ -320,7 +343,7 @@ private struct KlimatWatchHomeView: View {
                     }
                     .disabled(!connectivity.isPhoneReachable)
 
-                    if !connectivity.isPhoneReachable {
+                    if !connectivity.isPhoneReachable && connectivity.message == nil {
                         Text("Connection unavailable")
                             .font(.caption2)
                             .foregroundStyle(.secondary)

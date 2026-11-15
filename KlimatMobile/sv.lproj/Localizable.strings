@@ -109,3 +109,8 @@
 "Vertical airflow" = "Vertikalt luftflöde";
 "Horizontal airflow" = "Horisontellt luftflöde";
 "Swing" = "Svängning";
+
+/* Watch status freshness */
+"Updated" = "Uppdaterad";
+"Cached" = "Sparad status";
+"Status not verified" = "Status inte verifierad";

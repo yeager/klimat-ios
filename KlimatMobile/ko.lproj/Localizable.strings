@@ -108,3 +108,8 @@
 "Vertical airflow" = "수직 바람 방향";
 "Horizontal airflow" = "수평 바람 방향";
 "Swing" = "회전";
+
+/* Watch status freshness */
+"Updated" = "업데이트됨";
+"Cached" = "저장된 상태";
+"Status not verified" = "확인되지 않은 상태";

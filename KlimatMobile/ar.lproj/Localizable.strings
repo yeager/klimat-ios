@@ -108,3 +108,8 @@
 "Vertical airflow" = "اتجاه تدفق الهواء العمودي";
 "Horizontal airflow" = "اتجاه تدفق الهواء الأفقي";
 "Swing" = "تأرجح";
+
+/* Watch status freshness */
+"Updated" = "محدّث";
+"Cached" = "الحالة المحفوظة";
+"Status not verified" = "الحالة غير مؤكدة";

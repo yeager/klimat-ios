@@ -108,3 +108,8 @@
 "Vertical airflow" = "उभा वायुप्रवाह";
 "Horizontal airflow" = "आडवा वायुप्रवाह";
 "Swing" = "स्विंग";
+
+/* Watch status freshness */
+"Updated" = "अद्ययावत";
+"Cached" = "जतन केलेली स्थिती";
+"Status not verified" = "स्थितीची पडताळणी नाही";

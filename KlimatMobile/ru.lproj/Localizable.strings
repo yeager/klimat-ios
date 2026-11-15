@@ -108,3 +108,8 @@
 "Vertical airflow" = "Вертикальное направление потока";
 "Horizontal airflow" = "Горизонтальное направление потока";
 "Swing" = "Качание";
+
+/* Watch status freshness */
+"Updated" = "Обновлено";
+"Cached" = "Сохраненное состояние";
+"Status not verified" = "Статус не проверен";

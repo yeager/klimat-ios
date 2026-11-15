@@ -108,3 +108,8 @@
 "Vertical airflow" = "جهت جریان هوای عمودی";
 "Horizontal airflow" = "جهت جریان هوای افقی";
 "Swing" = "نوسان";
+
+/* Watch status freshness */
+"Updated" = "به‌روزرسانی‌شده";
+"Cached" = "وضعیت ذخیره‌شده";
+"Status not verified" = "وضعیت تأیید نشده";
