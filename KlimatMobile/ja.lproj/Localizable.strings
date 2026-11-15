@@ -99,3 +99,7 @@
 "Connect account" = "アカウントに接続";
 "Disconnect MELCloud" = "MELCloudを切断";
 "Your MELCloud password is sent directly to Mitsubishi Electric and is not stored by Klimat. Its session token stays in the iOS Keychain. Cloud control needs internet; direct local control does not use MELCloud." = "MELCloudのパスワードは三菱電機に直接送信され、Klimatには保存されません。セッショントークンはiOSキーチェーンに保存されます。クラウド制御にはインターネットが必要です。ローカル直接制御ではMELCloudを使用しません。";
+
+"Previous device" = "前のデバイス";
+"Next device" = "次のデバイス";
+"Change mode" = "モードを変更";

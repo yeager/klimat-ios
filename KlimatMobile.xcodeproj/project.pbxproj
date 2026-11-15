@@ -7,49 +7,72 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09CC952D11DF0B7BC5B24103 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F675FC8FCE6DDD3DECD05106 /* Localizable.strings */; };
 		0D47C910C8EC697A9BE6CA4E /* MitsubishiLocalAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408D2FB78DC1B9CB8E8D7C8C /* MitsubishiLocalAdapter.swift */; };
 		0DFC8E060EF5C525DE187424 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C34D732D0484F658C366BDC0 /* InfoPlist.strings */; };
 		12E146F4B4DC0F9E04BA664A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D70D7BCBE207747C1163F814 /* Localizable.strings */; };
 		13EE85422576727701EB0F70 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A9FDE5D400610B571A5272C7 /* PrivacyInfo.xcprivacy */; };
+		1A06506BA6814F52652D46BA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0CEED6BC60316058B39DAD16 /* Localizable.strings */; };
 		1BE33B4E69A3B6C94C48A7B1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E04459B793FE7BC27D50A3B /* InfoPlist.strings */; };
 		21A73FE08B1DCF091D33D9D2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3BC13866FA5BDBFC56CB863A /* InfoPlist.strings */; };
 		253E319E4735BC923AC0D466 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C0464FA4C219A7CBF35B0AD8 /* Localizable.strings */; };
+		292082B4FF2ABE0CB5F67527 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6EE1354830C2CA7ED22C5494 /* Localizable.strings */; };
 		293256B6A5F493519AE19AE6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6240197A498BFAC91C1AB64E /* Localizable.strings */; };
 		2A854D1177FEE568EA0B5441 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B0C50048DF5F816F06DAA37 /* InfoPlist.strings */; };
 		3222A8E9ED5C46C0D62D2DC0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AB15F1B3E7622E02C0A37BC7 /* Localizable.strings */; };
+		350FE4F8D626268501EA8B29 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9D16E72BD73C970A26093310 /* Localizable.strings */; };
+		36DEA0C01AD9DD1612D0175B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E7BA54F162AC6C20471D828A /* Localizable.strings */; };
 		38844AD6F18277AC55B3F54D /* ClimateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA80FF3C490BB163912044E /* ClimateStore.swift */; };
 		393CC74E5CF35A9D11FAE37D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7023635AE9FEF93D620324B0 /* Localizable.strings */; };
 		39AE9D99DE39544404289D03 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0CEED6BC60316058B39DAD16 /* Localizable.strings */; };
 		3A74B25DECEB974DDC5EBF39 /* GreeLocalAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2790123AE8D9AA15FA901D2 /* GreeLocalAdapter.swift */; };
 		3B00F1D3372ACBD35D3BE88A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3DB7ED30992E5CB3E142F53B /* InfoPlist.strings */; };
 		3D68C1F6AE54E84EB18F961F /* MELCloudClassicAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBDC13EF4B802B14859B85E3 /* MELCloudClassicAdapter.swift */; };
+		42721F993C3B5C4261F77ADF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D69945FC29B308E8ACD2D1F /* Localizable.strings */; };
 		42D8C6F2F963373250D92193 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0192E5AE7483089097C2549E /* InfoPlist.strings */; };
 		438A0F3539F1166D39CC1F11 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 32AB0C76F05A7C200C396B88 /* InfoPlist.strings */; };
+		495F1135A891828E686B66F1 /* PhoneWatchConnectivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF5A35AC818A4FB095BC289 /* PhoneWatchConnectivity.swift */; };
+		49A8331865279552A792DE52 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 287CC5B8D13F66ACD77B7478 /* Localizable.strings */; };
 		4C49AFDEB2F71D743F1EBE95 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 014A5A1037126ECFF46A16B2 /* Localizable.strings */; };
 		4E72CC96043AE16443E9566E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CE3B22767F19A97DA9726564 /* InfoPlist.strings */; };
 		5125C617A829D360EE547576 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E53C4AEE425920852D170E51 /* InfoPlist.strings */; };
+		5329BE4974A6874EA2BDA68A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6240197A498BFAC91C1AB64E /* Localizable.strings */; };
+		534C4F0F37EE264617587A07 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C7AB3FD0D1E87F650660DB6F /* Localizable.strings */; };
+		57C94C50619AFD338AFD8B8D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5DC49C53D1F4164B9B0C747C /* Localizable.strings */; };
+		674228DC572239246419E90B /* KlimatWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB21BA43FDD77CCAF5A1285 /* KlimatWatchApp.swift */; };
 		6C5616F52337A5D393A84148 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 900F514CD3EDB86B3E676701 /* Localizable.strings */; };
 		6C87E010C0582B9A249A1597 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE16B312BC7FDE3906756D02 /* Assets.xcassets */; };
+		6EDE35C53D817455DF262705 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5515A81536DD1723F2C3363A /* Localizable.strings */; };
+		7A78A508123ED2319DD04DB8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9B0BB0CF76862E6AB745CC21 /* Localizable.strings */; };
 		7DB0A89BD0043F3FC01CADBA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D69945FC29B308E8ACD2D1F /* Localizable.strings */; };
+		7EE70931A507B5D8744C172C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 900F514CD3EDB86B3E676701 /* Localizable.strings */; };
 		8054220989B3C3A68A16F1C7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 35467EECA9D51737F0359D81 /* InfoPlist.strings */; };
+		80BE13D25A1618E4C10B7E58 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E49CF66FBEAC61C8EC87ADC /* Localizable.strings */; };
 		8185BB404BFC882CB62A8846 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9B0BB0CF76862E6AB745CC21 /* Localizable.strings */; };
 		825F4B029DA9A39007FE8A09 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9D16E72BD73C970A26093310 /* Localizable.strings */; };
 		82F00BC4DE2007BED585BE7A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E49CF66FBEAC61C8EC87ADC /* Localizable.strings */; };
 		88BF08D27FC209297D24D015 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39E615E07802D988D1238D57 /* InfoPlist.strings */; };
+		8A44CE4E26634DBDB6CDDFB6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C0464FA4C219A7CBF35B0AD8 /* Localizable.strings */; };
+		8CE56DEB8F98D86220869616 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 48D46135FB8A41D604495720 /* Localizable.strings */; };
+		8D54DD51BCA134AEDAA24D41 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDFA764DF901F14FD3A5867B /* Localizable.strings */; };
 		90208A14A34EA86175DCAC09 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 77D93048A9DB10F9DF64FE55 /* InfoPlist.strings */; };
 		9591309B892C65ECAC6316D6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 287CC5B8D13F66ACD77B7478 /* Localizable.strings */; };
 		96055BAAF0CF115BB1B9F9E2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0D2A59A39FDDF61D7AF84F08 /* InfoPlist.strings */; };
 		982FA47E10A5700FF1ACF01D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6EE1354830C2CA7ED22C5494 /* Localizable.strings */; };
+		9BC6CB303C13568E3885AC65 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AB15F1B3E7622E02C0A37BC7 /* Localizable.strings */; };
 		9DF39392F14FD653188AD58A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E7BA54F162AC6C20471D828A /* Localizable.strings */; };
 		A5EF88D3475400693AD7657A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 61A43D2E2FEF546E5433054C /* InfoPlist.strings */; };
 		A7657F1F70EA426D5715C8B1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 990A00A415826812908EAB9A /* InfoPlist.strings */; };
 		AA4481B2C424AFB27FC9C544 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E5528675B26CC2D5138DA4B1 /* InfoPlist.strings */; };
 		AB3BB765DC83C2C5C535850D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3F4F5EF5828A3F0ED250554C /* InfoPlist.strings */; };
+		AE457578211C9B0E29BE297A /* KlimatWatchApp.app in Embed Dependencies */ = {isa = PBXBuildFile; fileRef = 03E7E24D1013432AC092D059 /* KlimatWatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AE96D646C59C56A944D7CDB6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F675FC8FCE6DDD3DECD05106 /* Localizable.strings */; };
 		B7056A7B39E06650CC90640A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C7AB3FD0D1E87F650660DB6F /* Localizable.strings */; };
 		B7A5B9AE67A9B2E9A4DF1AE0 /* KlimatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4235184141FC53092758CA94 /* KlimatApp.swift */; };
+		C2E7BFE3DB53539900C2B73B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 014A5A1037126ECFF46A16B2 /* Localizable.strings */; };
 		C3C447DBA021D7EFDCD5BF58 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B5A15104394405A319833A5D /* InfoPlist.strings */; };
 		C3F5F97B7010B57338839593 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5515A81536DD1723F2C3363A /* Localizable.strings */; };
+		C900E1D9B1A0F7060D2FF714 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7023635AE9FEF93D620324B0 /* Localizable.strings */; };
 		CA0782A53302A03F2846DE5A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 48D46135FB8A41D604495720 /* Localizable.strings */; };
 		CFBEB7E3A33A5F48FABBA099 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A89E4CDBDE1AE02444F69394 /* InfoPlist.strings */; };
 		D37038F377F6E24C1AF8E08A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 76B3FA1F12DD29B4D07F1698 /* InfoPlist.strings */; };
@@ -59,15 +82,44 @@
 		E81F8A76DAB46159AC5CA502 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5DC49C53D1F4164B9B0C747C /* Localizable.strings */; };
 		E8E1C5FADDE0BB0C4A14D976 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C178A565B33BE0ADE239A9C7 /* InfoPlist.strings */; };
 		F2B98B7A8360AFCAA21F1DFF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CDFA764DF901F14FD3A5867B /* Localizable.strings */; };
+		F2FB4194C9BFD3F29087C04D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D70D7BCBE207747C1163F814 /* Localizable.strings */; };
+		F569CDBB9A67EC2D1334FBA6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0E5064A945F73CE432089EE3 /* Assets.xcassets */; };
+		F80C6F7CD6BBF09DB12FAD77 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 51AA3D61CF05C00BAC9E373C /* Localizable.strings */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		515976209BDE512390D541CB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 421A5B51FED83CC24E9E66CC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95F4984A7316BEC085E7B7A0;
+			remoteInfo = KlimatWatchApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7EFE5AE04F607412725C005B /* Embed Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AE457578211C9B0E29BE297A /* KlimatWatchApp.app in Embed Dependencies */,
+			);
+			name = "Embed Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		014A5A1037126ECFF46A16B2 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		0192E5AE7483089097C2549E /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = sv.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		03E7E24D1013432AC092D059 /* KlimatWatchApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KlimatWatchApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CEED6BC60316058B39DAD16 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = bn.lproj/Localizable.strings; sourceTree = "<group>"; };
 		0D2A59A39FDDF61D7AF84F08 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0E04459B793FE7BC27D50A3B /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = te.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0E49CF66FBEAC61C8EC87ADC /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = hi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		0E5064A945F73CE432089EE3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		287CC5B8D13F66ACD77B7478 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		32AB0C76F05A7C200C396B88 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		35467EECA9D51737F0359D81 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -88,6 +140,7 @@
 		6EE1354830C2CA7ED22C5494 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7023635AE9FEF93D620324B0 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ur.lproj/Localizable.strings; sourceTree = "<group>"; };
 		76B3FA1F12DD29B4D07F1698 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		77CBD5A8D92E0C8F850BD4F8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		77D93048A9DB10F9DF64FE55 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = hi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		794029BAEA1C9C10F431EABC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		852A82D15447694192311D46 /* KlimatMobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KlimatMobile.entitlements; sourceTree = "<group>"; };
@@ -107,10 +160,12 @@
 		C178A565B33BE0ADE239A9C7 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = id.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		C34D732D0484F658C366BDC0 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		C7AB3FD0D1E87F650660DB6F /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ta.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CBF5A35AC818A4FB095BC289 /* PhoneWatchConnectivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneWatchConnectivity.swift; sourceTree = "<group>"; };
 		CDFA764DF901F14FD3A5867B /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CE3B22767F19A97DA9726564 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = ur.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D2790123AE8D9AA15FA901D2 /* GreeLocalAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreeLocalAdapter.swift; sourceTree = "<group>"; };
 		D70D7BCBE207747C1163F814 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DDB21BA43FDD77CCAF5A1285 /* KlimatWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KlimatWatchApp.swift; sourceTree = "<group>"; };
 		E53C4AEE425920852D170E51 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E5528675B26CC2D5138DA4B1 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E74DBB8103D8F422383F0517 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -123,7 +178,9 @@
 		01ADD078E8C8E9C6240EA750 = {
 			isa = PBXGroup;
 			children = (
+				C2CED96F9626E726DBE98935 /* App */,
 				594C67B58EEC253975BC1576 /* KlimatMobile */,
+				A55215969662A09AAFA01CA5 /* WatchApp */,
 				949DB52FEA3E76CFE710FD08 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -184,6 +241,7 @@
 				48D46135FB8A41D604495720 /* Localizable.strings */,
 				BBDC13EF4B802B14859B85E3 /* MELCloudClassicAdapter.swift */,
 				408D2FB78DC1B9CB8E8D7C8C /* MitsubishiLocalAdapter.swift */,
+				CBF5A35AC818A4FB095BC289 /* PhoneWatchConnectivity.swift */,
 				A9FDE5D400610B571A5272C7 /* PrivacyInfo.xcprivacy */,
 			);
 			path = KlimatMobile;
@@ -193,23 +251,63 @@
 			isa = PBXGroup;
 			children = (
 				57069753A94F699A46101470 /* KlimatMobile.app */,
+				03E7E24D1013432AC092D059 /* KlimatWatchApp.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A55215969662A09AAFA01CA5 /* WatchApp */ = {
+			isa = PBXGroup;
+			children = (
+				77CBD5A8D92E0C8F850BD4F8 /* Info.plist */,
+				DDB21BA43FDD77CCAF5A1285 /* KlimatWatchApp.swift */,
+			);
+			name = WatchApp;
+			path = KlimatWatch/WatchApp;
+			sourceTree = "<group>";
+		};
+		C2CED96F9626E726DBE98935 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				0E5064A945F73CE432089EE3 /* Assets.xcassets */,
+			);
+			name = App;
+			path = KlimatWatch/App;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		95F4984A7316BEC085E7B7A0 /* KlimatWatchApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0F5603FA3B5D5ED7D01C3011 /* Build configuration list for PBXNativeTarget "KlimatWatchApp" */;
+			buildPhases = (
+				D5542FB56DF4A158EC06AD05 /* Sources */,
+				ADFE1F74F3D01118278C8514 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KlimatWatchApp;
+			packageProductDependencies = (
+			);
+			productName = KlimatWatchApp;
+			productReference = 03E7E24D1013432AC092D059 /* KlimatWatchApp.app */;
+			productType = "com.apple.product-type.application";
+		};
 		AA5449ED6FDEB55EB701F32E /* KlimatMobile */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 04A12013FFEDCDCFFB332AB7 /* Build configuration list for PBXNativeTarget "KlimatMobile" */;
 			buildPhases = (
 				63652277C8B720F5E707AD17 /* Sources */,
 				105898AD9B8856631354DDDC /* Resources */,
+				7EFE5AE04F607412725C005B /* Embed Dependencies */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				CCF4780250D1B62B0576DDEF /* PBXTargetDependency */,
 			);
 			name = KlimatMobile;
 			packageProductDependencies = (
@@ -266,6 +364,7 @@
 			projectRoot = "";
 			targets = (
 				AA5449ED6FDEB55EB701F32E /* KlimatMobile */,
+				95F4984A7316BEC085E7B7A0 /* KlimatWatchApp */,
 			);
 		};
 /* End PBXProject section */
@@ -324,6 +423,36 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ADFE1F74F3D01118278C8514 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F569CDBB9A67EC2D1334FBA6 /* Assets.xcassets in Resources */,
+				6EDE35C53D817455DF262705 /* Localizable.strings in Resources */,
+				C900E1D9B1A0F7060D2FF714 /* Localizable.strings in Resources */,
+				8D54DD51BCA134AEDAA24D41 /* Localizable.strings in Resources */,
+				8CE56DEB8F98D86220869616 /* Localizable.strings in Resources */,
+				8A44CE4E26634DBDB6CDDFB6 /* Localizable.strings in Resources */,
+				09CC952D11DF0B7BC5B24103 /* Localizable.strings in Resources */,
+				5329BE4974A6874EA2BDA68A /* Localizable.strings in Resources */,
+				292082B4FF2ABE0CB5F67527 /* Localizable.strings in Resources */,
+				57C94C50619AFD338AFD8B8D /* Localizable.strings in Resources */,
+				534C4F0F37EE264617587A07 /* Localizable.strings in Resources */,
+				9BC6CB303C13568E3885AC65 /* Localizable.strings in Resources */,
+				350FE4F8D626268501EA8B29 /* Localizable.strings in Resources */,
+				7A78A508123ED2319DD04DB8 /* Localizable.strings in Resources */,
+				F2FB4194C9BFD3F29087C04D /* Localizable.strings in Resources */,
+				36DEA0C01AD9DD1612D0175B /* Localizable.strings in Resources */,
+				7EE70931A507B5D8744C172C /* Localizable.strings in Resources */,
+				C2E7BFE3DB53539900C2B73B /* Localizable.strings in Resources */,
+				49A8331865279552A792DE52 /* Localizable.strings in Resources */,
+				42721F993C3B5C4261F77ADF /* Localizable.strings in Resources */,
+				F80C6F7CD6BBF09DB12FAD77 /* Localizable.strings in Resources */,
+				1A06506BA6814F52652D46BA /* Localizable.strings in Resources */,
+				80BE13D25A1618E4C10B7E58 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -337,10 +466,27 @@
 				B7A5B9AE67A9B2E9A4DF1AE0 /* KlimatApp.swift in Sources */,
 				3D68C1F6AE54E84EB18F961F /* MELCloudClassicAdapter.swift in Sources */,
 				0D47C910C8EC697A9BE6CA4E /* MitsubishiLocalAdapter.swift in Sources */,
+				495F1135A891828E686B66F1 /* PhoneWatchConnectivity.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5542FB56DF4A158EC06AD05 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				674228DC572239246419E90B /* KlimatWatchApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CCF4780250D1B62B0576DDEF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 95F4984A7316BEC085E7B7A0 /* KlimatWatchApp */;
+			targetProxy = 515976209BDE512390D541CB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		024BB7013FD84ABCA36E1CD5 /* Release */ = {
@@ -397,7 +543,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.9;
@@ -483,13 +628,25 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
+		};
+		A387066ABB333C3E65777037 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = KlimatWatch/WatchApp/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = se.yeager.klimat.ios.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
 		};
 		BB4918E8CE70EF7C366E55B0 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -508,6 +665,19 @@
 			};
 			name = Release;
 		};
+		D9969377D40B6755376AF2FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = KlimatWatch/WatchApp/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = se.yeager.klimat.ios.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -516,6 +686,15 @@
 			buildConfigurations = (
 				4E9FD253971B82A849F718AC /* Debug */,
 				BB4918E8CE70EF7C366E55B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		0F5603FA3B5D5ED7D01C3011 /* Build configuration list for PBXNativeTarget "KlimatWatchApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D9969377D40B6755376AF2FD /* Debug */,
+				A387066ABB333C3E65777037 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

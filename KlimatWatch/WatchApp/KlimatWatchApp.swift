@@ -1,0 +1,267 @@
+import SwiftUI
+import WatchConnectivity
+
+@main
+struct KlimatWatchApp: App {
+    @StateObject private var connectivity = WatchConnectivityModel()
+
+    var body: some Scene {
+        WindowGroup {
+            KlimatWatchHomeView()
+                .environmentObject(connectivity)
+        }
+    }
+}
+
+private struct WatchClimateDevice: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let brand: String
+    let connection: String
+    let isOn: Bool
+    let current: Double
+    let target: Double
+    let mode: String
+    let fan: String
+
+    init?(dictionary: [String: Any]) {
+        guard let id = dictionary["id"] as? String,
+              let name = dictionary["name"] as? String else { return nil }
+        self.id = id
+        self.name = name
+        brand = dictionary["brand"] as? String ?? ""
+        connection = dictionary["connection"] as? String ?? ""
+        isOn = dictionary["isOn"] as? Bool ?? false
+        current = (dictionary["current"] as? NSNumber)?.doubleValue ?? 0
+        target = (dictionary["target"] as? NSNumber)?.doubleValue ?? 22
+        mode = dictionary["mode"] as? String ?? "Auto"
+        fan = dictionary["fan"] as? String ?? "Auto"
+    }
+}
+
+@MainActor
+private final class WatchConnectivityModel: NSObject, ObservableObject, WCSessionDelegate {
+    @Published private(set) var devices: [WatchClimateDevice] = []
+    @Published private(set) var selectedID = ""
+    @Published private(set) var isPhoneReachable = false
+    @Published private(set) var temperatureUnit = "celsius"
+    @Published private(set) var message: String?
+
+    private let session = WCSession.default
+
+    override init() {
+        super.init()
+        guard WCSession.isSupported() else {
+            message = String(localized: "Connection unavailable")
+            return
+        }
+        session.delegate = self
+        session.activate()
+        apply(session.receivedApplicationContext)
+    }
+
+    var selectedDevice: WatchClimateDevice? {
+        devices.first(where: { $0.id == selectedID }) ?? devices.first
+    }
+
+    var usesFahrenheit: Bool { temperatureUnit == "fahrenheit" }
+
+    func refresh() {
+        send(["command": "refresh"])
+    }
+
+    func select(_ device: WatchClimateDevice) {
+        send(["command": "select", "deviceID": device.id])
+    }
+
+    func selectAdjacent(_ offset: Int) {
+        guard !devices.isEmpty else { return }
+        let currentIndex = devices.firstIndex(where: { $0.id == selectedID }) ?? 0
+        let nextIndex = (currentIndex + offset + devices.count) % devices.count
+        select(devices[nextIndex])
+    }
+
+    func togglePower(for device: WatchClimateDevice) {
+        send(["command": "control", "deviceID": device.id, "action": "power", "value": device.isOn ? "off" : "on"])
+    }
+
+    func setTemperature(for device: WatchClimateDevice, direction: Double) {
+        let displayed = usesFahrenheit ? device.target * 9 / 5 + 32 : device.target
+        let step = usesFahrenheit ? 1.0 : 0.5
+        let nextDisplayed = displayed + direction * step
+        let nextCelsius = usesFahrenheit ? (nextDisplayed - 32) * 5 / 9 : nextDisplayed
+        let bounded = min(30, max(16, nextCelsius))
+        send(["command": "control", "deviceID": device.id, "action": "temperature", "number": bounded])
+    }
+
+    func setMode(_ mode: String, for device: WatchClimateDevice) {
+        send(["command": "control", "deviceID": device.id, "action": "mode", "value": mode])
+    }
+
+    func displayed(_ celsius: Double) -> Double {
+        usesFahrenheit ? celsius * 9 / 5 + 32 : celsius
+    }
+
+    private func send(_ message: [String: Any]) {
+        guard session.activationState == .activated, session.isReachable else {
+            isPhoneReachable = false
+            self.message = String(localized: "Connection unavailable")
+            return
+        }
+        self.message = nil
+        session.sendMessage(message, replyHandler: { [weak self] reply in
+            Task { @MainActor in self?.apply(reply) }
+        }, errorHandler: { [weak self] _ in
+            Task { @MainActor in
+                self?.isPhoneReachable = false
+                self?.message = String(localized: "Connection unavailable")
+            }
+        })
+    }
+
+    private func apply(_ context: [String: Any]) {
+        if let rawDevices = context["devices"] as? [[String: Any]] {
+            devices = rawDevices.compactMap(WatchClimateDevice.init(dictionary:))
+        }
+        if let selected = context["selectedID"] as? String { selectedID = selected }
+        if let unit = context["temperatureUnit"] as? String { temperatureUnit = unit }
+        message = context["error"] as? String
+        isPhoneReachable = session.isReachable
+    }
+
+    nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            self.isPhoneReachable = session.isReachable
+            self.apply(session.receivedApplicationContext)
+        }
+    }
+
+    nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
+        Task { @MainActor [weak self] in self?.isPhoneReachable = session.isReachable }
+    }
+
+    nonisolated func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
+        Task { @MainActor [weak self] in self?.apply(applicationContext) }
+    }
+}
+
+private struct KlimatWatchHomeView: View {
+    @EnvironmentObject private var connectivity: WatchConnectivityModel
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 8) {
+                if connectivity.devices.count > 1 {
+                    HStack(spacing: 4) {
+                        Button { connectivity.selectAdjacent(-1) } label: { Image(systemName: "chevron.left") }
+                        .accessibilityLabel("Previous device")
+                        Text(connectivity.selectedDevice?.name ?? "Klimat")
+                            .font(.headline)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity)
+                        Button { connectivity.selectAdjacent(1) } label: { Image(systemName: "chevron.right") }
+                            .accessibilityLabel("Next device")
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!connectivity.isPhoneReachable)
+                } else {
+                    Text(connectivity.selectedDevice?.name ?? "Klimat")
+                        .font(.headline)
+                        .lineLimit(1)
+                }
+
+                if let device = connectivity.selectedDevice {
+                    HStack(spacing: 5) {
+                        Circle().fill(connectivity.isPhoneReachable ? .green : .orange).frame(width: 6, height: 6)
+                        Text(device.isOn ? "ON" : "OFF")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(device.isOn ? .green : .secondary)
+                        Text("·")
+                        Text(LocalizedStringKey(device.mode)).font(.caption2)
+                    }
+
+                    Text(device.brand)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+
+                    VStack(spacing: 0) {
+                        Text("INDOORS").font(.system(size: 9, weight: .bold)).foregroundStyle(.secondary)
+                        Text("\(connectivity.displayed(device.current), specifier: "%.1f")°")
+                            .font(.system(size: 28, weight: .medium, design: .rounded))
+                            .monospacedDigit()
+                        Text(connectivity.usesFahrenheit ? "°F" : "°C")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        Text("SET POINT").font(.system(size: 9, weight: .bold)).foregroundStyle(.secondary)
+                    }
+
+                    HStack(spacing: 10) {
+                        Button { connectivity.setTemperature(for: device, direction: -1) } label: {
+                            Image(systemName: "minus").font(.body.weight(.semibold))
+                        }
+                        .accessibilityLabel("Lower temperature")
+
+                        Text("\(connectivity.displayed(device.target), specifier: "%.1f")°")
+                            .font(.title3.weight(.semibold))
+                            .monospacedDigit()
+                            .frame(minWidth: 58)
+
+                        Text(connectivity.usesFahrenheit ? "°F" : "°C")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+
+                        Button { connectivity.setTemperature(for: device, direction: 1) } label: {
+                            Image(systemName: "plus").font(.body.weight(.semibold))
+                        }
+                        .accessibilityLabel("Raise temperature")
+                    }
+                    .disabled(!connectivity.isPhoneReachable)
+
+                    HStack(spacing: 10) {
+                        Button { connectivity.togglePower(for: device) } label: {
+                            Image(systemName: "power").font(.title3.weight(.semibold))
+                        }
+                        .tint(device.isOn ? .green : .gray)
+                        .accessibilityLabel(device.isOn ? "Turn off" : "Turn on")
+
+                        Button {
+                            let modes = ["Auto", "Cool", "Heat", "Dry", "Fan"]
+                            let next = ((modes.firstIndex(of: device.mode) ?? 0) + 1) % modes.count
+                            connectivity.setMode(modes[next], for: device)
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "arrow.trianglehead.2.clockwise")
+                                Text(LocalizedStringKey(device.mode))
+                            }
+                            .font(.caption)
+                        }
+                        .accessibilityLabel("Change mode")
+                    }
+                    .disabled(!connectivity.isPhoneReachable)
+
+                    if !connectivity.isPhoneReachable {
+                        Text("Connection unavailable")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                } else {
+                    Text("Connection unavailable")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+
+                if let message = connectivity.message {
+                    Text(message)
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                        .multilineTextAlignment(.center)
+                }
+            }
+            .padding(.horizontal, 5)
+        }
+        .task { connectivity.refresh() }
+    }
+}

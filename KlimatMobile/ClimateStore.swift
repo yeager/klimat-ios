@@ -117,8 +117,9 @@ struct CloudProvider: Identifiable {
         selectedID = nil
         save()
     }
-    func command(action: String, value: String? = nil, number: Double? = nil) async {
-        if let device = selected, device.brand == "MELCloud" {
+    func command(deviceID: String? = nil, action: String, value: String? = nil, number: Double? = nil) async {
+        let commandDevice = deviceID.flatMap { id in devices.first(where: { $0.id == id }) } ?? selected
+        if let device = commandDevice, device.brand == "MELCloud" {
             do {
                 let state = try await MELCloudClassicAdapter.command(device: device, action: action, value: value, number: number)
                 guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
@@ -126,7 +127,7 @@ struct CloudProvider: Identifiable {
             } catch { connectionNotice = error.localizedDescription }
             return
         }
-        if let device = selected, device.brand == "Apple Home", let serviceID = device.homeServiceID {
+        if let device = commandDevice, device.brand == "Apple Home", let serviceID = device.homeServiceID {
             guard let appleHome else {
                 connectionNotice = String(localized: "Climate control was not found in Apple Home. Scan for devices again.")
                 return
@@ -139,7 +140,7 @@ struct CloudProvider: Identifiable {
             } catch { connectionNotice = error.localizedDescription }
             return
         }
-        if let device = selected, device.brand == "Gree", let host = device.host {
+        if let device = commandDevice, device.brand == "Gree", let host = device.host {
             do {
                 let mac = String(device.id.dropFirst("gree-".count))
                 let info = GreeLocalAdapter.DeviceInfo(mac: mac, name: device.name, host: host, brand: "Gree", model: "")
@@ -154,7 +155,7 @@ struct CloudProvider: Identifiable {
             } catch { connectionNotice = error.localizedDescription }
             return
         }
-        guard let device = selected, let host = device.host else {
+        guard let device = commandDevice, let host = device.host else {
             connectionNotice = String(localized: "This device does not have a local control adapter."); return
         }
         do {
