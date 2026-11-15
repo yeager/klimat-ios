@@ -103,3 +103,8 @@
 "Previous device" = "前のデバイス";
 "Next device" = "次のデバイス";
 "Change mode" = "モードを変更";
+
+/* Mitsubishi vane controls */
+"Vertical airflow" = "上下風向";
+"Horizontal airflow" = "左右風向";
+"Swing" = "スイング";

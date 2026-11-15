@@ -99,3 +99,8 @@
 "Previous device" = "Poprzednie urządzenie";
 "Next device" = "Następne urządzenie";
 "Change mode" = "Zmień tryb";
+
+/* Mitsubishi vane controls */
+"Vertical airflow" = "Pionowy kierunek nawiewu";
+"Horizontal airflow" = "Poziomy kierunek nawiewu";
+"Swing" = "Oscylacja";

@@ -11,6 +11,8 @@ enum MitsubishiLocalAdapter {
         let target: Double
         let mode: String
         let fan: String
+        let verticalVane: String?
+        let horizontalVane: String?
         let general: [UInt8]
     }
 
@@ -30,8 +32,8 @@ enum MitsubishiLocalAdapter {
         var packet = Array(repeating: UInt8(0), count: 20)
         packet.replaceSubrange(0..<5, with: [0x41, 0x01, 0x30, 0x10, 0x01])
         packet[7] = current.general[8]; packet[8] = current.general[9]
-        packet[9] = current.general[10]; packet[10] = current.general[11]
-        packet[11] = current.general[12]; packet[15] = current.general[13]
+        packet[9] = current.general[10]; packet[10] = current.general[11]; packet[11] = current.general[12]
+        packet[15] = current.general[13]
         packet[17] = current.general[15] & 0x0f
         packet[18] = current.general[16] == 0 ? 0 : current.general[16]
         packet[19] = 0x41
@@ -50,6 +52,14 @@ enum MitsubishiLocalAdapter {
             mask |= 0x0800
             let speeds = ["Auto": UInt8(0), "Low": 1, "Medium": 3, "High": 6]
             guard let speed = speeds[value ?? ""] else { throw URLError(.unsupportedURL) }; packet[10] = speed
+        case "verticalVane":
+            mask |= 0x1000
+            let positions = ["AUTO": UInt8(0), "V1": 1, "V2": 2, "V3": 3, "V4": 4, "V5": 5, "SWING": 7]
+            guard let position = positions[value ?? ""] else { throw URLError(.unsupportedURL) }; packet[11] = position
+        case "horizontalVane":
+            mask |= 0x0001
+            let positions = ["AUTO": UInt8(0), "FAR_LEFT": 1, "LEFT": 2, "CENTER": 3, "RIGHT": 4, "FAR_RIGHT": 5, "LEFT_CENTER": 6, "CENTER_RIGHT": 7, "LEFT_RIGHT": 8, "LEFT_CENTER_RIGHT": 9, "SWING": 12]
+            guard let position = positions[value ?? ""] else { throw URLError(.unsupportedURL) }; packet[17] = (packet[17] & 0xf0) | position
         default: throw URLError(.unsupportedURL)
         }
         packet[5] = UInt8(mask >> 8); packet[6] = UInt8(mask & 0xff)
@@ -74,10 +84,13 @@ enum MitsubishiLocalAdapter {
         guard let general, general.count >= 22, checksumIsValid(general) else { throw URLError(.cannotParseResponse) }
         let modeMap: [UInt8: String] = [0: "Auto", 1: "Heat", 2: "Dry", 3: "Cool", 7: "Fan"]
         let fanMap: [UInt8: String] = [0: "Auto", 1: "Low", 2: "Low", 3: "Medium", 5: "High", 6: "High"]
+        let verticalMap: [UInt8: String] = [0: "AUTO", 1: "V1", 2: "V2", 3: "V3", 4: "V4", 5: "V5", 7: "SWING"]
+        let horizontalMap: [UInt8: String] = [0: "AUTO", 1: "FAR_LEFT", 2: "LEFT", 3: "CENTER", 4: "RIGHT", 5: "FAR_RIGHT", 6: "LEFT_CENTER", 7: "CENTER_RIGHT", 8: "LEFT_RIGHT", 9: "LEFT_CENTER_RIGHT", 12: "SWING"]
         let target = general[16] == 0 ? Double(31 - general[10]) : Double(general[16] - 0x80) / 2
         let current = sensor.map { Double(Int($0[11]) - 0x80) / 2 } ?? 23
         return State(mac: capture.mac, isOn: general[8] == 1, current: current, target: target,
-                     mode: modeMap[general[9] & 0x07] ?? "Auto", fan: fanMap[general[11]] ?? "Auto", general: general)
+                     mode: modeMap[general[9] & 0x07] ?? "Auto", fan: fanMap[general[11]] ?? "Auto",
+                     verticalVane: verticalMap[general[12]], horizontalVane: horizontalMap[general[15] & 0x0f], general: general)
     }
 
     private static func exchange(host: String, payload: String, timeout: TimeInterval) async throws -> String {

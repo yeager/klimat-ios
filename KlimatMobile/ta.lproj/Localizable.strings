@@ -103,3 +103,8 @@
 "Previous device" = "முந்தைய சாதனம்";
 "Next device" = "அடுத்த சாதனம்";
 "Change mode" = "பயன்முறையை மாற்றவும்";
+
+/* Mitsubishi vane controls */
+"Vertical airflow" = "செங்குத்துக் காற்றோட்டம்";
+"Horizontal airflow" = "கிடைமட்டக் காற்றோட்டம்";
+"Swing" = "ஊசலாட்டம்";

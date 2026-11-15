@@ -103,3 +103,8 @@
 "Previous device" = "Thiết bị trước";
 "Next device" = "Thiết bị tiếp theo";
 "Change mode" = "Đổi chế độ";
+
+/* Mitsubishi vane controls */
+"Vertical airflow" = "Hướng gió dọc";
+"Horizontal airflow" = "Hướng gió ngang";
+"Swing" = "Đảo gió";

@@ -18,6 +18,8 @@ struct ClimateDevice: Identifiable, Codable, Equatable {
     var remoteID: Int? = nil
     var remoteBuildingID: Int? = nil
     var localCipher: String? = nil
+    var verticalVane: String? = nil
+    var horizontalVane: String? = nil
 }
 
 struct CloudProvider: Identifiable {
@@ -70,7 +72,7 @@ struct CloudProvider: Identifiable {
         do {
             let state = try await MitsubishiLocalAdapter.read(host: host)
             let identifier = state.mac.isEmpty ? host : state.mac
-            let device = ClimateDevice(id: identifier, name: name.isEmpty ? "Mitsubishi Electric AC" : name, brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host)
+            let device = ClimateDevice(id: identifier, name: name.isEmpty ? "Mitsubishi Electric AC" : name, brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, verticalVane: state.verticalVane, horizontalVane: state.horizontalVane)
             if let index = devices.firstIndex(where: { $0.id == device.id || $0.host == host }) { devices[index] = device } else { devices.append(device) }
             selectedID = device.id; save()
         } catch { connectionNotice = error.localizedDescription }
@@ -192,7 +194,9 @@ struct CloudProvider: Identifiable {
             let target = daikinState?.target ?? mitsubishiState?.target
             let mode = daikinState?.mode ?? mitsubishiState?.mode
             let fan = daikinState?.fan ?? mitsubishiState?.fan
-            if let isOn { devices[index].isOn = isOn }; if let current { devices[index].current = current }; if let target { devices[index].target = target }; if let mode { devices[index].mode = mode }; if let fan { devices[index].fan = fan }; save()
+            if let isOn { devices[index].isOn = isOn }; if let current { devices[index].current = current }; if let target { devices[index].target = target }; if let mode { devices[index].mode = mode }; if let fan { devices[index].fan = fan }
+            if let mitsubishiState { devices[index].verticalVane = mitsubishiState.verticalVane; devices[index].horizontalVane = mitsubishiState.horizontalVane }
+            save()
         } catch { connectionNotice = error.localizedDescription }
     }
     func scanAppleHome() {
@@ -246,7 +250,7 @@ struct CloudProvider: Identifiable {
                             }
                             if let state = try? await MitsubishiLocalAdapter.discover(host: host) {
                                 let identifier = state.mac.isEmpty ? host : state.mac
-                                return ClimateDevice(id: identifier, name: "Mitsubishi Electric AC", brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host)
+                                return ClimateDevice(id: identifier, name: "Mitsubishi Electric AC", brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, verticalVane: state.verticalVane, horizontalVane: state.horizontalVane)
                             }
                             return nil
                         }

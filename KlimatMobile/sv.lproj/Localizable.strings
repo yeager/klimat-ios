@@ -104,3 +104,8 @@
 "Previous device" = "Föregående enhet";
 "Next device" = "Nästa enhet";
 "Change mode" = "Byt läge";
+
+/* Mitsubishi vane controls */
+"Vertical airflow" = "Vertikalt luftflöde";
+"Horizontal airflow" = "Horisontellt luftflöde";
+"Swing" = "Svängning";

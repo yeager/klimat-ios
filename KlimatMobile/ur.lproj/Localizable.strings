@@ -103,3 +103,8 @@
 "Previous device" = "پچھلا آلہ";
 "Next device" = "اگلا آلہ";
 "Change mode" = "موڈ تبدیل کریں";
+
+/* Mitsubishi vane controls */
+"Vertical airflow" = "عمودی ہوا کا بہاؤ";
+"Horizontal airflow" = "افقی ہوا کا بہاؤ";
+"Swing" = "جھول";

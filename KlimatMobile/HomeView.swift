@@ -180,6 +180,12 @@ struct HomeView: View {
                 Spacer()
                 if ["Daikin", "Mitsubishi Electric", "Gree", "MELCloud"].contains(device.brand) { Menu { ForEach(["Auto", "Low", "Medium", "High"], id: \.self) { fan in Button(LocalizedStringKey(fan)) { Task { await store.command(action: "fan", value: fan) } } } } label: { HStack(spacing: 5) { Text(LocalizedStringKey(device.fan)).font(.system(size: 12, weight: .semibold)); Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold)) }.foregroundStyle(Palette.green).padding(.vertical, 9).padding(.horizontal, 11).background(Palette.wash, in: Capsule()) }.disabled(!canControl) }
             }.padding(.top, 15)
+            if device.brand == "Mitsubishi Electric", let verticalVane = device.verticalVane, let horizontalVane = device.horizontalVane {
+                HStack(spacing: 12) {
+                    vanePicker("Vertical airflow", selection: verticalVane, options: ["AUTO", "V1", "V2", "V3", "V4", "V5", "SWING"], action: "verticalVane", canControl: canControl)
+                    vanePicker("Horizontal airflow", selection: horizontalVane, options: ["AUTO", "FAR_LEFT", "LEFT", "CENTER", "RIGHT", "FAR_RIGHT", "LEFT_CENTER", "CENTER_RIGHT", "LEFT_RIGHT", "LEFT_CENTER_RIGHT", "SWING"], action: "horizontalVane", canControl: canControl)
+                }.padding(.top, 10)
+            }
             if !canControl { Text("No verified local adapter is available for this device yet.").font(.system(size: 10)).foregroundStyle(Palette.muted).padding(.top, 8) }
         }
         .padding(18).background(Palette.card, in: RoundedRectangle(cornerRadius: 24)).overlay(RoundedRectangle(cornerRadius: 24).stroke(Palette.line, lineWidth: 1))
@@ -187,6 +193,21 @@ struct HomeView: View {
 
     private func stepButton(_ icon: String, label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) { Image(systemName: icon).font(.system(size: 15, weight: .semibold)).foregroundStyle(Palette.green).frame(width: 42, height: 42).background(Palette.wash, in: Circle()) }.accessibilityLabel(label)
+    }
+    private func vanePicker(_ title: LocalizedStringKey, selection: String, options: [String], action: String, canControl: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(title).font(.system(size: 10, weight: .medium)).foregroundStyle(Palette.muted)
+            Menu {
+                ForEach(options, id: \.self) { option in
+                    Button(option == "AUTO" ? String(localized: "Auto") : option == "SWING" ? String(localized: "Swing") : option) {
+                        Task { await store.command(action: action, value: option) }
+                    }
+                }
+            } label: {
+                HStack { Text(selection == "AUTO" ? String(localized: "Auto") : selection == "SWING" ? String(localized: "Swing") : selection).lineLimit(1); Spacer(minLength: 2); Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .bold)) }
+                    .font(.system(size: 11, weight: .semibold)).foregroundStyle(Palette.green).padding(.vertical, 10).padding(.horizontal, 10).frame(maxWidth: .infinity).background(Palette.wash, in: RoundedRectangle(cornerRadius: 10))
+            }.disabled(!canControl)
+        }.frame(maxWidth: .infinity, alignment: .leading)
     }
     private func modeButton(_ title: LocalizedStringKey, icon: String, selected: Bool, action: @escaping () -> Void) -> some View {
         return Button(action: action) { HStack(spacing: 8) { Image(systemName: icon).font(.system(size: 13, weight: .medium)); Text(title).font(.system(size: 11, weight: .semibold)); Spacer(minLength: 0); if selected { Image(systemName: "checkmark").font(.system(size: 10, weight: .bold)) } }.foregroundStyle(selected ? Palette.green : Palette.muted).padding(.horizontal, 11).frame(height: 38).background(selected ? Palette.wash : Palette.card, in: RoundedRectangle(cornerRadius: 12)).overlay(RoundedRectangle(cornerRadius: 12).stroke(selected ? Palette.green.opacity(0.16) : Palette.line, lineWidth: 1)) }

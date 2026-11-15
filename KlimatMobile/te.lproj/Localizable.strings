@@ -103,3 +103,8 @@
 "Previous device" = "మునుపటి పరికరం";
 "Next device" = "తదుపరి పరికరం";
 "Change mode" = "మోడ్ మార్చండి";
+
+/* Mitsubishi vane controls */
+"Vertical airflow" = "నిలువు గాలి ప్రవాహం";
+"Horizontal airflow" = "అడ్డ గాలి ప్రవాహం";
+"Swing" = "స్వింగ్";
