@@ -24,6 +24,8 @@ private struct WatchClimateDevice: Identifiable, Equatable {
     let mode: String
     let fan: String
     let statusUpdatedAt: Date?
+    let minimumTarget: Double?
+    let maximumTarget: Double?
 
 #if DEBUG
     static let preview = WatchClimateDevice(
@@ -36,11 +38,13 @@ private struct WatchClimateDevice: Identifiable, Equatable {
         target: 22,
         mode: "Cool",
         fan: "Auto",
-        statusUpdatedAt: Date()
+        statusUpdatedAt: Date(),
+        minimumTarget: 16,
+        maximumTarget: 31
     )
 #endif
 
-    init(id: String, name: String, brand: String, connection: String, isOn: Bool, current: Double, target: Double, mode: String, fan: String, statusUpdatedAt: Date? = nil) {
+    init(id: String, name: String, brand: String, connection: String, isOn: Bool, current: Double, target: Double, mode: String, fan: String, statusUpdatedAt: Date? = nil, minimumTarget: Double? = nil, maximumTarget: Double? = nil) {
         self.id = id
         self.name = name
         self.brand = brand
@@ -51,6 +55,8 @@ private struct WatchClimateDevice: Identifiable, Equatable {
         self.mode = mode
         self.fan = fan
         self.statusUpdatedAt = statusUpdatedAt
+        self.minimumTarget = minimumTarget
+        self.maximumTarget = maximumTarget
     }
 
     init?(dictionary: [String: Any]) {
@@ -70,6 +76,8 @@ private struct WatchClimateDevice: Identifiable, Equatable {
         } else {
             statusUpdatedAt = nil
         }
+        minimumTarget = (dictionary["minimumTarget"] as? NSNumber)?.doubleValue
+        maximumTarget = (dictionary["maximumTarget"] as? NSNumber)?.doubleValue
     }
 }
 
@@ -140,12 +148,26 @@ private final class WatchConnectivityModel: NSObject, ObservableObject, WCSessio
         let step = usesFahrenheit ? 1.0 : 0.5
         let nextDisplayed = displayed + direction * step
         let nextCelsius = usesFahrenheit ? (nextDisplayed - 32) * 5 / 9 : nextDisplayed
-        let bounded = min(30, max(16, nextCelsius))
+        let minimum = device.minimumTarget ?? 16
+        let maximum = device.maximumTarget ?? 30
+        let bounded = min(maximum, max(minimum, (nextCelsius * 2).rounded() / 2))
         send(["command": "control", "deviceID": device.id, "action": "temperature", "number": bounded])
+    }
+
+    func canAdjustTemperature(for device: WatchClimateDevice, direction: Double) -> Bool {
+        let step = usesFahrenheit ? 5.0 / 9.0 : 0.5
+        let next = device.target + direction * step
+        return next >= (device.minimumTarget ?? 16) && next <= (device.maximumTarget ?? 30)
     }
 
     func setMode(_ mode: String, for device: WatchClimateDevice) {
         send(["command": "control", "deviceID": device.id, "action": "mode", "value": mode])
+    }
+
+    func cycleMode(for device: WatchClimateDevice) {
+        let modes = device.brand == "Apple Home" ? ["Auto", "Cool", "Heat"] : ["Auto", "Cool", "Heat", "Dry", "Fan"]
+        let next = ((modes.firstIndex(of: device.mode) ?? 0) + 1) % modes.count
+        setMode(modes[next], for: device)
     }
 
     func displayed(_ celsius: Double) -> Double {
@@ -296,6 +318,7 @@ private struct KlimatWatchHomeView: View {
                                         .background(.gray.opacity(0.2), in: Circle())
                                 }
                                 .accessibilityLabel("Lower temperature")
+                                .disabled(!connectivity.canAdjustTemperature(for: device, direction: -1))
 
                                 Text("\(connectivity.displayed(device.target), specifier: "%.1f")°")
                                     .font(.system(size: 15, weight: .semibold, design: .rounded))
@@ -308,9 +331,10 @@ private struct KlimatWatchHomeView: View {
                                         .background(.gray.opacity(0.2), in: Circle())
                                 }
                                 .accessibilityLabel("Raise temperature")
+                                .disabled(!connectivity.canAdjustTemperature(for: device, direction: 1))
                             }
                             .buttonStyle(.plain)
-                            .disabled(!connectivity.isPhoneReachable)
+                                .disabled(!connectivity.isPhoneReachable || !connectivity.canAdjustTemperature(for: device, direction: 1))
                         }
                     }
 
@@ -325,9 +349,7 @@ private struct KlimatWatchHomeView: View {
                         .accessibilityLabel(device.isOn ? "Turn off" : "Turn on")
 
                         Button {
-                            let modes = ["Auto", "Cool", "Heat", "Dry", "Fan"]
-                            let next = ((modes.firstIndex(of: device.mode) ?? 0) + 1) % modes.count
-                            connectivity.setMode(modes[next], for: device)
+                            connectivity.cycleMode(for: device)
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "arrow.trianglehead.2.clockwise")

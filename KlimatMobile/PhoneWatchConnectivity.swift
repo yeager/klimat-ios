@@ -67,6 +67,8 @@ final class PhoneWatchConnectivity: NSObject, ObservableObject, WCSessionDelegat
                 "fan": device.fan
             ]
             if let updatedAt = device.statusUpdatedAt { item["statusUpdatedAt"] = updatedAt.timeIntervalSince1970 }
+            if let minimumTarget = device.minimumTarget { item["minimumTarget"] = minimumTarget }
+            if let maximumTarget = device.maximumTarget { item["maximumTarget"] = maximumTarget }
             return item
         }
         var result: [String: Any] = [

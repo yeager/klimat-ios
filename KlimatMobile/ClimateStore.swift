@@ -21,6 +21,8 @@ struct ClimateDevice: Identifiable, Codable, Equatable {
     var verticalVane: String? = nil
     var horizontalVane: String? = nil
     var statusUpdatedAt: Date? = nil
+    var minimumTarget: Double? = nil
+    var maximumTarget: Double? = nil
 }
 
 struct CloudProvider: Identifiable {
@@ -49,8 +51,18 @@ struct CloudProvider: Identifiable {
 
     init() {
         if let data = UserDefaults.standard.data(forKey: storageKey), let saved = try? JSONDecoder().decode([ClimateDevice].self, from: data) {
-            devices = saved
-            selectedID = saved.first?.id
+            devices = saved.map { savedDevice in
+                var device = savedDevice
+                if device.brand == "Mitsubishi Electric" {
+                    device.minimumTarget = device.minimumTarget ?? 16
+                    device.maximumTarget = device.maximumTarget ?? 31
+                } else if device.brand == "MELCloud" {
+                    device.minimumTarget = device.minimumTarget ?? 10
+                    device.maximumTarget = device.maximumTarget ?? 31
+                }
+                return device
+            }
+            selectedID = devices.first?.id
         }
     }
     var selected: ClimateDevice? { devices.first(where: { $0.id == selectedID }) ?? devices.first }
@@ -73,7 +85,7 @@ struct CloudProvider: Identifiable {
         do {
             let state = try await MitsubishiLocalAdapter.read(host: host)
             let identifier = state.mac.isEmpty ? host : state.mac
-            let device = ClimateDevice(id: identifier, name: name.isEmpty ? "Mitsubishi Electric AC" : name, brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, verticalVane: state.verticalVane, horizontalVane: state.horizontalVane, statusUpdatedAt: Date())
+            let device = ClimateDevice(id: identifier, name: name.isEmpty ? "Mitsubishi Electric AC" : name, brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, verticalVane: state.verticalVane, horizontalVane: state.horizontalVane, statusUpdatedAt: Date(), minimumTarget: 16, maximumTarget: 31)
             if let index = devices.firstIndex(where: { $0.id == device.id || $0.host == host }) { devices[index] = device } else { devices.append(device) }
             selectedID = device.id; save()
         } catch { connectionNotice = error.localizedDescription }
@@ -105,7 +117,7 @@ struct CloudProvider: Identifiable {
         do {
             let (_, records) = try await MELCloudClassicAdapter.signIn(email: email, password: password)
             let cloudDevices = records.map { record in
-                ClimateDevice(id: "melcloud-\(record.deviceID)", name: record.name, brand: "MELCloud", connection: "MELCloud · Mitsubishi Electric", isOn: record.power, current: record.roomTemperature, target: record.setTemperature, mode: Self.modeName(record.operationMode), fan: Self.fanName(record.fanSpeed), host: nil, homeServiceID: nil, remoteID: record.deviceID, remoteBuildingID: record.buildingID, statusUpdatedAt: Date())
+                ClimateDevice(id: "melcloud-\(record.deviceID)", name: record.name, brand: "MELCloud", connection: "MELCloud · Mitsubishi Electric", isOn: record.power, current: record.roomTemperature, target: record.setTemperature, mode: Self.modeName(record.operationMode), fan: Self.fanName(record.fanSpeed), host: nil, homeServiceID: nil, remoteID: record.deviceID, remoteBuildingID: record.buildingID, statusUpdatedAt: Date(), minimumTarget: 10, maximumTarget: 31)
             }
             devices.removeAll { $0.brand == "MELCloud" }
             devices.append(contentsOf: cloudDevices)
@@ -162,6 +174,7 @@ struct CloudProvider: Identifiable {
                 let state = try await MELCloudClassicAdapter.read(device: device)
                 refreshed.isOn = state.power; refreshed.current = state.roomTemperature; refreshed.target = state.setTemperature
                 refreshed.mode = Self.modeName(state.operationMode); refreshed.fan = Self.fanName(state.fanSpeed)
+                refreshed.minimumTarget = 10; refreshed.maximumTarget = 31
             case "Apple Home":
                 guard let serviceID = device.homeServiceID, let appleHome else { throw HomeKitControlError.serviceUnavailable }
                 refreshed = try await appleHome.read(serviceID: serviceID)
@@ -302,7 +315,7 @@ struct CloudProvider: Identifiable {
                             }
                             if let state = try? await MitsubishiLocalAdapter.discover(host: host) {
                                 let identifier = state.mac.isEmpty ? host : state.mac
-                                return ClimateDevice(id: identifier, name: "Mitsubishi Electric AC", brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, verticalVane: state.verticalVane, horizontalVane: state.horizontalVane, statusUpdatedAt: Date())
+                                return ClimateDevice(id: identifier, name: "Mitsubishi Electric AC", brand: "Mitsubishi Electric", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: host, verticalVane: state.verticalVane, horizontalVane: state.horizontalVane, statusUpdatedAt: Date(), minimumTarget: 16, maximumTarget: 31)
                             }
                             return nil
                         }

@@ -165,15 +165,18 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 3) { Text("SET POINT").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted); HStack(alignment: .firstTextBaseline, spacing: 3) { Text(String(format: "%.1f", displayedTemperature(device.target))).font(.system(size: 30, weight: .semibold, design: .rounded)).foregroundStyle(Palette.ink); Text(usesFahrenheit ? "°F" : "°C").font(.system(size: 13, weight: .medium)).foregroundStyle(Palette.muted) } }
                 Spacer()
                 HStack(spacing: 10) {
-                    stepButton("minus", label: "Lower temperature") { Task { await store.command(action: "temperature", number: max(16, device.target - 0.5)) } }.disabled(!canControl)
-                    stepButton("plus", label: "Raise temperature") { Task { await store.command(action: "temperature", number: min(30, device.target + 0.5)) } }.disabled(!canControl)
+                    stepButton("minus", label: "Lower temperature") { Task { await store.command(action: "temperature", number: max(device.minimumTarget ?? 16, device.target - 0.5)) } }.disabled(!canControl || device.target <= (device.minimumTarget ?? 16))
+                    stepButton("plus", label: "Raise temperature") { Task { await store.command(action: "temperature", number: min(device.maximumTarget ?? 30, device.target + 0.5)) } }.disabled(!canControl || device.target >= (device.maximumTarget ?? 30))
                 }
             }.padding(.vertical, 17)
             LazyVGrid(columns: columns, spacing: 8) {
                 modeButton("Cool", icon: "snowflake", selected: device.mode == "Cool") { Task { await store.command(action: "mode", value: "Cool") } }.disabled(!canControl)
                 modeButton("Heat", icon: "sun.max", selected: device.mode == "Heat") { Task { await store.command(action: "mode", value: "Heat") } }.disabled(!canControl)
                 modeButton("Auto", icon: "arrow.trianglehead.2.clockwise", selected: device.mode == "Auto") { Task { await store.command(action: "mode", value: "Auto") } }.disabled(!canControl)
-                modeButton("Dry", icon: "drop", selected: device.mode == "Dry") { Task { await store.command(action: "mode", value: "Dry") } }.disabled(!canControl)
+                if device.brand != "Apple Home" {
+                    modeButton("Dry", icon: "drop", selected: device.mode == "Dry") { Task { await store.command(action: "mode", value: "Dry") } }.disabled(!canControl)
+                    modeButton("Fan", icon: "wind", selected: device.mode == "Fan") { Task { await store.command(action: "mode", value: "Fan") } }.disabled(!canControl)
+                }
             }
             HStack {
                 Label("Fan speed", systemImage: "wind").font(.system(size: 12, weight: .medium)).foregroundStyle(Palette.ink)
