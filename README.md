@@ -22,7 +22,7 @@ MELCloud Classic is an optional cloud connection for Mitsubishi accounts and req
 
 The companion watchOS app shows the selected device's status and lets you switch devices, power, temperature, and mode. Watch Connectivity relays commands to the paired iPhone, which uses the existing device adapter. For supported local adapters, AC commands stay on the local Wi-Fi network and do not need a cloud service or internet access. The iPhone must be reachable for live watch commands. Temperature units follow the iPhone setting. The latest device state is shared only with the paired watch; Klimat has no developer backend, analytics, or tracking.
 
-Compatibility depends on the adapter, firmware, and protocol version. Mitsubishi and Gree support still needs testing with physical AC hardware. Network discovery checks only the iPhone's private IPv4 Wi-Fi subnet, rejects subnets larger than 512 addresses, and is not a general scan for all AC brands.
+Compatibility depends on the adapter, firmware, and protocol version. The desktop Klimat reference has been physically verified with two Mitsubishi MSZ-LN35VG2W units using MAC-577IF-2E, including status, temperature changes, and vane controls. The iPhone Swift port uses the same MAC-577 local HTTP protocol, but iPhone-specific hardware control still needs testing. The MELCloud iPhone integration has passed account sign-in and device enumeration for one account; no AC command was sent during that test, so command control remains unverified. Gree support still needs physical-device testing. Network discovery checks only the iPhone's private IPv4 Wi-Fi subnet, rejects subnets larger than 512 addresses, and is not a general scan for all AC brands.
 
 ## Build
 

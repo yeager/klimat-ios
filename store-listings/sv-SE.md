@@ -26,7 +26,7 @@ Du kan också lägga till termostater och värme-/kylreglage som redan har konfi
 
 Kompatibiliteten beror på adaptermodell, firmware och vilka klimatreglage Apple Home-tillbehören erbjuder. Nätverkssökningen söker igenom det lokala Wi-Fi-nätet efter adaptrar med protokoll som stöds. Du kan också ange adapterns IP-adress manuellt.
 
-Klimat stöder för närvarande den kompatibla lokala Daikin-adaptern och Apple Home enligt beskrivningen ovan. Molntjänster från andra tillverkare och fler lokala protokoll är ännu inte tillgängliga.
+Klimat stöder kompatibla lokala Daikin-adaptrar och klimatreglage i Apple Home. Direkt Daikin-styrning fungerar via ditt lokala Wi-Fi även utan internet.
 
 **Nyckelord**  
 luftkonditionering,AC-styrning,Daikin,klimat,termostat,lokal styrning,HomeKit,temperatur
