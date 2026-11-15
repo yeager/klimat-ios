@@ -79,7 +79,7 @@
 "Could not determine the Wi-Fi subnet. Enter the adapter IP address instead." = "Wi-Fi 서브넷을 확인할 수 없습니다. 대신 어댑터 IP 주소를 입력하세요.";
 "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually." = "이 Wi-Fi 네트워크에서 호환되는 Daikin 어댑터를 찾지 못했습니다. IP 주소를 직접 입력할 수 있습니다.";
 "Found %lld compatible Daikin adapter(s) on this Wi-Fi network." = "이 Wi-Fi 네트워크에서 호환되는 Daikin 어댑터 %lld개를 찾았습니다.";
-"Compatible Daikin adapters work locally, without internet or a cloud account." = "호환되는 Daikin 어댑터는 인터넷이나 클라우드 계정 없이 로컬에서 작동합니다.";
+"Control compatible air conditioners over your local Wi-Fi, without internet or a cloud account." = "호환되는 에어컨을 로컬 Wi-Fi로 제어하세요. 인터넷이나 클라우드 계정은 필요하지 않습니다.";
 "Choose light or dark mode, or follow your iPhone setting." = "라이트 모드나 다크 모드를 선택하거나 iPhone 설정을 따르세요.";
 "Choose how temperatures are shown throughout Klimat." = "Klimat에서 온도를 표시하는 방식을 선택하세요.";
 "Use Face ID to unlock Klimat when you reopen the app." = "앱을 다시 열 때 Face ID로 Klimat을 잠금 해제하세요.";

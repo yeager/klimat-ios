@@ -79,7 +79,7 @@
 "Could not determine the Wi-Fi subnet. Enter the adapter IP address instead." = "Wi-Fi সাবনেট নির্ধারণ করা যায়নি। পরিবর্তে অ্যাডাপ্টারের IP ঠিকানা লিখুন।";
 "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually." = "এই Wi-Fi নেটওয়ার্কে সামঞ্জস্যপূর্ণ Daikin অ্যাডাপ্টার পাওয়া যায়নি। IP ঠিকানা নিজে লিখতে পারেন।";
 "Found %lld compatible Daikin adapter(s) on this Wi-Fi network." = "এই Wi-Fi নেটওয়ার্কে %lldটি সামঞ্জস্যপূর্ণ Daikin অ্যাডাপ্টার পাওয়া গেছে।";
-"Compatible Daikin adapters work locally, without internet or a cloud account." = "সামঞ্জস্যপূর্ণ Daikin অ্যাডাপ্টার ইন্টারনেট বা ক্লাউড অ্যাকাউন্ট ছাড়াই স্থানীয়ভাবে চলে।";
+"Control compatible air conditioners over your local Wi-Fi, without internet or a cloud account." = "স্থানীয় Wi-Fi দিয়ে সামঞ্জস্যপূর্ণ এয়ার কন্ডিশনার নিয়ন্ত্রণ করুন; ইন্টারনেট বা ক্লাউড অ্যাকাউন্টের দরকার নেই।";
 "Choose light or dark mode, or follow your iPhone setting." = "হালকা বা গাঢ় মোড বেছে নিন, অথবা iPhone-এর সেটিং অনুসরণ করুন।";
 "Choose how temperatures are shown throughout Klimat." = "Klimat-এ তাপমাত্রা কীভাবে দেখানো হবে তা বেছে নিন।";
 "Use Face ID to unlock Klimat when you reopen the app." = "অ্যাপটি আবার খুললে Klimat আনলক করতে Face ID ব্যবহার করুন।";

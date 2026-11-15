@@ -79,7 +79,7 @@
 "Could not determine the Wi-Fi subnet. Enter the adapter IP address instead." = "无法确定 Wi-Fi 子网。请改为输入适配器 IP 地址。";
 "No compatible direct Daikin adapters found on this Wi-Fi network. You can enter an adapter IP address manually." = "在此 Wi-Fi 网络中未找到兼容的 Daikin 适配器。你也可以手动输入适配器 IP 地址。";
 "Found %lld compatible Daikin adapter(s) on this Wi-Fi network." = "在此 Wi-Fi 网络中找到 %lld 个兼容的 Daikin 适配器。";
-"Compatible Daikin adapters work locally, without internet or a cloud account." = "兼容的 Daikin 适配器可在本地运行，无需互联网或云账户。";
+"Control compatible air conditioners over your local Wi-Fi, without internet or a cloud account." = "通过本地 Wi-Fi 控制兼容的空调，无需互联网或云账户。";
 "Choose light or dark mode, or follow your iPhone setting." = "选择浅色或深色模式，也可以跟随 iPhone 的设置。";
 "Choose how temperatures are shown throughout Klimat." = "选择 Klimat 中温度的显示方式。";
 "Use Face ID to unlock Klimat when you reopen the app." = "重新打开应用时，使用 Face ID 解锁 Klimat。";

@@ -285,7 +285,7 @@ struct HomeView: View {
                 Button { store.scanAppleHome() } label: { Label(store.isLoadingAppleHome ? "Searching Apple Home…" : "Add climate controls from Apple Home", systemImage: "house") }.buttonStyle(SecondaryButtonStyle())
                 Text(store.appleHomeStatus).font(.system(size: 11)).foregroundStyle(Palette.muted)
                 Button { showAdd = false; showManual = true } label: { Label("Enter device IP address", systemImage: "number") }.buttonStyle(SecondaryButtonStyle())
-                VStack(alignment: .leading, spacing: 8) { Text("DIRECT CONNECTION").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted); Text("Compatible Daikin adapters work locally, without internet or a cloud account.").font(.system(size: 12)).foregroundStyle(Palette.ink) }.padding(14).frame(maxWidth: .infinity, alignment: .leading).background(Palette.wash, in: RoundedRectangle(cornerRadius: 15))
+                VStack(alignment: .leading, spacing: 8) { Text("DIRECT CONNECTION").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted); Text("Control compatible air conditioners over your local Wi-Fi, without internet or a cloud account.").font(.system(size: 12)).foregroundStyle(Palette.ink) }.padding(14).frame(maxWidth: .infinity, alignment: .leading).background(Palette.wash, in: RoundedRectangle(cornerRadius: 15))
                 Spacer()
             }.padding(20).background(Palette.background.ignoresSafeArea()).toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Done") { showAdd = false }.foregroundStyle(Palette.green) } }
         }.presentationDetents([.medium, .large])
