@@ -76,6 +76,7 @@ private final class WatchConnectivityModel: NSObject, ObservableObject, WCSessio
     private let session = WCSession.default
 #if DEBUG
     private var isPreview = false
+    private var didRunControlRelayCheck = false
 #endif
 
     override init() {
@@ -170,16 +171,42 @@ private final class WatchConnectivityModel: NSObject, ObservableObject, WCSessio
         isPhoneReachable = session.isReachable
     }
 
+#if DEBUG
+    private func runControlRelayCheckIfRequested() {
+        guard !didRunControlRelayCheck,
+              ProcessInfo.processInfo.arguments.contains("--klimat-watch-control-relay-check"),
+              session.activationState == .activated,
+              session.isReachable else { return }
+        didRunControlRelayCheck = true
+        // The unknown device ID is rejected by the phone before any adapter can send AC traffic.
+        send([
+            "command": "control",
+            "deviceID": "__klimat_missing_device_relay_check__",
+            "action": "power",
+            "value": "on"
+        ])
+    }
+#endif
+
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         Task { @MainActor [weak self] in
             guard let self else { return }
             self.isPhoneReachable = session.isReachable
             self.apply(session.receivedApplicationContext)
+#if DEBUG
+            self.runControlRelayCheckIfRequested()
+#endif
         }
     }
 
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
-        Task { @MainActor [weak self] in self?.isPhoneReachable = session.isReachable }
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            self.isPhoneReachable = session.isReachable
+#if DEBUG
+            self.runControlRelayCheckIfRequested()
+#endif
+        }
     }
 
     nonisolated func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
