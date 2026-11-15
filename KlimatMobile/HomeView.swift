@@ -64,6 +64,10 @@ struct HomeView: View {
             .preferredColorScheme(preferredColorScheme)
             .overlay { if requireFaceID && !isUnlocked { biometricLock } }
             .onAppear { if requireFaceID { isUnlocked = false; authenticate() } else { isUnlocked = true } }
+            .task(id: refreshTaskID) {
+                guard scenePhase == .active, let deviceID = store.selected?.id else { return }
+                await store.refreshDevice(deviceID: deviceID, reportErrors: false)
+            }
             .onChange(of: scenePhase) { _, phase in
                 if phase == .background, requireFaceID { isUnlocked = false }
                 if phase == .active {
@@ -78,6 +82,8 @@ struct HomeView: View {
     private var preferredColorScheme: ColorScheme? {
         switch appearance { case "light": .light; case "dark": .dark; default: nil }
     }
+
+    private var refreshTaskID: String { "\(store.selectedID ?? store.selected?.id ?? "")|\(scenePhase == .active)" }
 
     private var usesFahrenheit: Bool { temperatureUnit == "fahrenheit" }
     private func displayedTemperature(_ celsius: Double) -> Double { usesFahrenheit ? celsius * 9 / 5 + 32 : celsius }
@@ -149,6 +155,14 @@ struct HomeView: View {
                     HStack(spacing: 6) { Circle().fill(device.isOn ? Palette.green : Palette.muted.opacity(0.5)).frame(width: 7, height: 7); Text(device.isOn ? "ON" : "OFF").font(.system(size: 9, weight: .bold)).tracking(1).foregroundStyle(Palette.muted) }
                     Text(device.name).font(.system(size: 19, weight: .bold, design: .rounded)).foregroundStyle(Palette.ink)
                     Text(device.connection).font(.system(size: 11)).foregroundStyle(Palette.muted)
+                    if let statusUpdatedAt = device.statusUpdatedAt {
+                        HStack(spacing: 3) {
+                            Text("Updated")
+                            Text(statusUpdatedAt, style: .relative)
+                        }.font(.system(size: 9)).foregroundStyle(Palette.muted)
+                    } else {
+                        Text("Status not verified").font(.system(size: 9)).foregroundStyle(Palette.muted)
+                    }
                 }
                 Spacer()
                 Button { Task { await store.command(action: "power", value: device.isOn ? "off" : "on") } } label: { Image(systemName: "power").font(.system(size: 16, weight: .semibold)).foregroundStyle(device.isOn ? .white : Palette.green).frame(width: 42, height: 42).background(device.isOn ? Palette.green : Palette.wash, in: Circle()) }.disabled(!canControl)

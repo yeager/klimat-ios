@@ -141,7 +141,7 @@ struct CloudProvider: Identifiable {
         selectedID = nil
         save()
     }
-    func refreshDevice(deviceID: String?) async {
+    func refreshDevice(deviceID: String?, reportErrors: Bool = true) async {
         guard let device = deviceID.flatMap({ id in devices.first(where: { $0.id == id }) }) ?? selected else {
             connectionNotice = String(localized: "Connection unavailable")
             return
@@ -186,7 +186,7 @@ struct CloudProvider: Identifiable {
             devices[index] = refreshed
             save()
         } catch {
-            connectionNotice = error.localizedDescription
+            if reportErrors { connectionNotice = error.localizedDescription }
         }
     }
     func command(deviceID: String? = nil, action: String, value: String? = nil, number: Double? = nil) async {
