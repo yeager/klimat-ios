@@ -29,6 +29,10 @@ final class PhoneWatchConnectivity: NSObject, ObservableObject, WCSessionDelegat
         if command == "select", let deviceID = message["deviceID"] as? String,
            store.devices.contains(where: { $0.id == deviceID }) {
             store.selectedID = deviceID
+            await store.refreshDevice(deviceID: deviceID)
+        } else if command == "refresh" {
+            store.connectionNotice = nil
+            await store.refreshDevice(deviceID: message["deviceID"] as? String ?? store.selectedID)
         } else if command == "control" {
             guard let action = message["action"] as? String,
                   ["power", "temperature", "mode", "fan"].contains(action) else {
@@ -44,8 +48,9 @@ final class PhoneWatchConnectivity: NSObject, ObservableObject, WCSessionDelegat
             return snapshot(for: store, error: error)
         }
 
+        let error = store.connectionNotice
         updateContext(from: store)
-        return snapshot(for: store)
+        return snapshot(for: store, error: error)
     }
 
     private func snapshot(for store: ClimateStore, error: String? = nil) -> [String: Any] {

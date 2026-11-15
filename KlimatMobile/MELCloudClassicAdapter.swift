@@ -63,6 +63,13 @@ enum MELCloudClassicAdapter {
         return results
     }
 
+    static func read(device: ClimateDevice) async throws -> MELCloudDeviceRecord {
+        guard let deviceID = device.remoteID, let buildingID = device.remoteBuildingID, let session = storedSession() else { throw MELCloudError.signInAgain }
+        let query = [URLQueryItem(name: "id", value: String(deviceID)), URLQueryItem(name: "buildingId", value: String(buildingID))]
+        guard let values = try await request(path: "Device/Get", session: session, query: query) as? [String: Any] else { throw MELCloudError.invalidResponse }
+        return record(from: values, deviceID: deviceID, buildingID: buildingID, name: device.name)
+    }
+
     static func command(device: ClimateDevice, action: String, value: String?, number: Double?) async throws -> MELCloudDeviceRecord {
         guard let deviceID = device.remoteID, let buildingID = device.remoteBuildingID, let session = storedSession() else { throw MELCloudError.signInAgain }
         let query = [URLQueryItem(name: "id", value: String(deviceID)), URLQueryItem(name: "buildingId", value: String(buildingID))]

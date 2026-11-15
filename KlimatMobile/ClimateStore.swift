@@ -128,6 +128,52 @@ struct CloudProvider: Identifiable {
         selectedID = nil
         save()
     }
+    func refreshDevice(deviceID: String?) async {
+        guard let device = deviceID.flatMap({ id in devices.first(where: { $0.id == id }) }) ?? selected else {
+            connectionNotice = String(localized: "Connection unavailable")
+            return
+        }
+        connectionNotice = nil
+        do {
+            var refreshed = device
+            switch device.brand {
+            case "Daikin":
+                guard let host = device.host else { throw URLError(.badURL) }
+                let state = try await DaikinLocalAdapter.read(host: host)
+                refreshed.isOn = state.isOn; refreshed.current = state.current; refreshed.target = state.target
+                refreshed.mode = state.mode; refreshed.fan = state.fan
+            case "Mitsubishi Electric":
+                guard let host = device.host else { throw URLError(.badURL) }
+                let state = try await MitsubishiLocalAdapter.read(host: host)
+                refreshed.isOn = state.isOn; refreshed.current = state.current; refreshed.target = state.target
+                refreshed.mode = state.mode; refreshed.fan = state.fan
+                refreshed.verticalVane = state.verticalVane; refreshed.horizontalVane = state.horizontalVane
+            case "Gree":
+                guard let host = device.host else { throw URLError(.badURL) }
+                let mac = String(device.id.dropFirst("gree-".count))
+                let info = GreeLocalAdapter.DeviceInfo(mac: mac, name: device.name, host: host, brand: "Gree", model: "")
+                guard let credentials = GreeKeychain.load(mac: mac),
+                      let cipher = GreeLocalAdapter.CipherKind(rawValue: credentials.cipher) else { throw GreeControlError.missingPairing }
+                let state = try await GreeLocalAdapter.read(info, key: credentials.key, cipher: cipher)
+                refreshed.isOn = state.isOn; refreshed.current = state.current; refreshed.target = state.target
+                refreshed.mode = state.mode; refreshed.fan = state.fan; refreshed.localCipher = state.cipher.rawValue
+            case "MELCloud":
+                let state = try await MELCloudClassicAdapter.read(device: device)
+                refreshed.isOn = state.power; refreshed.current = state.roomTemperature; refreshed.target = state.setTemperature
+                refreshed.mode = Self.modeName(state.operationMode); refreshed.fan = Self.fanName(state.fanSpeed)
+            case "Apple Home":
+                guard let serviceID = device.homeServiceID, let appleHome else { throw HomeKitControlError.serviceUnavailable }
+                refreshed = try await appleHome.read(serviceID: serviceID)
+            default:
+                throw URLError(.unsupportedURL)
+            }
+            guard let index = devices.firstIndex(where: { $0.id == device.id }) else { return }
+            devices[index] = refreshed
+            save()
+        } catch {
+            connectionNotice = error.localizedDescription
+        }
+    }
     func command(deviceID: String? = nil, action: String, value: String? = nil, number: Double? = nil) async {
         let commandDevice: ClimateDevice?
         if let deviceID {
@@ -384,6 +430,19 @@ private enum GreeKeychain {
         refresh()
         guard let home = manager.homes.first(where: { $0.accessories.contains(where: { $0.services.contains(where: { $0.uniqueIdentifier.uuidString == serviceID }) }) }),
               let accessory = home.accessories.first(where: { $0.services.contains(where: { $0.uniqueIdentifier.uuidString == serviceID }) }) else { throw HomeKitControlError.serviceUnavailable }
+        let values = Dictionary(uniqueKeysWithValues: await service.characteristics.asyncCompactMap { characteristic -> (String, Any)? in
+            guard Self.readableTypes.contains(characteristic.characteristicType), let value = await Self.read(characteristic) else { return nil }
+            return (characteristic.characteristicType, value)
+        })
+        return Self.device(home: home, accessory: accessory, service: service, values: values)
+    }
+
+    func read(serviceID: String) async throws -> ClimateDevice {
+        guard let home = manager.homes.first(where: { $0.accessories.contains(where: { $0.services.contains(where: { $0.uniqueIdentifier.uuidString == serviceID }) }) }),
+              let accessory = home.accessories.first(where: { $0.services.contains(where: { $0.uniqueIdentifier.uuidString == serviceID }) }),
+              let service = accessory.services.first(where: { $0.uniqueIdentifier.uuidString == serviceID }) else {
+            throw HomeKitControlError.serviceUnavailable
+        }
         let values = Dictionary(uniqueKeysWithValues: await service.characteristics.asyncCompactMap { characteristic -> (String, Any)? in
             guard Self.readableTypes.contains(characteristic.characteristicType), let value = await Self.read(characteristic) else { return nil }
             return (characteristic.characteristicType, value)
