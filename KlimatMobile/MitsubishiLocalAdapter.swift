@@ -42,7 +42,7 @@ enum MitsubishiLocalAdapter {
         case "power": mask |= 0x0100; packet[7] = value == "on" ? 1 : 0
         case "mode":
             mask |= 0x0200
-            let modes = ["Auto": UInt8(8), "Heat": 1, "Dry": 2, "Cool": 3, "Fan": 7]
+            let modes = ["Auto": UInt8(0), "Heat": 1, "Dry": 2, "Cool": 3, "Fan": 7]
             guard let mode = modes[value ?? ""] else { throw URLError(.unsupportedURL) }; packet[8] = mode
         case "temperature":
             mask |= 0x0400
