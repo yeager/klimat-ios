@@ -24,6 +24,32 @@ private struct WatchClimateDevice: Identifiable, Equatable {
     let mode: String
     let fan: String
 
+#if DEBUG
+    static let preview = WatchClimateDevice(
+        id: "preview-daikin",
+        name: "Living Room",
+        brand: "Daikin",
+        connection: "Local network",
+        isOn: true,
+        current: 23.5,
+        target: 22,
+        mode: "Cool",
+        fan: "Auto"
+    )
+#endif
+
+    init(id: String, name: String, brand: String, connection: String, isOn: Bool, current: Double, target: Double, mode: String, fan: String) {
+        self.id = id
+        self.name = name
+        self.brand = brand
+        self.connection = connection
+        self.isOn = isOn
+        self.current = current
+        self.target = target
+        self.mode = mode
+        self.fan = fan
+    }
+
     init?(dictionary: [String: Any]) {
         guard let id = dictionary["id"] as? String,
               let name = dictionary["name"] as? String else { return nil }
@@ -51,6 +77,14 @@ private final class WatchConnectivityModel: NSObject, ObservableObject, WCSessio
 
     override init() {
         super.init()
+#if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--klimat-watch-preview") {
+            devices = [.preview]
+            selectedID = "preview-daikin"
+            isPhoneReachable = true
+            return
+        }
+#endif
         guard WCSession.isSupported() else {
             message = String(localized: "Connection unavailable")
             return
@@ -151,7 +185,7 @@ private struct KlimatWatchHomeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 8) {
+            VStack(spacing: 4) {
                 if connectivity.devices.count > 1 {
                     HStack(spacing: 4) {
                         Button { connectivity.selectAdjacent(-1) } label: { Image(systemName: "chevron.left") }
@@ -167,7 +201,7 @@ private struct KlimatWatchHomeView: View {
                     .disabled(!connectivity.isPhoneReachable)
                 } else {
                     Text(connectivity.selectedDevice?.name ?? "Klimat")
-                        .font(.headline)
+                        .font(.system(size: 16, weight: .semibold))
                         .lineLimit(1)
                 }
 
@@ -181,48 +215,56 @@ private struct KlimatWatchHomeView: View {
                         Text(LocalizedStringKey(device.mode)).font(.caption2)
                     }
 
-                    Text(device.brand)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                    HStack(alignment: .center, spacing: 4) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("INDOORS").font(.system(size: 8, weight: .bold)).foregroundStyle(.secondary)
+                            HStack(alignment: .firstTextBaseline, spacing: 2) {
+                                Text("\(connectivity.displayed(device.current), specifier: "%.1f")°")
+                                    .font(.system(size: 22, weight: .medium, design: .rounded))
+                                    .monospacedDigit()
+                                Text(connectivity.usesFahrenheit ? "F" : "C")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
 
-                    VStack(spacing: 0) {
-                        Text("INDOORS").font(.system(size: 9, weight: .bold)).foregroundStyle(.secondary)
-                        Text("\(connectivity.displayed(device.current), specifier: "%.1f")°")
-                            .font(.system(size: 28, weight: .medium, design: .rounded))
-                            .monospacedDigit()
-                        Text(connectivity.usesFahrenheit ? "°F" : "°C")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                        Text("SET POINT").font(.system(size: 9, weight: .bold)).foregroundStyle(.secondary)
+                        Spacer(minLength: 2)
+
+                        VStack(alignment: .trailing, spacing: 1) {
+                            Text("SET POINT").font(.system(size: 8, weight: .bold)).foregroundStyle(.secondary)
+                            HStack(spacing: 5) {
+                                Button { connectivity.setTemperature(for: device, direction: -1) } label: {
+                                    Image(systemName: "minus").font(.caption2.weight(.bold))
+                                        .frame(width: 28, height: 28)
+                                        .background(.gray.opacity(0.2), in: Circle())
+                                }
+                                .accessibilityLabel("Lower temperature")
+
+                                Text("\(connectivity.displayed(device.target), specifier: "%.1f")°")
+                                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                    .monospacedDigit()
+                                    .frame(minWidth: 42)
+
+                                Button { connectivity.setTemperature(for: device, direction: 1) } label: {
+                                    Image(systemName: "plus").font(.caption2.weight(.bold))
+                                        .frame(width: 28, height: 28)
+                                        .background(.gray.opacity(0.2), in: Circle())
+                                }
+                                .accessibilityLabel("Raise temperature")
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(!connectivity.isPhoneReachable)
+                        }
                     }
 
-                    HStack(spacing: 10) {
-                        Button { connectivity.setTemperature(for: device, direction: -1) } label: {
-                            Image(systemName: "minus").font(.body.weight(.semibold))
-                        }
-                        .accessibilityLabel("Lower temperature")
-
-                        Text("\(connectivity.displayed(device.target), specifier: "%.1f")°")
-                            .font(.title3.weight(.semibold))
-                            .monospacedDigit()
-                            .frame(minWidth: 58)
-
-                        Text(connectivity.usesFahrenheit ? "°F" : "°C")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-
-                        Button { connectivity.setTemperature(for: device, direction: 1) } label: {
-                            Image(systemName: "plus").font(.body.weight(.semibold))
-                        }
-                        .accessibilityLabel("Raise temperature")
-                    }
-                    .disabled(!connectivity.isPhoneReachable)
-
-                    HStack(spacing: 10) {
+                    HStack(spacing: 8) {
                         Button { connectivity.togglePower(for: device) } label: {
-                            Image(systemName: "power").font(.title3.weight(.semibold))
+                            Image(systemName: "power").font(.caption.weight(.semibold))
+                                .frame(width: 32, height: 32)
+                                .background(device.isOn ? Color.green : Color.gray, in: Circle())
+                                .foregroundStyle(.white)
                         }
-                        .tint(device.isOn ? .green : .gray)
+                        .buttonStyle(.plain)
                         .accessibilityLabel(device.isOn ? "Turn off" : "Turn on")
 
                         Button {
@@ -234,8 +276,12 @@ private struct KlimatWatchHomeView: View {
                                 Image(systemName: "arrow.trianglehead.2.clockwise")
                                 Text(LocalizedStringKey(device.mode))
                             }
-                            .font(.caption)
+                            .font(.caption2.weight(.medium))
+                            .padding(.horizontal, 9)
+                            .frame(height: 28)
+                            .background(.gray.opacity(0.2), in: Capsule())
                         }
+                        .buttonStyle(.plain)
                         .accessibilityLabel("Change mode")
                     }
                     .disabled(!connectivity.isPhoneReachable)
