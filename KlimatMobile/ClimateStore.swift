@@ -118,7 +118,16 @@ struct CloudProvider: Identifiable {
         save()
     }
     func command(deviceID: String? = nil, action: String, value: String? = nil, number: Double? = nil) async {
-        let commandDevice = deviceID.flatMap { id in devices.first(where: { $0.id == id }) } ?? selected
+        let commandDevice: ClimateDevice?
+        if let deviceID {
+            guard let requestedDevice = devices.first(where: { $0.id == deviceID }) else {
+                connectionNotice = String(localized: "Connection unavailable")
+                return
+            }
+            commandDevice = requestedDevice
+        } else {
+            commandDevice = selected
+        }
         if let device = commandDevice, device.brand == "MELCloud" {
             do {
                 let state = try await MELCloudClassicAdapter.command(device: device, action: action, value: value, number: number)
