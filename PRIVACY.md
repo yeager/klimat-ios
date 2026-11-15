@@ -20,6 +20,10 @@ When you use discovery or control a compatible device, Klimat sends protocol req
 
 **Apple Home:** If you select Apple Home, Klimat requests access to HomeKit data needed to list and control compatible climate accessories already in your Apple Home. Apple manages this access under its own privacy terms. Klimat requests HomeKit access only when you choose the feature.
 
+## App Store privacy label
+
+The App Store privacy label lists Email Address and Other Data as linked to the user's identity and used for App Functionality. These declarations reflect the optional MELCloud integration: Klimat sends your sign-in email and climate control requests to Mitsubishi Electric, and receives MELCloud account and device records to display and control your equipment. Mitsubishi Electric handles that information under its own service terms. The Klimat developer does not receive it. If you use only local Wi-Fi control, device data stays on your iPhone and AC communications stay on your local network.
+
 ## Children's privacy
 
 Klimat does not knowingly collect information from anyone, including children.
