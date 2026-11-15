@@ -42,15 +42,15 @@ enum MideaLocalAdapter {
     }
 
     static func read(_ device: Device) async throws -> State {
-        try await withSession(device) { connection in
-            let state = try await queryState(connection, deviceID: device.id)
+        try await withSession(device) { connection, reader in
+            let state = try await queryState(connection, reader: reader, deviceID: device.id)
             return makeState(state)
         }
     }
 
     static func command(_ device: Device, action: String, value: String?, target: Double?) async throws -> State {
-        try await withSession(device) { connection in
-            let current = try await queryState(connection, deviceID: device.id)
+        try await withSession(device) { connection, reader in
+            let current = try await queryState(connection, reader: reader, deviceID: device.id)
             var set = SetState(from: current)
             switch action {
             case "power": set.powerOn = value == "on"
@@ -68,7 +68,7 @@ enum MideaLocalAdapter {
             default: throw MideaAdapterError.unsupportedControl
             }
             try await send(set.encode(), deviceID: device.id, over: connection)
-            return makeState(try await receiveState(from: connection))
+            return makeState(try await reader.receiveState())
         }
     }
 
@@ -93,14 +93,17 @@ enum MideaLocalAdapter {
                      target: state.targetTemperature, mode: mode, fan: fan)
     }
 
-    private static func withSession<T>(_ device: Device, operation: (NWConnection) async throws -> T) async throws -> T {
+    private static func withSession<T>(
+        _ device: Device,
+        operation: (NWConnection, MideaPacketReader) async throws -> T
+    ) async throws -> T {
         guard let host = LocalWiFiIPv4.validatedHost(device.host), let port = NWEndpoint.Port(rawValue: device.port) else {
             throw MideaAdapterError.invalidAddress
         }
         let connection = NWConnection(host: NWEndpoint.Host(host), port: port, using: .tcp)
         defer { connection.cancel() }
         try await waitUntilReady(connection, timeout: 5)
-        return try await operation(connection)
+        return try await operation(connection, MideaPacketReader(connection: connection))
     }
 
     private static func waitUntilReady(_ connection: NWConnection, timeout: TimeInterval) async throws {
@@ -121,16 +124,13 @@ enum MideaLocalAdapter {
         }
     }
 
-    private static func queryState(_ connection: NWConnection, deviceID: UInt64) async throws -> ACState {
+    private static func queryState(
+        _ connection: NWConnection,
+        reader: MideaPacketReader,
+        deviceID: UInt64
+    ) async throws -> ACState {
         try await send(Command.getState(), deviceID: deviceID, over: connection)
-        return try await receiveState(from: connection)
-    }
-
-    private static func receiveState(from connection: NWConnection) async throws -> ACState {
-        let packet = try await receivePacket(from: connection)
-        let frame = try V2Packet.decode(packet)
-        guard let state = try ACState.parse(frame: frame) else { throw ProtocolError.noStateResponse }
-        return state
+        return try await reader.receiveState()
     }
 
     private static func send(_ frame: [UInt8], deviceID: UInt64, over connection: NWConnection) async throws {
@@ -146,20 +146,7 @@ enum MideaLocalAdapter {
         }
     }
 
-    private static func receivePacket(from connection: NWConnection) async throws -> [UInt8] {
-        let deadline = Date().addingTimeInterval(6)
-        var buffer = [UInt8]()
-        while Date() < deadline {
-            let remaining = max(0.1, deadline.timeIntervalSinceNow)
-            let data = try await receiveChunk(from: connection, timeout: remaining)
-            buffer.append(contentsOf: data)
-            if let packet = extractPacket(from: &buffer) { return packet }
-        }
-        connection.cancel()
-        throw MideaAdapterError.timeout
-    }
-
-    private static func receiveChunk(from connection: NWConnection, timeout: TimeInterval) async throws -> Data {
+    fileprivate static func receiveChunk(from connection: NWConnection, timeout: TimeInterval) async throws -> Data {
         try await withCheckedThrowingContinuation { continuation in
             let gate = MideaContinuation<Data>(continuation)
             connection.receive(minimumIncompleteLength: 1, maximumLength: 8192) { data, _, complete, error in
@@ -174,7 +161,35 @@ enum MideaLocalAdapter {
         }
     }
 
-    private static func extractPacket(from buffer: inout [UInt8]) -> [UInt8]? {
+}
+
+private final class MideaPacketReader {
+    private let connection: NWConnection
+    private var buffer = [UInt8]()
+
+    init(connection: NWConnection) { self.connection = connection }
+
+    func receiveState() async throws -> ACState {
+        // Like MideaKit, skip unsolicited or non-state frames. Keep unread bytes
+        // between frames because one TCP receive may contain multiple packets.
+        for _ in 0..<4 {
+            let deadline = Date().addingTimeInterval(6)
+            while Date() < deadline {
+                if let packet = extractPacket() {
+                    let frame = try V2Packet.decode(packet)
+                    if let state = try ACState.parse(frame: frame) { return state }
+                    break
+                }
+                let remaining = max(0.1, deadline.timeIntervalSinceNow)
+                let data = try await MideaLocalAdapter.receiveChunk(from: connection, timeout: remaining)
+                buffer.append(contentsOf: data)
+            }
+        }
+        connection.cancel()
+        throw MideaAdapterError.timeout
+    }
+
+    private func extractPacket() -> [UInt8]? {
         guard let start = buffer.indices.dropLast().first(where: { buffer[$0] == 0x5A && buffer[$0 + 1] == 0x5A }) else {
             buffer = buffer.suffix(1).map { $0 }
             return nil
