@@ -79,6 +79,13 @@ final class PhoneWatchConnectivity: NSObject, ObservableObject, WCSessionDelegat
         }
     }
 
+    nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
+        Task { @MainActor [weak self] in
+            guard let self, let store = self.store else { return }
+            self.updateContext(from: store)
+        }
+    }
+
     nonisolated func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
         Task { @MainActor [weak self] in
             guard let self else {
