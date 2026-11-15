@@ -24,9 +24,5 @@
 	<string>se.yeager.klimat.ios</string>
 	<key>WKRunsIndependentlyOfCompanionApp</key>
 	<false/>
-	<key>WKWatchKitApp</key>
-	<true/>
-	<key>WKWatchOnly</key>
-	<false/>
 </dict>
 </plist>

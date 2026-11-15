@@ -28,8 +28,6 @@ targets:
     dependencies:
       - target: KlimatWatchApp
         embed: true
-        copy:
-          destination: plugins
 
   KlimatWatchApp:
     type: application
@@ -47,12 +45,13 @@ targets:
         CFBundleDisplayName: Klimat
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
-        WKWatchKitApp: true
         WKCompanionAppBundleIdentifier: se.yeager.klimat.ios
         WKRunsIndependentlyOfCompanionApp: false
-        WKWatchOnly: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: se.yeager.klimat.ios.watchkitapp
+        SUPPORTED_PLATFORMS: watchos
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SKIP_INSTALL: YES
+        "ARCHS[sdk=watchos*]": arm64_32
+        "ARCHS[sdk=watchsimulator*]": arm64

@@ -15,6 +15,7 @@
 		1A06506BA6814F52652D46BA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0CEED6BC60316058B39DAD16 /* Localizable.strings */; };
 		1BE33B4E69A3B6C94C48A7B1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E04459B793FE7BC27D50A3B /* InfoPlist.strings */; };
 		21A73FE08B1DCF091D33D9D2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3BC13866FA5BDBFC56CB863A /* InfoPlist.strings */; };
+		24F190B4D180BBBCDACA8160 /* KlimatWatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 03E7E24D1013432AC092D059 /* KlimatWatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		253E319E4735BC923AC0D466 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C0464FA4C219A7CBF35B0AD8 /* Localizable.strings */; };
 		292082B4FF2ABE0CB5F67527 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6EE1354830C2CA7ED22C5494 /* Localizable.strings */; };
 		293256B6A5F493519AE19AE6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6240197A498BFAC91C1AB64E /* Localizable.strings */; };
@@ -65,7 +66,6 @@
 		A7657F1F70EA426D5715C8B1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 990A00A415826812908EAB9A /* InfoPlist.strings */; };
 		AA4481B2C424AFB27FC9C544 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E5528675B26CC2D5138DA4B1 /* InfoPlist.strings */; };
 		AB3BB765DC83C2C5C535850D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3F4F5EF5828A3F0ED250554C /* InfoPlist.strings */; };
-		AE457578211C9B0E29BE297A /* KlimatWatchApp.app in Embed Dependencies */ = {isa = PBXBuildFile; fileRef = 03E7E24D1013432AC092D059 /* KlimatWatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AE96D646C59C56A944D7CDB6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F675FC8FCE6DDD3DECD05106 /* Localizable.strings */; };
 		B7056A7B39E06650CC90640A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C7AB3FD0D1E87F650660DB6F /* Localizable.strings */; };
 		B7A5B9AE67A9B2E9A4DF1AE0 /* KlimatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4235184141FC53092758CA94 /* KlimatApp.swift */; };
@@ -98,15 +98,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		7EFE5AE04F607412725C005B /* Embed Dependencies */ = {
+		0582C1818742382D26EA98D0 /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
 			files = (
-				AE457578211C9B0E29BE297A /* KlimatWatchApp.app in Embed Dependencies */,
+				24F190B4D180BBBCDACA8160 /* KlimatWatchApp.app in Embed Watch Content */,
 			);
-			name = "Embed Dependencies";
+			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -302,7 +302,7 @@
 			buildPhases = (
 				63652277C8B720F5E707AD17 /* Sources */,
 				105898AD9B8856631354DDDC /* Resources */,
-				7EFE5AE04F607412725C005B /* Embed Dependencies */,
+				0582C1818742382D26EA98D0 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
@@ -638,11 +638,14 @@
 		A387066ABB333C3E65777037 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"ARCHS[sdk=watchos*]" = arm64_32;
+				"ARCHS[sdk=watchsimulator*]" = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = KlimatWatch/WatchApp/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = se.yeager.klimat.ios.watchkitapp;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = watchos;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
@@ -668,11 +671,14 @@
 		D9969377D40B6755376AF2FD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"ARCHS[sdk=watchos*]" = arm64_32;
+				"ARCHS[sdk=watchsimulator*]" = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = KlimatWatch/WatchApp/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = se.yeager.klimat.ios.watchkitapp;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = watchos;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
