@@ -74,6 +74,9 @@ private final class WatchConnectivityModel: NSObject, ObservableObject, WCSessio
     @Published private(set) var message: String?
 
     private let session = WCSession.default
+#if DEBUG
+    private var isPreview = false
+#endif
 
     override init() {
         super.init()
@@ -82,6 +85,7 @@ private final class WatchConnectivityModel: NSObject, ObservableObject, WCSessio
             devices = [.preview]
             selectedID = "preview-daikin"
             isPhoneReachable = true
+            isPreview = true
             return
         }
 #endif
@@ -137,6 +141,9 @@ private final class WatchConnectivityModel: NSObject, ObservableObject, WCSessio
     }
 
     private func send(_ message: [String: Any]) {
+#if DEBUG
+        if isPreview { return }
+#endif
         guard session.activationState == .activated, session.isReachable else {
             isPhoneReachable = false
             self.message = String(localized: "Connection unavailable")
