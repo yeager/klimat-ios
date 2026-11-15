@@ -49,6 +49,7 @@
 		7EE70931A507B5D8744C172C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 900F514CD3EDB86B3E676701 /* Localizable.strings */; };
 		8054220989B3C3A68A16F1C7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 35467EECA9D51737F0359D81 /* InfoPlist.strings */; };
 		80BE13D25A1618E4C10B7E58 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E49CF66FBEAC61C8EC87ADC /* Localizable.strings */; };
+		811304AAABE001F5B923CA39 /* LocalWiFiIPv4.swift in Sources */ = {isa = PBXBuildFile; fileRef = F44A7CB6012E4A438605F6EB /* LocalWiFiIPv4.swift */; };
 		8185BB404BFC882CB62A8846 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9B0BB0CF76862E6AB745CC21 /* Localizable.strings */; };
 		825F4B029DA9A39007FE8A09 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9D16E72BD73C970A26093310 /* Localizable.strings */; };
 		82F00BC4DE2007BED585BE7A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0E49CF66FBEAC61C8EC87ADC /* Localizable.strings */; };
@@ -170,6 +171,7 @@
 		E5528675B26CC2D5138DA4B1 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E74DBB8103D8F422383F0517 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		E7BA54F162AC6C20471D828A /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F44A7CB6012E4A438605F6EB /* LocalWiFiIPv4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalWiFiIPv4.swift; sourceTree = "<group>"; };
 		F4F6FDFC151BC18FB60F0730 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F675FC8FCE6DDD3DECD05106 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = fa.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -239,6 +241,7 @@
 				7023635AE9FEF93D620324B0 /* Localizable.strings */,
 				014A5A1037126ECFF46A16B2 /* Localizable.strings */,
 				48D46135FB8A41D604495720 /* Localizable.strings */,
+				F44A7CB6012E4A438605F6EB /* LocalWiFiIPv4.swift */,
 				BBDC13EF4B802B14859B85E3 /* MELCloudClassicAdapter.swift */,
 				408D2FB78DC1B9CB8E8D7C8C /* MitsubishiLocalAdapter.swift */,
 				CBF5A35AC818A4FB095BC289 /* PhoneWatchConnectivity.swift */,
@@ -464,6 +467,7 @@
 				3A74B25DECEB974DDC5EBF39 /* GreeLocalAdapter.swift in Sources */,
 				D5D7ADA3E36D933EF35A0905 /* HomeView.swift in Sources */,
 				B7A5B9AE67A9B2E9A4DF1AE0 /* KlimatApp.swift in Sources */,
+				811304AAABE001F5B923CA39 /* LocalWiFiIPv4.swift in Sources */,
 				3D68C1F6AE54E84EB18F961F /* MELCloudClassicAdapter.swift in Sources */,
 				0D47C910C8EC697A9BE6CA4E /* MitsubishiLocalAdapter.swift in Sources */,
 				495F1135A891828E686B66F1 /* PhoneWatchConnectivity.swift in Sources */,

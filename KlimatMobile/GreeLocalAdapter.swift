@@ -48,6 +48,7 @@ enum GreeLocalAdapter {
     }
 
     private static func discoverBroadcast(broadcast: String, timeout: TimeInterval) throws -> [DeviceInfo] {
+        guard LocalWiFiIPv4.isCurrentBroadcast(broadcast) else { throw GreeAdapterError.invalidAddress }
         let descriptor = Darwin.socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
         guard descriptor >= 0 else { throw GreeAdapterError.networkUnavailable }
         defer { Darwin.close(descriptor) }
@@ -260,6 +261,7 @@ enum GreeLocalAdapter {
     private static func number(_ value: Any?) -> Double? { (value as? NSNumber)?.doubleValue }
 
     private static func exchange(host: String, packet: Data, timeout: TimeInterval) async throws -> Data {
+        guard let host = LocalWiFiIPv4.validatedHost(host) else { throw GreeAdapterError.invalidAddress }
         guard let nwPort = NWEndpoint.Port(rawValue: 7000) else { throw GreeAdapterError.invalidAddress }
         let connection = NWConnection(host: NWEndpoint.Host(host), port: nwPort, using: .udp)
         return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Data, Error>) in

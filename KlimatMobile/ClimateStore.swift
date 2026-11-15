@@ -53,6 +53,9 @@ struct CloudProvider: Identifiable {
     var selected: ClimateDevice? { devices.first(where: { $0.id == selectedID }) ?? devices.first }
     func save() { if let data = try? JSONEncoder().encode(devices) { UserDefaults.standard.set(data, forKey: storageKey) } }
     func connectDaikin(host: String, name: String) async {
+        guard let host = LocalWiFiIPv4.validatedHost(host) else {
+            connectionNotice = String(localized: "Connection unavailable"); return
+        }
         do {
             let state = try await DaikinLocalAdapter.read(host: host)
             let device = ClimateDevice(id: state.id, name: name.isEmpty ? state.name : name, brand: "Daikin", connection: "Local network · \(host)", isOn: state.isOn, current: state.current, target: state.target, mode: state.mode, fan: state.fan, host: state.host)
@@ -61,6 +64,9 @@ struct CloudProvider: Identifiable {
         } catch { connectionNotice = error.localizedDescription }
     }
     func connectMitsubishi(host: String, name: String) async {
+        guard let host = LocalWiFiIPv4.validatedHost(host) else {
+            connectionNotice = String(localized: "Connection unavailable"); return
+        }
         do {
             let state = try await MitsubishiLocalAdapter.read(host: host)
             let identifier = state.mac.isEmpty ? host : state.mac
@@ -70,9 +76,12 @@ struct CloudProvider: Identifiable {
         } catch { connectionNotice = error.localizedDescription }
     }
     func connectGree(host: String, name: String) async {
+        guard let host = LocalWiFiIPv4.validatedHost(host) else {
+            connectionNotice = String(localized: "Connection unavailable"); return
+        }
         do {
             let info: GreeLocalAdapter.DeviceInfo
-            if let broadcast = LocalSubnetDiscovery.broadcastAddress(),
+            if let broadcast = LocalWiFiIPv4.broadcastAddress(),
                let matches = try? await GreeLocalAdapter.discoverAll(broadcast: broadcast, timeout: 1.2),
                let match = matches.first(where: { $0.host == host }) {
                 info = match
@@ -150,6 +159,9 @@ struct CloudProvider: Identifiable {
             return
         }
         if let device = commandDevice, device.brand == "Gree", let host = device.host {
+            guard let host = LocalWiFiIPv4.validatedHost(host) else {
+                connectionNotice = String(localized: "Connection unavailable"); return
+            }
             do {
                 let mac = String(device.id.dropFirst("gree-".count))
                 let info = GreeLocalAdapter.DeviceInfo(mac: mac, name: device.name, host: host, brand: "Gree", model: "")
@@ -166,6 +178,9 @@ struct CloudProvider: Identifiable {
         }
         guard let device = commandDevice, let host = device.host else {
             connectionNotice = String(localized: "This device does not have a local control adapter."); return
+        }
+        guard let host = LocalWiFiIPv4.validatedHost(host) else {
+            connectionNotice = String(localized: "Connection unavailable"); return
         }
         do {
             let isMitsubishi = device.brand == "Mitsubishi Electric"
@@ -206,14 +221,14 @@ struct CloudProvider: Identifiable {
         isScanning = true; scanMessage = String(localized: "Scanning this Wi-Fi network for compatible Daikin, Mitsubishi and Gree adapters…")
         Task { @MainActor [weak self] in
             guard let self else { return }
-            let hosts = LocalSubnetDiscovery.hosts()
+            let hosts = LocalWiFiIPv4.hosts()
             guard !hosts.isEmpty else {
                 self.scanMessage = String(localized: "Could not determine the Wi-Fi subnet. Enter the adapter IP address instead.")
                 self.isScanning = false
                 return
             }
             var found: [ClimateDevice] = []
-            if let broadcast = LocalSubnetDiscovery.broadcastAddress(),
+            if let broadcast = LocalWiFiIPv4.broadcastAddress(),
                let greeDevices = try? await GreeLocalAdapter.discoverAll(broadcast: broadcast) {
                 for info in greeDevices {
                     guard let state = try? await GreeLocalAdapter.connect(info),
@@ -436,6 +451,7 @@ private struct DaikinState: Sendable {
 
 private enum DaikinLocalAdapter {
     static func discover(host: String) async throws -> DaikinState {
+        let host = try validatedHost(host)
         let control = try await request(endpoint(host), "aircon/get_control_info", timeout: 1.2)
         guard control["ret"] == "OK", ["0", "1"].contains(control["pow"] ?? ""), control["mode"] != nil else {
             throw URLError(.cannotParseResponse)
@@ -444,6 +460,7 @@ private enum DaikinLocalAdapter {
     }
 
     static func read(host: String) async throws -> DaikinState {
+        let host = try validatedHost(host)
         let base = endpoint(host)
         let control = try await request(base, "aircon/get_control_info")
         let sensor = try await request(base, "aircon/get_sensor_info")
@@ -454,6 +471,7 @@ private enum DaikinLocalAdapter {
         return DaikinState(id: info["mac"] ?? host, name: info["name"].map { $0.removingPercentEncoding ?? $0 } ?? "Daikin AC", isOn: control["pow"] == "1", current: Double(sensor["htemp"] ?? "23") ?? 23, target: Double(control["stemp"] ?? "22") ?? 22, mode: mode, fan: fanMap[control["f_rate"] ?? "A"] ?? "Auto", host: host)
     }
     static func command(host: String, action: String, value: String?, number: Double?) async throws -> DaikinState {
+        let host = try validatedHost(host)
         let base = endpoint(host)
         var params = try await request(base, "aircon/get_control_info")
         switch action {
@@ -465,6 +483,10 @@ private enum DaikinLocalAdapter {
         }
         _ = try await request(base, "aircon/set_control_info", parameters: params)
         return try await read(host: host)
+    }
+    private static func validatedHost(_ host: String) throws -> String {
+        guard let host = LocalWiFiIPv4.validatedHost(host) else { throw URLError(.badURL) }
+        return host
     }
     private static func endpoint(_ host: String) -> String { "http://\(host.trimmingCharacters(in: CharacterSet(charactersIn: "/")))" }
     private static func request(_ base: String, _ path: String, parameters: [String:String]? = nil, timeout: TimeInterval = 5) async throws -> [String:String] {
@@ -481,48 +503,5 @@ private enum DaikinLocalAdapter {
         }
         guard result["ret"].map({ $0 == "OK" }) ?? true else { throw URLError(.cannotWriteToFile) }
         return result
-    }
-}
-
-private enum LocalSubnetDiscovery {
-    static func hosts() -> [String] {
-        guard let subnet = localSubnet() else { return [] }
-        return ((subnet.network + 1)..<subnet.broadcast).filter { $0 != subnet.ip }.map(addressString)
-    }
-
-    static func broadcastAddress() -> String? {
-        guard let subnet = localSubnet() else { return nil }
-        return addressString(subnet.broadcast)
-    }
-
-    private static func addressString(_ value: UInt32) -> String {
-        "\((value >> 24) & 255).\((value >> 16) & 255).\((value >> 8) & 255).\(value & 255)"
-    }
-
-    private static func localSubnet() -> (ip: UInt32, network: UInt32, broadcast: UInt32)? {
-        var first: UnsafeMutablePointer<ifaddrs>?
-        guard getifaddrs(&first) == 0, let first else { return nil }
-        defer { freeifaddrs(first) }
-
-        var item: UnsafeMutablePointer<ifaddrs>? = first
-        while let current = item {
-            defer { item = current.pointee.ifa_next }
-            let interface = current.pointee
-            guard String(cString: interface.ifa_name) == "en0",
-                  let address = interface.ifa_addr,
-                  let netmask = interface.ifa_netmask,
-                  address.pointee.sa_family == UInt8(AF_INET),
-                  netmask.pointee.sa_family == UInt8(AF_INET) else { continue }
-
-            let ip = UInt32(bigEndian: UnsafePointer<sockaddr_in>(OpaquePointer(address)).pointee.sin_addr.s_addr)
-            let mask = UInt32(bigEndian: UnsafePointer<sockaddr_in>(OpaquePointer(netmask)).pointee.sin_addr.s_addr)
-            let isPrivate = (ip >> 24) == 10 || (ip >> 20) == 0xAC1 || (ip >> 16) == 0xC0A8
-            guard isPrivate else { return nil }
-            let network = ip & mask
-            let broadcast = network | ~mask
-            guard broadcast > network, broadcast - network <= 512 else { return nil }
-            return (ip, network, broadcast)
-        }
-        return nil
     }
 }

@@ -83,7 +83,8 @@ enum MitsubishiLocalAdapter {
     private static func exchange(host: String, payload: String, timeout: TimeInterval) async throws -> String {
         let encrypted = try encrypt(payload)
         let body = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ESV>\(encrypted)</ESV>"
-        guard let url = URL(string: "http://\(host)/smart") else { throw URLError(.badURL) }
+        guard let localHost = LocalWiFiIPv4.validatedHost(host),
+              let url = URL(string: "http://\(localHost)/smart") else { throw URLError(.badURL) }
         var request = URLRequest(url: url, timeoutInterval: timeout)
         request.httpMethod = "POST"; request.httpBody = body.data(using: .utf8)
         request.setValue("text/plain;chrset=UTF-8", forHTTPHeaderField: "Content-Type")
