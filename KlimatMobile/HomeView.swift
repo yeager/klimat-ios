@@ -319,7 +319,7 @@ struct HomeView: View {
                     }.disabled(!faceIDAvailable)
                     Text(faceIDAvailable ? "Use Face ID to unlock Klimat when you reopen the app." : "Face ID is unavailable on this device.").font(.caption).foregroundStyle(Palette.muted)
                     Text("No analytics or tracking. Direct control stays on your local network.").font(.caption).foregroundStyle(Palette.muted)
-                    Link(destination: URL(string: "https://github.com/yeager/klimat-ios/blob/main/PRIVACY.md")!) {
+                    Link(destination: URL(string: "https://gist.github.com/yeager/d40a85790d29f70dedde41ba90f1ef99")!) {
                         Label("Privacy policy", systemImage: "hand.raised")
                     }
                 }

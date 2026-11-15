@@ -30,4 +30,4 @@ Klimat does not knowingly collect information from anyone, including children.
 
 ## Changes and contact
 
-Changes to this policy will be published with the source code in this repository. For privacy questions, open a GitHub issue at [github.com/yeager/klimat-ios/issues](https://github.com/yeager/klimat-ios/issues).
+The current policy is published at [github.com/yeager/klimat-ios privacy policy](https://gist.github.com/yeager/d40a85790d29f70dedde41ba90f1ef99). This policy will be updated at that URL when Klimat's data practices change.
